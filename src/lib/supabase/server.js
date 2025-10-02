@@ -1,22 +1,29 @@
+// lib/supabase/server.js
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export async function createSupabaseServerClient() {
-	const cookieStore = await cookies();
+export function createSupabaseServerClient() {
+	const cookieStore = cookies(); // ⬅️ tidak async
 
-	return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
+	const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+	const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+	if (!url || !key) {
+		throw new Error('Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL dan PUBLISHABLE_KEY/ANON_KEY.');
+	}
+
+	return createServerClient(url, key, {
 		cookies: {
-			getAll() {
-				return cookieStore.getAll();
+			get(name) {
+				return cookieStore.get(name)?.value;
 			},
-			setAll(cookiesToSet) {
-				try {
-					cookiesToSet.forEach(({ name, value, options }) => {
-						cookieStore.set(name, value, options);
-					});
-				} catch (error) {
-					console.log('Error setting cookies:', error)
-				}
+			set(name, value, options) {
+				// Di Server Component murni ini tidak akan jalan (read-only).
+				// Gunakan di Route Handler / Server Action saat butuh set cookie.
+				cookieStore.set({ name, value, ...options });
+			},
+			remove(name, options) {
+				cookieStore.set({ name, value: '', ...options, maxAge: 0 });
 			},
 		},
 	});
