@@ -9,8 +9,8 @@ export default function RegisterClient() {
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState(null); // { type: 'error' | 'success', text: string }
 
-	// Pastikan ENV tersedia (di Vercel: NEXT_PUBLIC_SUPABASE_URL & NEXT_PUBLIC_SUPABASE_ANON_KEY)
-	const envOk = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+	// Pastikan ENV tersedia (di Vercel: NEXT_PUBLIC_SUPABASE_URL & NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)
+	const envOk = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 	// Buat client hanya bila ENV ada (dan hanya sekali)
 	const supabase = useMemo(() => {
@@ -25,7 +25,7 @@ export default function RegisterClient() {
 		if (!supabase) {
 			setMessage({
 				type: 'error',
-				text: 'Konfigurasi Supabase belum lengkap. Isi env NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di Vercel.',
+				text: 'Konfigurasi Supabase belum lengkap. Isi env NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY di Vercel.',
 			});
 			return;
 		}
