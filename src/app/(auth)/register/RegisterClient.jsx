@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import GoogleLoginButton from '@/components/google-login-button';
 
 export default function RegisterClient() {
 	const [email, setEmail] = useState('');
@@ -53,11 +54,28 @@ export default function RegisterClient() {
 		setLoading(false);
 	}
 
+	const handleGoogleError = (errorMessage) => {
+		setMessage({ type: 'error', text: errorMessage });
+	};
+
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
 			<div className="w-full max-w-md bg-white shadow-lg rounded-xl p-6">
 				<h1 className="text-2xl font-bold text-center mb-2">Register</h1>
 				<p className="text-sm text-gray-500 text-center mb-6">Masukkan email & password. Setelah daftar, cek email untuk verifikasi.</p>
+
+				{/* Google Login Button */}
+				<GoogleLoginButton onError={handleGoogleError} />
+
+				{/* Divider */}
+				<div className="relative my-6">
+					<div className="absolute inset-0 flex items-center">
+						<div className="w-full border-t border-gray-300" />
+					</div>
+					<div className="relative flex justify-center text-sm">
+						<span className="px-3 bg-white text-gray-500">Atau daftar dengan email</span>
+					</div>
+				</div>
 
 				<form onSubmit={onSubmit} className="space-y-4">
 					<div>

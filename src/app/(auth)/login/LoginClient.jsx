@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import GoogleLoginButton from '@/components/google-login-button';
 
 export default function LoginClient() {
 	const router = useRouter();
@@ -12,7 +13,7 @@ export default function LoginClient() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState(null); 
+	const [message, setMessage] = useState(null);
 
 	// Baca error dari query string (?error=...)
 	useEffect(() => {
@@ -26,6 +27,16 @@ export default function LoginClient() {
 			setMessage({
 				type: 'error',
 				text: 'Session required for password update. Please login first.',
+			});
+		} else if (err === 'callback_failed') {
+			setMessage({
+				type: 'error',
+				text: 'Login dengan Google gagal. Silakan coba lagi.',
+			});
+		} else if (err === 'oauth_error') {
+			setMessage({
+				type: 'error',
+				text: 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.',
 			});
 		}
 	}, [searchParams]);
@@ -58,11 +69,28 @@ export default function LoginClient() {
 		[email, password, supabase, router, loading]
 	);
 
+	const handleGoogleError = (errorMessage) => {
+		setMessage({ type: 'error', text: errorMessage });
+	};
+
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
 			<div className="w-full max-w-md bg-white shadow-lg rounded-xl p-6">
 				<h1 className="text-2xl font-bold text-center mb-2">Login</h1>
 				<p className="text-sm text-gray-500 text-center mb-6">Masukkan email & password yang sudah terdaftar.</p>
+
+				{/* Google Login Button */}
+				<GoogleLoginButton onError={handleGoogleError} />
+
+				{/* Divider */}
+				<div className="relative my-6">
+					<div className="absolute inset-0 flex items-center">
+						<div className="w-full border-t border-gray-300" />
+					</div>
+					<div className="relative flex justify-center text-sm">
+						<span className="px-3 bg-white text-gray-500">Atau lanjutkan dengan email</span>
+					</div>
+				</div>
 
 				<form onSubmit={onSubmit} className="space-y-4">
 					<div>

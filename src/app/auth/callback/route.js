@@ -6,9 +6,16 @@ export async function GET(request) {
 	const { searchParams, origin } = new URL(request.url);
 	const code = searchParams.get('code');
 	const type = searchParams.get('type');
-	const next = searchParams.get('next') ?? '/';
+	const next = searchParams.get('next') ?? '/dashboard';
+	const error = searchParams.get('error');
 
-	console.log('Auth callback - code:', code, 'type:', type);
+	console.log('Auth callback - code:', code, 'type:', type, 'error:', error);
+
+	// Handle OAuth error
+	if (error) {
+		console.error('OAuth error:', error);
+		return NextResponse.redirect(`${origin}/login?error=oauth_error`);
+	}
 
 	if (code) {
 		const cookieStore = await cookies();
@@ -32,17 +39,17 @@ export async function GET(request) {
 			return NextResponse.redirect(`${origin}/login?error=callback_failed`);
 		}
 
-		console.log('Auth callback success');
+		console.log('Auth callback success for user:', data.user?.email);
 
 		// Cek jika ini adalah password recovery flow
 		if (type === 'recovery') {
 			return NextResponse.redirect(`${origin}/update-password`);
 		}
 
-		// Default redirect ke dashboard
+		// Default redirect ke dashboard atau next URL
 		return NextResponse.redirect(`${origin}${next}`);
 	}
 
-	// URL tidak valid, redirect ke home
-	return NextResponse.redirect(`${origin}/`);
+	// URL tidak valid, redirect ke login
+	return NextResponse.redirect(`${origin}/login`);
 }
