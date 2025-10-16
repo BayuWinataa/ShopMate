@@ -3,7 +3,18 @@ import Groq from 'groq-sdk';
 import { NextResponse } from 'next/server';
 import products from '@/../products.json';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Initialize Groq client only when needed
+let groq;
+const initGroq = () => {
+	if (!groq) {
+		const apiKey = process.env.GROQ_API_KEY;
+		if (!apiKey) {
+			throw new Error('GROQ_API_KEY environment variable is missing');
+		}
+		groq = new Groq({ apiKey });
+	}
+	return groq;
+};
 
 /* =========================
    Utils (robust & reusable)
@@ -102,8 +113,14 @@ function dedupeKeepOrder(arr) {
    Route Handler
    ========================= */
 
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+
 export async function POST(req) {
 	try {
+		// Initialize Groq client at runtime
+		const groqClient = initGroq();
+		
 		const { messages, context } = await req.json();
 
 		// Sanitize pesan dari client (buang field liar spt meta)
@@ -239,7 +256,7 @@ Ingat: Semua rekomendasi **harus** berasal dari katalog JSON yang disediakan.`,
 		};
 
 		// Panggil Groq
-		const chatCompletion = await groq.chat.completions.create({
+		const chatCompletion = await groqClient.chat.completions.create({
 			messages: [systemMessage, ...clientMessages],
 			model: 'llama-3.3-70b-versatile',
 			temperature: 0.7,
