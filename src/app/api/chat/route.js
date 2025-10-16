@@ -1,5 +1,5 @@
 // File: app/api/chat/route.js
-import { Groq } from 'groq-sdk';
+import Groq from 'groq-sdk';
 import { NextResponse } from 'next/server';
 import products from '@/../products.json';
 
