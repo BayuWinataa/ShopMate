@@ -22,6 +22,8 @@ export default function GoogleLoginButton({ onError }) {
 
 			console.log('Google OAuth - Base URL:', baseUrl);
 			console.log('Google OAuth - Callback URL:', callbackUrl);
+			console.log('Google OAuth - Environment:', process.env.NODE_ENV);
+			console.log('Google OAuth - Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
 
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: 'google',
