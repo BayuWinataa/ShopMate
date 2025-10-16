@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useCart } from './CartProvider';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 export default function AddToCartButton({ product }) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const search = useSearchParams();
 	const { addItem, setOpen } = useCart();
+	const supabase = createSupabaseBrowserClient();
 
 	const [authChecked, setAuthChecked] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,26 +19,46 @@ export default function AddToCartButton({ product }) {
 
 	useEffect(() => {
 		let mounted = true;
-		(async () => {
+
+		// Check initial auth state
+		const checkAuth = async () => {
 			try {
-				const res = await fetch('/api/auth/me', { cache: 'no-store' });
+				const {
+					data: { user },
+					error,
+				} = await supabase.auth.getUser();
 				if (mounted) {
-					setIsLoggedIn(res.ok);
+					setIsLoggedIn(!error && !!user);
 					setAuthChecked(true);
+					setChecking(false);
 				}
 			} catch {
 				if (mounted) {
 					setIsLoggedIn(false);
 					setAuthChecked(true);
+					setChecking(false);
 				}
-			} finally {
-				if (mounted) setChecking(false);
 			}
-		})();
+		};
+
+		checkAuth();
+
+		// Listen for auth state changes
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((event, session) => {
+			if (mounted) {
+				setIsLoggedIn(!!session?.user);
+				setAuthChecked(true);
+				setChecking(false);
+			}
+		});
+
 		return () => {
 			mounted = false;
+			subscription?.unsubscribe();
 		};
-	}, []);
+	}, [supabase]);
 
 	const handleClick = () => {
 		const nextUrl = pathname + (search?.toString() ? `?${search.toString()}` : '');

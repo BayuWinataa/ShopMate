@@ -60,10 +60,13 @@ export default function LoginClient() {
 				return;
 			}
 
-			setMessage({ type: 'success', text: 'Login berhasil! Mengarahkan ke dashboard...' });
+			setMessage({ type: 'success', text: 'Login berhasil! Mengarahkan...' });
+
+			// Check for redirect URL from query params
+			const redirectTo = searchParams.get('next') || '/dashboard';
 
 			setTimeout(() => {
-				router.push('/dashboard');
+				router.push(redirectTo);
 			}, 1000);
 		},
 		[email, password, supabase, router, loading]
