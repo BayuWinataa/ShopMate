@@ -9,7 +9,7 @@ export async function GET(request) {
 	const next = searchParams.get('next') ?? '/dashboard';
 	const error = searchParams.get('error');
 
-	console.log('Auth callback - code:', code, 'type:', type, 'error:', error);
+	console.log('Auth callback - code:', !!code, 'type:', type, 'error:', error, 'origin:', origin);
 
 	// Handle OAuth error
 	if (error) {
@@ -22,19 +22,32 @@ export async function GET(request) {
 
 		let response = NextResponse.redirect(`${origin}${next}`);
 
-		const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
-			cookies: {
-				getAll() {
-					return cookieStore.getAll();
+		const supabase = createServerClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL,
+			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+			{
+				cookies: {
+					getAll() {
+						return cookieStore.getAll();
+					},
+					setAll(cookiesToSet) {
+						cookiesToSet.forEach(({ name, value, options }) => {
+							const cookieOptions = {
+								...options,
+								// Ensure cookies work in both development and production
+								secure: process.env.NODE_ENV === 'production',
+								sameSite: 'lax',
+								httpOnly: false,
+								path: '/',
+							};
+							
+							cookieStore.set(name, value, cookieOptions);
+							response.cookies.set(name, value, cookieOptions);
+						});
+					},
 				},
-				setAll(cookiesToSet) {
-					cookiesToSet.forEach(({ name, value, options }) => {
-						cookieStore.set(name, value, options);
-						response.cookies.set(name, value, options);
-					});
-				},
-			},
-		});
+			}
+		);
 
 		const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 

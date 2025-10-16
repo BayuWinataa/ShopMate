@@ -65,9 +65,14 @@ export default function LoginClient() {
 			// Check for redirect URL from query params
 			const redirectTo = searchParams.get('next') || '/dashboard';
 
+			// Add a longer delay for development mode to ensure session is set
+			const delay = process.env.NODE_ENV === 'development' ? 2000 : 1000;
+
 			setTimeout(() => {
 				router.push(redirectTo);
-			}, 1000);
+				// Force refresh to ensure middleware picks up the new session
+				router.refresh();
+			}, delay);
 		},
 		[email, password, supabase, router, loading]
 	);

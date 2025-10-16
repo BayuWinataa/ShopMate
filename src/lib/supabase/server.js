@@ -20,9 +20,18 @@ export async function createSupabaseServerClient() {
 			setAll(cookiesToSet) {
 				cookiesToSet.forEach(({ name, value, options }) => {
 					try {
-						cookieStore.set(name, value, options);
+						const cookieOptions = {
+							...options,
+							// Ensure cookies work in both development and production
+							secure: process.env.NODE_ENV === 'production',
+							sameSite: 'lax',
+							httpOnly: false,
+							path: '/',
+						};
+						cookieStore.set(name, value, cookieOptions);
 					} catch (error) {
 						// Ignore errors in read-only contexts
+						console.warn('Failed to set cookie:', name, error.message);
 					}
 				});
 			},

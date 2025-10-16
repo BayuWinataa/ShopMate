@@ -120,7 +120,7 @@ export async function POST(req) {
 	try {
 		// Initialize Groq client at runtime
 		const groqClient = initGroq();
-		
+
 		const { messages, context } = await req.json();
 
 		// Sanitize pesan dari client (buang field liar spt meta)
