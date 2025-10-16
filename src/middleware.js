@@ -7,7 +7,11 @@ export async function middleware(request) {
 	const isProtected = pathname.startsWith('/dashboard');
 
 	if (isProtected) {
-		let response = NextResponse.next();
+		let response = NextResponse.next({
+			request: {
+				headers: request.headers,
+			},
+		});
 
 		const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
 			cookies: {

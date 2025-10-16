@@ -19,6 +19,9 @@ export async function GET(request) {
 
 	if (code) {
 		const cookieStore = await cookies();
+
+		let response = NextResponse.redirect(`${origin}${next}`);
+
 		const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
 			cookies: {
 				getAll() {
@@ -27,15 +30,16 @@ export async function GET(request) {
 				setAll(cookiesToSet) {
 					cookiesToSet.forEach(({ name, value, options }) => {
 						cookieStore.set(name, value, options);
+						response.cookies.set(name, value, options);
 					});
 				},
 			},
 		});
 
-		const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+		const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
-		if (error) {
-			console.error('Auth callback error:', error);
+		if (exchangeError) {
+			console.error('Auth callback error:', exchangeError);
 			return NextResponse.redirect(`${origin}/login?error=callback_failed`);
 		}
 
@@ -47,7 +51,7 @@ export async function GET(request) {
 		}
 
 		// Default redirect ke dashboard atau next URL
-		return NextResponse.redirect(`${origin}${next}`);
+		return response;
 	}
 
 	// URL tidak valid, redirect ke login

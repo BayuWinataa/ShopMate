@@ -3,35 +3,28 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function createSupabaseServerClient() {
-	const cookieStore = await cookies(); // ⬅️ now async
+	const cookieStore = await cookies();
 
 	const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-	const key =  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+	const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 	if (!url || !key) {
-		throw new Error('Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL dan PUBLISHABLE_KEY/ANON_KEY.');
+		throw new Error('Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY.');
 	}
 
 	return createServerClient(url, key, {
 		cookies: {
-			get(name) {
-				return cookieStore.get(name)?.value;
+			getAll() {
+				return cookieStore.getAll();
 			},
-			set(name, value, options) {
-				// Di Server Component murni ini tidak akan jalan (read-only).
-				// Gunakan di Route Handler / Server Action saat butuh set cookie.
-				try {
-					cookieStore.set({ name, value, ...options });
-				} catch (error) {
-					// Ignore errors in read-only contexts
-				}
-			},
-			remove(name, options) {
-				try {
-					cookieStore.set({ name, value: '', ...options, maxAge: 0 });
-				} catch (error) {
-					// Ignore errors in read-only contexts
-				}
+			setAll(cookiesToSet) {
+				cookiesToSet.forEach(({ name, value, options }) => {
+					try {
+						cookieStore.set(name, value, options);
+					} catch (error) {
+						// Ignore errors in read-only contexts
+					}
+				});
 			},
 		},
 	});
