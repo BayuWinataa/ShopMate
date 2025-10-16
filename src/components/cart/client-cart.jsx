@@ -32,7 +32,7 @@ export default function ClientCartPage() {
 		return (
 			<div className="mt-6 text-sm text-muted-foreground">
 				Keranjang kosong.{' '}
-				<Link href="/" className="underline">
+				<Link href="/products" className="underline">
 					Belanja sekarang
 				</Link>
 				.

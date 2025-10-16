@@ -1,5 +1,6 @@
 import './globals.css';
 import CartProvider from '@/components/cart/CartProvider';
+import CartSheet from '@/components/cart/CartSheet';
 import { Poppins } from 'next/font/google';
 
 export const metadata = {
@@ -16,7 +17,10 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="id">
 			<body className={poppins.className}>
-				<CartProvider>{children}</CartProvider>
+				<CartProvider>
+					{children}
+					<CartSheet />
+				</CartProvider>
 			</body>
 		</html>
 	);
