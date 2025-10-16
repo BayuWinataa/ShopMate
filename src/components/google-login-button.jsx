@@ -15,23 +15,30 @@ export default function GoogleLoginButton({ onError }) {
 
 			// Get redirect URL from query params
 			const redirectTo = searchParams.get('next') || '/dashboard';
-
-			// Ensure we use the correct origin for production
-			const origin = typeof window !== 'undefined' ? window.location.origin : '';
-			const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
-
-			console.log('Google OAuth redirectTo:', callbackUrl);
+			
+			// Build callback URL - ensure it's correct for both dev and prod
+			const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+			const callbackUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+			
+			console.log('Google OAuth - Base URL:', baseUrl);
+			console.log('Google OAuth - Callback URL:', callbackUrl);
 
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: 'google',
 				options: {
 					redirectTo: callbackUrl,
+					queryParams: {
+						access_type: 'online',
+						prompt: 'consent',
+					}
 				},
 			});
 
 			if (error) {
 				console.error('Google login error:', error);
 				if (onError) onError(error.message);
+			} else {
+				console.log('Google OAuth initiated successfully');
 			}
 		} catch (error) {
 			console.error('Unexpected error during Google login:', error);
