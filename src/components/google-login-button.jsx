@@ -15,11 +15,11 @@ export default function GoogleLoginButton({ onError }) {
 
 			// Get redirect URL from query params
 			const redirectTo = searchParams.get('next') || '/dashboard';
-			
+
 			// Build callback URL - ensure it's correct for both dev and prod
 			const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 			const callbackUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
-			
+
 			console.log('Google OAuth - Base URL:', baseUrl);
 			console.log('Google OAuth - Callback URL:', callbackUrl);
 
@@ -30,7 +30,7 @@ export default function GoogleLoginButton({ onError }) {
 					queryParams: {
 						access_type: 'online',
 						prompt: 'consent',
-					}
+					},
 				},
 			});
 

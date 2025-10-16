@@ -15,7 +15,7 @@ export async function GET(request) {
 		error,
 		origin,
 		next,
-		searchParams: Object.fromEntries(searchParams.entries())
+		searchParams: Object.fromEntries(searchParams.entries()),
 	});
 
 	// Handle OAuth error
@@ -29,36 +29,32 @@ export async function GET(request) {
 
 		let response = NextResponse.redirect(`${origin}${next}`);
 
-		const supabase = createServerClient(
-			process.env.NEXT_PUBLIC_SUPABASE_URL, 
-			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 
-			{
-				cookies: {
-					getAll() {
-						return cookieStore.getAll();
-					},
-					setAll(cookiesToSet) {
-						cookiesToSet.forEach(({ name, value, options }) => {
-							const cookieOptions = {
-								...options,
-								// Ensure cookies work in both development and production
-								secure: process.env.NODE_ENV === 'production',
-								sameSite: 'lax',
-								httpOnly: false,
-								path: '/',
-							};
-							
-							try {
-								cookieStore.set(name, value, cookieOptions);
-								response.cookies.set(name, value, cookieOptions);
-							} catch (err) {
-								console.error('Failed to set cookie:', name, err.message);
-							}
-						});
-					},
+		const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+			cookies: {
+				getAll() {
+					return cookieStore.getAll();
 				},
-			}
-		);
+				setAll(cookiesToSet) {
+					cookiesToSet.forEach(({ name, value, options }) => {
+						const cookieOptions = {
+							...options,
+							// Ensure cookies work in both development and production
+							secure: process.env.NODE_ENV === 'production',
+							sameSite: 'lax',
+							httpOnly: false,
+							path: '/',
+						};
+
+						try {
+							cookieStore.set(name, value, cookieOptions);
+							response.cookies.set(name, value, cookieOptions);
+						} catch (err) {
+							console.error('Failed to set cookie:', name, err.message);
+						}
+					});
+				},
+			},
+		});
 
 		const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -66,7 +62,7 @@ export async function GET(request) {
 			console.error('Auth callback error:', {
 				error: exchangeError.message,
 				code: exchangeError.code,
-				details: exchangeError
+				details: exchangeError,
 			});
 			return NextResponse.redirect(`${origin}/login?error=callback_failed`);
 		}
@@ -74,7 +70,7 @@ export async function GET(request) {
 		console.log('Auth callback success:', {
 			userEmail: data.user?.email,
 			userId: data.user?.id,
-			hasSession: !!data.session
+			hasSession: !!data.session,
 		});
 
 		// Cek jika ini adalah password recovery flow
