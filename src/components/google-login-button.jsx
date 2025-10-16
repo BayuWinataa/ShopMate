@@ -15,11 +15,17 @@ export default function GoogleLoginButton({ onError }) {
 
 			// Get redirect URL from query params
 			const redirectTo = searchParams.get('next') || '/dashboard';
+			
+			// Ensure we use the correct origin for production
+			const origin = typeof window !== 'undefined' ? window.location.origin : '';
+			const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+			
+			console.log('Google OAuth redirectTo:', callbackUrl);
 
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: 'google',
 				options: {
-					redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
+					redirectTo: callbackUrl,
 				},
 			});
 

@@ -12,6 +12,15 @@ export default async function DashboardPage() {
 		error,
 	} = await supabase.auth.getUser();
 
+	// Log untuk debugging production
+	if (process.env.NODE_ENV === 'production') {
+		console.error('Dashboard Auth Check:', {
+			hasUser: !!user,
+			userEmail: user?.email,
+			errorMessage: error?.message,
+		});
+	}
+
 	if (error || !user) {
 		redirect('/login?next=/dashboard');
 	}
