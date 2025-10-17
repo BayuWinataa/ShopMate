@@ -1,7 +1,10 @@
 // File: app/api/chat/route.js
 import Groq from 'groq-sdk';
 import { NextResponse } from 'next/server';
-import products from '@/../products.json';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 // Initialize Groq client only when needed
 let groq;
@@ -14,6 +17,37 @@ const initGroq = () => {
 		groq = new Groq({ apiKey });
 	}
 	return groq;
+};
+
+// Cache for products to avoid repeated database calls
+let productsCache = null;
+let lastFetchTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Function to fetch products from Supabase with caching
+const getProducts = async () => {
+	const now = Date.now();
+
+	// Return cached products if still valid
+	if (productsCache && now - lastFetchTime < CACHE_DURATION) {
+		return productsCache;
+	}
+
+	try {
+		const { data, error } = await supabase.from('Products').select('*').order('created_at', { ascending: false });
+
+		if (error) {
+			console.error('Error fetching products from Supabase:', error);
+			return productsCache || []; // Return cached data or empty array
+		}
+
+		productsCache = data || [];
+		lastFetchTime = now;
+		return productsCache;
+	} catch (err) {
+		console.error('Network error fetching products:', err);
+		return productsCache || []; // Return cached data or empty array
+	}
 };
 
 /* =========================
@@ -123,6 +157,9 @@ export async function POST(req) {
 
 		const { messages, context } = await req.json();
 
+		// Fetch products from Supabase
+		const products = await getProducts();
+
 		// Sanitize pesan dari client (buang field liar spt meta)
 		const clientMessages = Array.isArray(messages)
 			? messages
@@ -141,7 +178,7 @@ export async function POST(req) {
 				harga: p.harga,
 				kategori: p.kategori,
 				deskripsi: p.deskripsi,
-				longDeskripsi: p.deskripsi,
+				longDeskripsi: p.longDeskripsi || p.deskripsi,
 				tags: p.tags,
 			}))
 		);

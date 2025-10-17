@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSearchParams } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -14,13 +15,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 
 import { Scale, Sparkles, Send, Loader2, ArrowRight, ListFilter } from 'lucide-react';
 
-// import gambar from '@/app/assets/kobo.jpg';
-import products from '@/../products.json';
+// Initialize Supabase client
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 function ChatPageContent() {
 	const [messages, setMessages] = useState([]);
 	const [input, setInput] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	const [products, setProducts] = useState([]);
+	const [productsLoading, setProductsLoading] = useState(true);
 	const [recommendedProducts, setRecommendedProducts] = useState([]);
 	const [comparisonList, setComparisonList] = useState([]);
 	const [isComparing, setIsComparing] = useState(false);
@@ -34,6 +37,30 @@ function ChatPageContent() {
 	const modalEndRef = useRef(null);
 	const searchParams = useSearchParams();
 	const hasBootstrappedAsk = useRef(false);
+
+	// Fetch products from Supabase
+	useEffect(() => {
+		const fetchProducts = async () => {
+			try {
+				setProductsLoading(true);
+				const { data, error } = await supabase.from('Products').select('*').order('created_at', { ascending: false });
+
+				if (error) {
+					console.error('Error fetching products:', error);
+					setProducts([]);
+				} else {
+					setProducts(data || []);
+				}
+			} catch (err) {
+				console.error('Network error fetching products:', err);
+				setProducts([]);
+			} finally {
+				setProductsLoading(false);
+			}
+		};
+
+		fetchProducts();
+	}, []);
 
 	useEffect(() => {
 		try {
@@ -73,7 +100,7 @@ function ChatPageContent() {
 	}, [searchParams, messages.length]);
 
 	useEffect(() => {
-		if (messages.length === 0) return;
+		if (messages.length === 0 || productsLoading) return;
 		localStorage.setItem('chat_messages', JSON.stringify(messages));
 		const last = messages[messages.length - 1];
 		if (last?.role !== 'assistant') return;
@@ -94,7 +121,7 @@ function ChatPageContent() {
 		} else {
 			setRecommendedProducts([]);
 		}
-	}, [messages, products]);
+	}, [messages, products, productsLoading]);
 
 	useEffect(() => {
 		if (!chatEndRef.current) return;
@@ -227,7 +254,16 @@ function ChatPageContent() {
 										<SheetTitle>Produk Rekomendasi</SheetTitle>
 									</SheetHeader>
 									<div className="mt-3">
-										<RecList items={recommendedProducts} formatIDR={formatIDR} isSelectedForCompare={isSelectedForCompare} toggleCompare={toggleCompare} />
+										{productsLoading ? (
+											<div className="flex items-center justify-center py-8">
+												<div className="text-center">
+													<Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
+													<p className="text-sm text-slate-500">Loading products...</p>
+												</div>
+											</div>
+										) : (
+											<RecList items={recommendedProducts} formatIDR={formatIDR} isSelectedForCompare={isSelectedForCompare} toggleCompare={toggleCompare} />
+										)}
 										<div className="mt-3">
 											<DebateBar count={comparisonList.length} disabled={comparisonList.length !== 2 || isComparing} isComparing={isComparing} onClick={handleStartComparison} />
 										</div>
@@ -249,7 +285,16 @@ function ChatPageContent() {
 							</div>
 							<div className="flex-1 min-h-0 p-4">
 								<ScrollArea className="h-full pr-2">
-									<RecList items={recommendedProducts} formatIDR={formatIDR} isSelectedForCompare={isSelectedForCompare} toggleCompare={toggleCompare} />
+									{productsLoading ? (
+										<div className="flex items-center justify-center py-8">
+											<div className="text-center">
+												<Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
+												<p className="text-sm text-slate-500">Loading products...</p>
+											</div>
+										</div>
+									) : (
+										<RecList items={recommendedProducts} formatIDR={formatIDR} isSelectedForCompare={isSelectedForCompare} toggleCompare={toggleCompare} />
+									)}
 									<ScrollBar orientation="vertical" />
 								</ScrollArea>
 							</div>
@@ -408,7 +453,7 @@ function RecList({ items, formatIDR, isSelectedForCompare, toggleCompare }) {
 				<div key={`${product.id}-${product.nama}-${idx}`} className="group flex flex-col w-full rounded-lg sm:rounded-xl border border-slate-200 p-3 transition-all hover:border-slate-300 hover:shadow-sm">
 					{/* Bagian atas: Gambar dan info produk */}
 					<div className="flex items-center gap-3 mb-3">
-						<Image src={product.gambar} alt={product.nama} width={64} height={64} className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-md sm:rounded-lg object-cover flex-shrink-0" />
+						<Image src={product.gambar || product.image || '/placeholder.jpg'} alt={product.nama} width={64} height={64} className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-md sm:rounded-lg object-cover flex-shrink-0" />
 						<div className="min-w-0 flex-1">
 							<p className="font-medium text-sm sm:text-base leading-tight mb-1">{product.nama}</p>
 							<p className="font-semibold text-blue-600 text-sm sm:text-base">{formatIDR(product.harga)}</p>

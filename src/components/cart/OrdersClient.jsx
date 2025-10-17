@@ -7,7 +7,10 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import Link from 'next/link';
-import products from '@/../products.json';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number.isFinite(Number(n)) ? Number(n) : 0);
 
@@ -23,8 +26,6 @@ const formatDate = (d) => {
 		minute: '2-digit',
 	});
 };
-
-const productIndex = new Map((products ?? []).map((p) => [p.id, p]));
 
 function Row({ label, value }) {
 	if (value == null || value === '' || value === '—') return null;
@@ -110,6 +111,8 @@ function Totals({ order }) {
 // ================= Main =================
 export default function OrdersClient() {
 	const [orders, setOrders] = useState([]);
+	const [products, setProducts] = useState([]);
+	const [productsLoading, setProductsLoading] = useState(true);
 	const [openChat, setOpenChat] = useState(false);
 	const [chatInput, setChatInput] = useState('');
 	const [chatMsgs, setChatMsgs] = useState([]);
@@ -120,6 +123,30 @@ export default function OrdersClient() {
 	// Modal detail order
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
+
+	// Fetch products from Supabase
+	useEffect(() => {
+		const fetchProducts = async () => {
+			try {
+				setProductsLoading(true);
+				const { data, error } = await supabase.from('Products').select('*').order('created_at', { ascending: false });
+
+				if (error) {
+					console.error('Error fetching products:', error);
+					setProducts([]);
+				} else {
+					setProducts(data || []);
+				}
+			} catch (err) {
+				console.error('Network error fetching products:', err);
+				setProducts([]);
+			} finally {
+				setProductsLoading(false);
+			}
+		};
+
+		fetchProducts();
+	}, []);
 
 	// Load orders & chat dari localStorage
 	useEffect(() => {
@@ -146,6 +173,11 @@ export default function OrdersClient() {
 	useEffect(() => {
 		chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [chatMsgs]);
+
+	// Create product index from loaded products
+	const productIndex = useMemo(() => {
+		return new Map((products ?? []).map((p) => [p.id, p]));
+	}, [products]);
 
 	const contextString = `Riwayat Order Anda:\n${JSON.stringify(orders, null, 2)}`;
 
