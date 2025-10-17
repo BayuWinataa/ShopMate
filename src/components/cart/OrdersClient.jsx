@@ -9,7 +9,7 @@ import { Loader2, MessageSquare, Send } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
+// Initialize Supabase client`
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number.isFinite(Number(n)) ? Number(n) : 0);
@@ -37,7 +37,7 @@ function Row({ label, value }) {
 	);
 }
 
-function ItemsTable({ items }) {
+function ItemsTable({ items, productIndex }) {
 	if (!Array.isArray(items) || items.length === 0) {
 		return <div className="text-sm text-slate-500">Tidak ada item.</div>;
 	}
@@ -55,7 +55,7 @@ function ItemsTable({ items }) {
 				<tbody>
 					{items.map((it, idx) => {
 						const productId = it.productId ?? it.id ?? null;
-						const prod = productIndex.get(productId);
+						const prod = productIndex?.get(productId);
 
 						const name = it.name ?? it.nama ?? prod?.nama ?? `#${productId ?? '—'}`;
 						const qty = Number(it.quantity ?? it.qty ?? 1);
@@ -77,16 +77,16 @@ function ItemsTable({ items }) {
 	);
 }
 
-function Totals({ order }) {
+function Totals({ order, productIndex }) {
 	const items = Array.isArray(order.items) ? order.items : Array.isArray(order.lines) ? order.lines : [];
 	const computedSubtotal = useMemo(() => {
 		return items.reduce((acc, it) => {
 			const qty = Number(it.quantity ?? it.qty ?? 1);
-			const price = Number(it.price ?? it.harga ?? productIndex.get(it.productId ?? it.id)?.harga ?? 0);
+			const price = Number(it.price ?? it.harga ?? productIndex?.get(it.productId ?? it.id)?.harga ?? 0);
 			const sub = Number(it.subtotal ?? price * qty);
 			return acc + (Number.isFinite(sub) ? sub : 0);
 		}, 0);
-	}, [items]);
+	}, [items, productIndex]);
 
 	const shipping = Number(order.shippingCost ?? order.shipping_fee ?? 0);
 	const discount = Number(order.discount ?? order.discountTotal ?? order.voucherDiscount ?? 0);
@@ -343,13 +343,13 @@ export default function OrdersClient() {
 									{/* Item detail (tabel) */}
 									<div className="rounded-lg border p-3">
 										<div className="text-sm font-semibold mb-2">Item Detail</div>
-										<ItemsTable items={Array.isArray(selectedOrder.items) ? selectedOrder.items : selectedOrder.lines || []} />
+										<ItemsTable items={Array.isArray(selectedOrder.items) ? selectedOrder.items : selectedOrder.lines || []} productIndex={productIndex} />
 									</div>
 
 									{/* Ringkasan pembayaran */}
 									<div className="rounded-lg border p-3">
 										<div className="text-sm font-semibold mb-2">Ringkasan Pembayaran</div>
-										<Totals order={selectedOrder} />
+										<Totals order={selectedOrder} productIndex={productIndex} />
 									</div>
 								</div>
 							)}
