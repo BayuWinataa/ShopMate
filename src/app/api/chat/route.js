@@ -187,7 +187,6 @@ export async function POST(req) {
 			role: 'system',
 			content: `Anda adalah **"ShopMate AI"**, asisten belanja yang ramah, cepat, dan akurat.
 Tugas Anda: membantu pengguna menemukan produk terbaik **hanya dari katalog JSON** yang disediakan.
-
 KATALOG (JSON):
 ${productInfo}
 
@@ -265,37 +264,25 @@ ${context ? `KONTEKS TAMBAHAN:\n${context}\n` : ''}
    ====================== */
 - **Ringkas**  
   Headphone untuk kerja fokus dengan noise-cancelling dan nyaman dipakai lama.
-
 - **Rekomendasi**
   • **Headphone Peredam Bising Pro** — **Rp 1.500.000**  
     Keunggulan: ANC efektif, suara jernih, bantalan empuk.
-
   • **Nama Produk 2** — **Rp X**  
     Keunggulan: …  
-
   • **Nama Produk 3** — **Rp X**  
     Keunggulan: …
 - **Banding Singkat**  
-
 - **Kenapa Ini Cocok**
   - Bisa meredam bising kantor/kafe.
   - Nyaman untuk pemakaian >2 jam.
   - Sesuai budget menengah.
-
-
-
-/* ======================
-   INTERAKSI LANJUTAN
-   ====================== */
-- Setelah rekomendasi, tawarkan 1 opsi follow-up: set budget, preferensi brand, atau banding 2 produk pilihan user.
-
-Ingat: Semua rekomendasi **harus** berasal dari katalog JSON yang disediakan.`,
+`,
 		};
 
 		// Panggil Groq
 		const chatCompletion = await groqClient.chat.completions.create({
 			messages: [systemMessage, ...clientMessages],
-			model: 'llama-3.3-70b-versatile',
+			model: 'meta-llama/llama-4-scout-17b-16e-instruct',
 			temperature: 0.7,
 			max_tokens: 1024,
 		});

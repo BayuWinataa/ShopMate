@@ -48,7 +48,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
 	try {
-		const { data: product, error } = await supabase.from('Products').select('id, nama, deskripsi, longDeskripsi').eq('id', params.id).single();
+		const resolvedParams = await params;
+		const { data: product, error } = await supabase.from('Products').select('id, nama, deskripsi, longDeskripsi').eq('id', resolvedParams.id).single();
 
 		if (error || !product) {
 			return { title: 'Produk tidak ditemukan · ShopMate' };
@@ -70,7 +71,7 @@ export async function generateMetadata({ params }) {
 
 // ---- Page (SERVER COMPONENT, tanpa 'use client')
 export default async function ProductDetail({ params }) {
-	const { id } = params;
+	const { id } = await params;
 
 	try {
 		// Fetch the main product

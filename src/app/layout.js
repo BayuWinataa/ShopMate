@@ -2,6 +2,7 @@ import './globals.css';
 import CartProvider from '@/components/cart/CartProvider';
 import CartSheet from '@/components/cart/CartSheet';
 import { Poppins } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata = {
 	title: 'ShopMate',
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
 			<body className={poppins.className}>
 				<CartProvider>
 					{children}
+					<Toaster richColors />
 					<CartSheet />
 				</CartProvider>
 			</body>
