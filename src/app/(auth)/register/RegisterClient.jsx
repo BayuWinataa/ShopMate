@@ -7,6 +7,7 @@ import GoogleLoginButton from '@/components/google-login-button';
 import Image from 'next/image';
 import illustration from '../../../../public/Frame 1.svg';
 import { toast } from 'sonner';
+import Link from 'next/link'; // ✅ add this
 
 export default function RegisterClient() {
 	const router = useRouter();
@@ -84,7 +85,12 @@ export default function RegisterClient() {
 				</aside>
 
 				{/* Right form section */}
-				<main className="flex items-center justify-center px-4 md:px-10 pt-12 md:pt-0 pb-12 md:pb-0">
+				<main className="relative flex items-center justify-center px-4 md:px-10 pt-12 md:pt-0 pb-12 md:pb-0">
+					{/* ← Back to Home */}
+					<Link href="/" className="absolute top-6 left-6 text-sm text-gray-500 hover:text-gray-700 transition" aria-label="Back to Home">
+						← Back to Home
+					</Link>
+
 					<div className="w-full max-w-[460px]">
 						<h1 className="text-[34px] font-extrabold leading-tight text-gray-900">Create Account ✨</h1>
 						<p className="mt-1 text-xl font-semibold text-gray-800">ShopMate AI</p>

@@ -67,7 +67,6 @@ export default function LoginClient() {
 
 			toast.success('Login successful 🎉', {
 				description: 'Redirecting to your dashboard…',
-				duration: 1500,
 			});
 
 			const redirectTo = searchParams.get('next') || '/dashboard';
@@ -95,7 +94,12 @@ export default function LoginClient() {
 				</aside>
 
 				{/* Right form */}
-				<main className="flex items-center justify-center px-4 md:px-10 pt-12 md:pt-0 pb-12 md:pb-0">
+				<main className="relative flex items-center justify-center px-4 md:px-10 pt-12 md:pt-0 pb-12 md:pb-0">
+					{/* ← Back to Home */}
+					<Link href="/" className="absolute top-6 left-6 text-sm text-gray-500 hover:text-gray-700 transition">
+						← Back to Home
+					</Link>
+
 					<div className="w-full max-w-[460px]">
 						<h1 className="text-[34px] font-extrabold leading-tight text-gray-900">
 							Welcome Back!{' '}
