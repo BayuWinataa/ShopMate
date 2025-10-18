@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import GoogleLoginButton from '@/components/google-login-button';
 import Image from 'next/image';
-import gambar from '../../../../public/Frame 1.svg';
+import illustration from '../../../../public/Frame 1.svg';
 import Link from 'next/link';
-import { toast } from 'sonner'; // ✅ sonner (bukan useToast)
+import { toast } from 'sonner';
 
 export default function LoginClient() {
 	const router = useRouter();
@@ -18,18 +18,30 @@ export default function LoginClient() {
 	const [password, setPassword] = useState('');
 	const [showPwd, setShowPwd] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState(null); // untuk error inline opsional
+	const [message, setMessage] = useState(null);
 
 	useEffect(() => {
 		const err = searchParams.get('error');
 		if (err === 'invalid_recovery_link') {
-			setMessage({ type: 'error', text: 'Invalid or expired password reset link. Please request a new one.' });
+			setMessage({
+				type: 'error',
+				text: 'Invalid or expired password reset link. Please request a new one.',
+			});
 		} else if (err === 'session_required') {
-			setMessage({ type: 'error', text: 'Session required for password update. Please login first.' });
+			setMessage({
+				type: 'error',
+				text: 'Session required for password update. Please log in first.',
+			});
 		} else if (err === 'callback_failed') {
-			setMessage({ type: 'error', text: 'Login dengan Google gagal. Silakan coba lagi.' });
+			setMessage({
+				type: 'error',
+				text: 'Google login failed. Please try again.',
+			});
 		} else if (err === 'oauth_error') {
-			setMessage({ type: 'error', text: 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.' });
+			setMessage({
+				type: 'error',
+				text: 'An error occurred while logging in with Google. Please try again.',
+			});
 		}
 	}, [searchParams]);
 
@@ -37,18 +49,26 @@ export default function LoginClient() {
 		async (e) => {
 			e.preventDefault();
 			if (loading) return;
+
 			setLoading(true);
 			setMessage(null);
 
-			const { error } = await supabase.auth.signInWithPassword({ email, password });
+			const { error } = await supabase.auth.signInWithPassword({
+				email,
+				password,
+			});
 
 			if (error) {
-				toast('Login gagal', { description: error.message });
+				toast('Login failed', { description: error.message });
 				setMessage({ type: 'error', text: error.message });
 				setLoading(false);
 				return;
 			}
-			toast.success('Login berhasil 🎉');
+
+			toast.success('Login successful 🎉', {
+				description: 'Redirecting to your dashboard…',
+				duration: 1500,
+			});
 
 			const redirectTo = searchParams.get('next') || '/dashboard';
 			router.push(redirectTo);
@@ -58,57 +78,77 @@ export default function LoginClient() {
 	);
 
 	const handleGoogleError = (msg) => {
-		toast('Login Google gagal', { description: msg });
+		toast('Google login failed', { description: msg });
 		setMessage({ type: 'error', text: msg });
 	};
 
 	return (
 		<div className="fixed inset-0 h-[100svh] w-screen overflow-auto md:overflow-hidden bg-white">
 			<div className="grid h-full w-full grid-rows-[auto_1fr] md:grid-rows-1 md:grid-cols-2">
+				{/* Left illustration */}
 				<aside className="relative hidden md:block">
 					<div className="relative z-10 flex h-full w-full items-center justify-center">
 						<div className="relative h-full w-full">
-							<Image src={gambar} alt="Illustration" fill className="object-cover" priority />
+							<Image src={illustration} alt="Illustration" fill className="object-cover" priority />
 						</div>
 					</div>
 				</aside>
 
+				{/* Right form */}
 				<main className="flex items-center justify-center px-4 md:px-10 pt-12 md:pt-0 pb-12 md:pb-0">
 					<div className="w-full max-w-[460px]">
 						<h1 className="text-[34px] font-extrabold leading-tight text-gray-900">
-							Welcome Back&nbsp;!{' '}
+							Welcome Back!{' '}
 							<span role="img" aria-label="wave">
 								👋
 							</span>
 						</h1>
 						<p className="mt-1 text-xl font-semibold text-gray-800">ShopMate AI</p>
-						<p className="mt-1 text-sm text-gray-500">Nice To See you again</p>
+						<p className="mt-1 text-sm text-gray-500">Nice to see you again.</p>
 
 						<form onSubmit={onSubmit} className="mt-6 space-y-4">
-							<div className="relative">
-								<input
-									type="email"
-									placeholder="Email"
-									className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-[15px] outline-none transition focus:border-gray-300 focus:ring-2 focus:ring-emerald-400"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									required
-									autoComplete="email"
-								/>
-							</div>
-
+							{/* Email */}
 							<div>
+								<label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+									Email
+								</label>
 								<div className="relative">
 									<input
+										id="email"
+										type="email"
+										placeholder="you@example.com"
+										className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-[15px] outline-none transition focus:border-gray-300 focus:ring-2 focus:ring-emerald-400"
+										value={email}
+										onChange={(e) => setEmail(e.target.value)}
+										required
+										autoComplete="email"
+									/>
+								</div>
+							</div>
+
+							{/* Password */}
+							<div>
+								<label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
+									Password
+								</label>
+								<div className="relative">
+									<input
+										id="password"
 										type={showPwd ? 'text' : 'password'}
-										placeholder="Password"
+										placeholder="••••••"
 										className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-12 text-[15px] outline-none transition focus:ring-2 focus:ring-emerald-400"
 										value={password}
 										onChange={(e) => setPassword(e.target.value)}
 										required
 										autoComplete="current-password"
 									/>
-									<button type="button" onClick={() => setShowPwd((v) => !v)} aria-label={showPwd ? 'Hide password' : 'Show password'} className="absolute inset-y-0 right-3 flex items-center rounded p-1 text-gray-500 hover:text-gray-700">
+									<button
+										type="button"
+										onClick={() => setShowPwd((v) => !v)}
+										aria-label={showPwd ? 'Hide password' : 'Show password'}
+										aria-pressed={showPwd}
+										className="absolute inset-y-0 right-3 flex items-center rounded p-1 text-gray-500 hover:text-gray-700"
+									>
 										{showPwd ? (
 											<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 												<path
@@ -129,7 +169,7 @@ export default function LoginClient() {
 
 								<div className="mt-2 text-right">
 									<Link href="/forgot-password" className="text-xs font-medium text-gray-500 hover:underline">
-										Forgot Password?
+										Forgot password?
 									</Link>
 								</div>
 							</div>
@@ -152,7 +192,7 @@ export default function LoginClient() {
 						{message?.type === 'error' && <p className="mt-4 text-center text-sm text-red-600">{message.text}</p>}
 
 						<p className="mt-6 text-center text-sm text-gray-700">
-							Don't have an account?
+							Don’t have an account?
 							<Link href="/register" className="ml-1 font-semibold text-gray-900 hover:underline">
 								Register
 							</Link>
