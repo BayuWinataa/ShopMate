@@ -106,7 +106,7 @@ export default function Header() {
 							</div>
 						) : user ? (
 							// User sudah login - tampilkan avatar
-							<Link href="/dashboard" className="border px-2 py-1 rounded-lg hover:bg-accent transition">
+							<Link href="/dashboard" className=" rounded-lg hover:bg-accent transition">
 								<EmailAvatar email={user.email} size="default" />
 							</Link>
 						) : (
