@@ -1,6 +1,7 @@
 import './globals.css';
 import CartProvider from '@/components/cart/CartProvider';
 import CartSheet from '@/components/cart/CartSheet';
+import AuthProviderWrapper from '@/components/providers/AuthProviderWrapper';
 import { Poppins } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -18,11 +19,13 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="id">
 			<body className={poppins.className}>
-				<CartProvider>
-					{children}
-					<Toaster richColors />
-					<CartSheet />
-				</CartProvider>
+				<AuthProviderWrapper>
+					<CartProvider>
+						{children}
+						<Toaster richColors />
+						<CartSheet />
+					</CartProvider>
+				</AuthProviderWrapper>
 			</body>
 		</html>
 	);

@@ -21,14 +21,19 @@ export const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		// Get initial session
 		const getInitialSession = async () => {
-			const {
-				data: { session },
-				error,
-			} = await supabase.auth.getSession();
-			if (error) {
-				console.error('Error getting session:', error);
-			} else {
-				setUser(session?.user ?? null);
+			try {
+				const {
+					data: { session },
+					error,
+				} = await supabase.auth.getSession();
+
+				if (error) {
+					console.error('Error getting session:', error);
+				} else {
+					setUser(session?.user ?? null);
+				}
+			} catch (err) {
+				console.error('AuthProvider - Unexpected error:', err);
 			}
 			setLoading(false);
 		};
@@ -41,9 +46,6 @@ export const AuthProvider = ({ children }) => {
 		} = supabase.auth.onAuthStateChange(async (event, session) => {
 			setUser(session?.user ?? null);
 			setLoading(false);
-
-			// Log auth events for debugging
-			console.log('Auth event:', event, 'User:', session?.user?.email);
 		});
 
 		return () => {
