@@ -4,17 +4,6 @@ import Link from 'next/link';
 export default function AdminDashboardPage() {
 	return (
 		<div className="space-y-6">
-			{/* Heading + actions */}
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-					<p className="text-gray-500">Ringkasan performa toko hari ini</p>
-				</div>
-				<Link href="/admin/products/new" className="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
-					+ Produk Baru
-				</Link>
-			</div>
-
 			{/* Stats cards */}
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				<CardStat title="Penjualan (Hari ini)" value="Rp 2.350.000" sub="+12% dari kemarin" />
