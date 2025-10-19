@@ -3,11 +3,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, Receipt, MessageSquare, Settings, User } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Receipt, MessageSquare, Settings, User, MapPin } from 'lucide-react';
 
 const LINKS = [
 	{ href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
 	{ href: '/dashboard/orders', label: 'Orders', icon: ShoppingBag },
+	{ href: '/dashboard/address', label: 'Address', icon: MapPin },
 	// { href: '/dashboard/invoices', label: 'Invoices', icon: Receipt },
 	// { href: '/dashboard/chat-history', label: 'Chat History', icon: MessageSquare },
 	// { href: '/dashboard/profile', label: 'Profile', icon: User },

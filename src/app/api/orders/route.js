@@ -40,11 +40,24 @@ export async function POST(req) {
 		return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
 	}
 
-	const name = String(body?.name || '').trim();
-	const phone = String(body?.phone || '').trim();
-	const address = String(body?.address || '').trim();
-	const note = String(body?.note || '').trim();
+	const address_id = body?.address_id ? String(body.address_id) : null;
+	let name = String(body?.name || '').trim();
+	let phone = String(body?.phone || '').trim();
+	let address = String(body?.address || '').trim();
+	let note = String(body?.note || '').trim();
 	const payment_method = mapPaymentMethod(body?.payment);
+
+	// If address_id provided, load it and override fields
+	if (address_id) {
+		const { data: addr, error: addrErr } = await supabase.from('addresses').select('*').eq('id', address_id).single();
+		if (addrErr || !addr) {
+			return NextResponse.json({ error: 'Alamat tidak ditemukan.' }, { status: 400 });
+		}
+		name = addr.recipient_name || name;
+		phone = addr.phone || phone;
+		address = addr.address || address;
+		note = addr.note || note;
+	}
 
 	if (!name || !phone || !address) {
 		return NextResponse.json({ error: 'Nama, nomor HP, dan alamat wajib diisi.' }, { status: 400 });

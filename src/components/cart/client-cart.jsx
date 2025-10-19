@@ -14,6 +14,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 const formatIDR = (n) =>
 	new Intl.NumberFormat('id-ID', {
@@ -33,6 +35,7 @@ function useDebouncedCallback(cb, delay = 250) {
 export default function ClientCartPage() {
 	const { items, updateQty, removeItem, clear, totalPrice } = useCart();
 	const router = useRouter();
+	const supabase = createSupabaseBrowserClient();
 
 	const [open, setOpen] = useState(false);
 	const [placing, setPlacing] = useState(false);
@@ -42,6 +45,9 @@ export default function ClientCartPage() {
 	const [address, setAddress] = useState('');
 	const [note, setNote] = useState('');
 	const [payment, setPayment] = useState('qris');
+	const [addresses, setAddresses] = useState([]);
+	const [addressId, setAddressId] = useState('');
+	const [addressMode, setAddressMode] = useState('manual'); // 'manual' | 'saved'
 
 	useEffect(() => {
 		try {
@@ -53,15 +59,36 @@ export default function ClientCartPage() {
 				setAddress(saved.address ?? '');
 				setNote(saved.note ?? '');
 				setPayment(saved.payment ?? 'qris');
+				setAddressMode(saved.addressMode ?? 'manual');
+				setAddressId(saved.addressId ?? '');
 			}
 		} catch {}
 	}, []);
 
 	useEffect(() => {
 		try {
-			localStorage.setItem('checkoutForm', JSON.stringify({ name, phone, address, note, payment }));
+			localStorage.setItem('checkoutForm', JSON.stringify({ name, phone, address, note, payment, addressMode, addressId }));
 		} catch {}
-	}, [name, phone, address, note, payment]);
+	}, [name, phone, address, note, payment, addressMode, addressId]);
+
+	// Load saved addresses when modal opens
+	useEffect(() => {
+		if (!open) return;
+		(async () => {
+			try {
+				const {
+					data: { user },
+				} = await supabase.auth.getUser();
+				if (!user) return;
+				const res = await fetch('/api/addresses');
+				if (!res.ok) return;
+				const json = await res.json();
+				setAddresses(Array.isArray(json.data) ? json.data : []);
+			} catch (e) {
+				console.warn('Failed to load addresses', e);
+			}
+		})();
+	}, [open, supabase]);
 
 	const debouncedUpdateQty = useDebouncedCallback((id, qty) => {
 		const clamped = Math.max(1, Number.isFinite(qty) ? qty : 1);
@@ -87,14 +114,22 @@ export default function ClientCartPage() {
 	const handlePlaceOrder = async (e) => {
 		e?.preventDefault?.();
 
-		if (!name.trim() || !phone.trim() || !address.trim()) {
+		if (addressMode === 'saved') {
+			if (!addressId) {
+				toast.error('Pilih alamat tersimpan dulu.');
+				return;
+			}
+		} else if (!name.trim() || !phone.trim() || !address.trim()) {
 			toast.error('Nama, nomor HP, dan alamat wajib diisi.');
 			return;
 		}
 
-		if (!/^(\+62|62|0)8[1-9][0-9]{6,10}$/.test(phone.replace(/\s|-/g, ''))) {
-			toast.error('Nomor HP tidak valid.');
-			return;
+		// Validasi nomor HP hanya untuk mode manual
+		if (addressMode === 'manual') {
+			if (!/^(\+62|62|0)8[1-9][0-9]{6,10}$/.test(phone.replace(/\s|-/g, ''))) {
+				toast.error('Nomor HP tidak valid.');
+				return;
+			}
 		}
 
 		try {
@@ -104,7 +139,7 @@ export default function ClientCartPage() {
 			const res = await fetch('/api/orders', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name, phone, address, note, payment }),
+				body: JSON.stringify(addressMode === 'saved' ? { address_id: addressId, payment } : { name, phone, address, note, payment }),
 			});
 
 			if (!res.ok) {
@@ -208,22 +243,109 @@ export default function ClientCartPage() {
 
 					<form onSubmit={handlePlaceOrder} className="space-y-4">
 						<div className="grid grid-cols-1 gap-3">
+							{/* Mode address */}
 							<div className="grid gap-1.5">
-								<Label htmlFor="name">Nama Penerima</Label>
-								<Input id="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama lengkap" required />
+								<Label>Alamat</Label>
+								<div className="flex gap-2">
+									<Button type="button" variant={addressMode === 'manual' ? 'default' : 'outline'} onClick={() => setAddressMode('manual')}>
+										Manual
+									</Button>
+									<Button type="button" variant={addressMode === 'saved' ? 'default' : 'outline'} onClick={() => setAddressMode('saved')}>
+										Pilih Tersimpan
+									</Button>
+								</div>
 							</div>
-							<div className="grid gap-1.5">
-								<Label htmlFor="phone">No. HP</Label>
-								<Input id="phone" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxxx" required />
-							</div>
-							<div className="grid gap-1.5">
-								<Label htmlFor="address">Alamat</Label>
-								<Textarea id="address" autoComplete="street-address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Jalan, Kelurahan, Kecamatan, Kota, Kode Pos" required />
-							</div>
-							<div className="grid gap-1.5">
-								<Label htmlFor="note">Catatan (opsional)</Label>
-								<Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Mis: Titip di satpam" />
-							</div>
+
+							{addressMode === 'saved' ? (
+								<div className="grid gap-1.5">
+									<Label>Pilih Alamat Tersimpan</Label>
+									<Select value={addressId} onValueChange={setAddressId}>
+										<SelectTrigger className="w-full">
+											<SelectValue placeholder="Pilih alamat" />
+										</SelectTrigger>
+										<SelectContent align="start">
+											{addresses.length === 0 ? (
+												<SelectItem value="__no_addresses" disabled>
+													Tidak ada alamat tersimpan
+												</SelectItem>
+											) : (
+												addresses.map((a) => (
+													<SelectItem key={a.id} value={a.id}>
+														{a.label || 'Alamat'} — {a.recipient_name} — {a.phone}
+													</SelectItem>
+												))
+											)}
+										</SelectContent>
+									</Select>
+									{/* Preview alamat terpilih */}
+									{addressId && addresses.find((a) => a.id === addressId) ? (
+										<div className="mt-3 rounded-lg border p-3 text-sm">
+											{(() => {
+												const a = addresses.find((x) => x.id === addressId);
+												if (!a) return null;
+												return (
+													<div className="space-y-1">
+														<div className="font-medium">
+															{a.recipient_name} • {a.phone}
+														</div>
+														<div className="whitespace-pre-wrap">{a.address}</div>
+														{a.note ? <div className="text-muted-foreground">Catatan: {a.note}</div> : null}
+													</div>
+												);
+											})()}
+										</div>
+									) : null}
+								</div>
+							) : (
+								<>
+									<div className="grid gap-1.5">
+										<Label htmlFor="name">Nama Penerima</Label>
+										<Input id="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama lengkap" required />
+									</div>
+									<div className="grid gap-1.5">
+										<Label htmlFor="phone">No. HP</Label>
+										<Input id="phone" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxxx" required />
+									</div>
+									<div className="grid gap-1.5">
+										<Label htmlFor="address">Alamat</Label>
+										<Textarea id="address" autoComplete="street-address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Jalan, Kelurahan, Kecamatan, Kota, Kode Pos" required />
+									</div>
+									<div className="grid gap-1.5">
+										<Label htmlFor="note">Catatan (opsional)</Label>
+										<Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Mis: Titip di satpam" />
+									</div>
+									<div>
+										<Button
+											type="button"
+											variant="outline"
+											onClick={async () => {
+												try {
+													if (!name.trim() || !phone.trim() || !address.trim()) {
+														toast.error('Isi nama, HP, dan alamat terlebih dulu.');
+														return;
+													}
+													const res = await fetch('/api/addresses', {
+														method: 'POST',
+														headers: { 'Content-Type': 'application/json' },
+														body: JSON.stringify({ label: 'Alamat', recipient_name: name, phone, address, note }),
+													});
+													const out = await res.json();
+													if (!res.ok) throw new Error(out?.error || 'Gagal menyimpan alamat');
+													// Refresh list and select the new one
+													setAddresses((prev) => [out.data, ...prev]);
+													setAddressId(out.data.id);
+													setAddressMode('saved');
+													toast.success('Alamat disimpan.');
+												} catch (err) {
+													toast.error(err.message || 'Gagal menyimpan alamat');
+												}
+											}}
+										>
+											Simpan Alamat Ini
+										</Button>
+									</div>
+								</>
+							)}
 							<div className="grid gap-1.5">
 								<Label>Metode Pembayaran</Label>
 								<div className="grid grid-cols-3 gap-2">
