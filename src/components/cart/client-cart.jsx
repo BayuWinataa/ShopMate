@@ -100,36 +100,29 @@ export default function ClientCartPage() {
 		try {
 			setPlacing(true);
 
-			const order = {
-				id: `ORD-${Date.now()}`,
-				createdAt: new Date().toISOString(),
-				customer: { name, phone, address, note },
-				payment,
-				items: items.map((it) => ({
-					id: it.id,
-					nama: it.nama,
-					harga: it.harga,
-					qty: it.qty,
-					subtotal: (it.harga || 0) * (it.qty || 1),
-				})),
-				subtotal: totalPrice,
-				total: totalPrice,
-				status: 'CONFIRMED',
-			};
+			// Call server API to create order in Supabase
+			const res = await fetch('/api/orders', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name, phone, address, note, payment }),
+			});
 
-			const raw = typeof window !== 'undefined' ? localStorage.getItem('orders') : null;
-			const prev = raw ? JSON.parse(raw) : [];
-			localStorage.setItem('orders', JSON.stringify([order, ...prev]));
+			if (!res.ok) {
+				const msg = await res.json().catch(() => ({}));
+				throw new Error(msg?.error || 'Gagal membuat pesanan.');
+			}
 
-			clear();
+			const data = await res.json();
+
+			await clear();
 			localStorage.removeItem('checkoutForm');
 
-			toast.success('Pesanan berhasil dibuat!');
+			toast.success(`Pesanan ${data?.order?.order_code || ''} berhasil dibuat!`);
 			setOpen(false);
 			router.push('/dashboard/orders?success=1');
 		} catch (err) {
 			console.error(err);
-			toast.error('Gagal membuat pesanan. Silakan coba lagi.');
+			toast.error(err.message || 'Gagal membuat pesanan. Silakan coba lagi.');
 		} finally {
 			setPlacing(false);
 		}

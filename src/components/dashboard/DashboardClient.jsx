@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Loader2, Send } from 'lucide-react';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 // ✅ shadcn chart wrapper + recharts
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -36,11 +37,70 @@ export default function DashboardClient() {
 	const [orders, setOrders] = useState([]);
 	const [messagesGlobal, setMessagesGlobal] = useState([]);
 	const [lastChatAt, setLastChatAt] = useState(null);
+	const [ordersLoading, setOrdersLoading] = useState(true);
+	const [ordersError, setOrdersError] = useState('');
 
+	const supabase = createSupabaseBrowserClient();
+
+	// Load dashboard orders from Supabase (not from localStorage)
 	useEffect(() => {
-		try {
-			setOrders(JSON.parse(localStorage.getItem('orders') || '[]') || []);
-		} catch {}
+		const fetchOrders = async () => {
+			try {
+				setOrdersLoading(true);
+				setOrdersError('');
+				const { data, error } = await supabase
+					.from('orders')
+					.select(
+						`id, order_code, payment_method, status, subtotal, total, created_at,
+						customers:customer_id ( id, name, phone, address, note ),
+						order_items ( id, product_id, name, price, qty, subtotal )`
+					)
+					.order('created_at', { ascending: false });
+
+				if (error) {
+					console.error('Error fetching dashboard orders:', error);
+					setOrders([]);
+					setOrdersError('Gagal memuat orders.');
+					return;
+				}
+
+				const shaped = (data || []).map((o) => ({
+					id: o.order_code || o.id,
+					createdAt: o.created_at,
+					status: o.status,
+					payment: o.payment_method,
+					subtotal: Number(o.subtotal || 0),
+					total: Number(o.total || 0),
+					customer: {
+						name: o.customers?.name || '',
+						phone: o.customers?.phone || '',
+						address: o.customers?.address || '',
+						note: o.customers?.note || '',
+					},
+					items: (o.order_items || []).map((it) => ({
+						id: it.product_id,
+						name: it.name,
+						price: Number(it.price || 0),
+						quantity: Number(it.qty || 1),
+						subtotal: Number(it.subtotal || 0),
+					})),
+				}));
+
+				setOrders(shaped);
+			} catch (err) {
+				console.error('Network error fetching dashboard orders:', err);
+				setOrdersError('Gagal memuat orders.');
+				setOrders([]);
+			} finally {
+				setOrdersLoading(false);
+			}
+		};
+
+		fetchOrders();
+	}, [supabase]);
+
+	// Load other local-only info
+	useEffect(() => {
 		try {
 			setMessagesGlobal(JSON.parse(localStorage.getItem('chat_messages') || '[]') || []);
 		} catch {}
@@ -168,7 +228,7 @@ export default function DashboardClient() {
 				<Card>
 					<CardContent className="p-4">
 						<div className="text-sm text-slate-500">Total Orders</div>
-						<div className="mt-1 text-2xl font-bold">{stats.totalOrders}</div>
+						<div className="mt-1 text-2xl font-bold">{ordersLoading ? '…' : stats.totalOrders}</div>
 						<div className="text-xs text-slate-500">All stored orders</div>
 					</CardContent>
 				</Card>
@@ -176,7 +236,7 @@ export default function DashboardClient() {
 				<Card>
 					<CardContent className="p-4">
 						<div className="text-sm text-slate-500">Spent</div>
-						<div className="mt-1 text-2xl font-bold">{formatIDR(stats.spent)}</div>
+						<div className="mt-1 text-2xl font-bold">{ordersLoading ? '…' : formatIDR(stats.spent)}</div>
 						<div className="text-xs text-slate-500">Subtotal of all orders</div>
 					</CardContent>
 				</Card>
@@ -226,7 +286,7 @@ export default function DashboardClient() {
 								{recentOrders.map((o) => (
 									<li key={o.id} className="flex items-center justify-between rounded-lg border px-3 py-2">
 										<span className="truncate">
-											{o.id} • {o.items?.[0]?.nama ?? 'Order'}
+											{o.id} • {o.items?.[0]?.name ?? 'Order'}
 											{o.items && o.items.length > 1 ? ` +${o.items.length - 1} item` : ''}
 										</span>
 										<span className="text-slate-600">{formatIDR(o.total || 0)}</span>

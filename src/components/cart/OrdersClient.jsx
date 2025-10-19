@@ -7,10 +7,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client`
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number.isFinite(Number(n)) ? Number(n) : 0);
 
@@ -113,6 +110,8 @@ export default function OrdersClient() {
 	const [orders, setOrders] = useState([]);
 	const [products, setProducts] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
+	const [ordersLoading, setOrdersLoading] = useState(true);
+	const [ordersError, setOrdersError] = useState('');
 	const [openChat, setOpenChat] = useState(false);
 	const [chatInput, setChatInput] = useState('');
 	const [chatMsgs, setChatMsgs] = useState([]);
@@ -123,6 +122,8 @@ export default function OrdersClient() {
 	// Modal detail order
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
+
+	const supabase = createSupabaseBrowserClient();
 
 	// Fetch products from Supabase
 	useEffect(() => {
@@ -146,16 +147,67 @@ export default function OrdersClient() {
 		};
 
 		fetchProducts();
-	}, []);
+	}, [supabase]);
 
-	// Load orders & chat dari localStorage
+	// Fetch orders from Supabase (with customers and order_items)
 	useEffect(() => {
-		try {
-			const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-			setOrders(Array.isArray(savedOrders) ? savedOrders : []);
-		} catch (error) {
-			console.error('Failed to load orders from localStorage', error);
-		}
+		const fetchOrders = async () => {
+			try {
+				setOrdersLoading(true);
+				setOrdersError('');
+				const { data, error } = await supabase
+					.from('orders')
+					.select(
+						`id, order_code, payment_method, status, subtotal, total, created_at,
+						customers:customer_id ( id, name, phone, address, note ),
+						order_items ( id, product_id, name, price, qty, subtotal )`
+					)
+					.order('created_at', { ascending: false });
+
+				if (error) {
+					console.error('Error fetching orders:', error);
+					setOrders([]);
+					setOrdersError('Gagal memuat orders');
+					return;
+				}
+
+				const shaped = (data || []).map((o) => ({
+					id: o.order_code || o.id, // tampilkan order_code bila ada
+					createdAt: o.created_at,
+					status: o.status,
+					payment: o.payment_method,
+					subtotal: Number(o.subtotal || 0),
+					total: Number(o.total || 0),
+					customer: {
+						name: o.customers?.name || '',
+						phone: o.customers?.phone || '',
+						address: o.customers?.address || '',
+						note: o.customers?.note || '',
+					},
+					items: (o.order_items || []).map((it) => ({
+						id: it.product_id,
+						name: it.name,
+						price: Number(it.price || 0),
+						quantity: Number(it.qty || 1),
+						subtotal: Number(it.subtotal || 0),
+					})),
+				}));
+
+				setOrders(shaped);
+			} catch (err) {
+				console.error('Network error fetching orders:', err);
+				setOrdersError('Gagal memuat orders');
+				setOrders([]);
+			} finally {
+				setOrdersLoading(false);
+			}
+		};
+
+		fetchOrders();
+	}, [supabase]);
+
+	// Load chat history dari localStorage (orders kini dari DB)
+	useEffect(() => {
 		try {
 			const savedMessages = JSON.parse(localStorage.getItem('orders_ai_messages') || '[]');
 			setChatMsgs(Array.isArray(savedMessages) ? savedMessages : []);
@@ -244,7 +296,11 @@ export default function OrdersClient() {
 
 			{/* ===== LIST ORDERS (ringkas; klik untuk buka modal detail) ===== */}
 			<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-				{orders.length === 0 ? (
+				{ordersLoading ? (
+					<div className="text-sm text-muted-foreground">Memuat orders…</div>
+				) : ordersError ? (
+					<div className="text-sm text-red-600">{ordersError}</div>
+				) : orders.length === 0 ? (
 					<div className="text-sm text-muted-foreground">Belum ada pesanan.</div>
 				) : (
 					orders.map((o) => {
@@ -271,7 +327,7 @@ export default function OrdersClient() {
 										<Badge variant={badgeVariant} className="text-[10px]">
 											{String(status).toUpperCase()}
 										</Badge>
-										{paymentStatus && <div className="mt-1 text-xs text-slate-500">Pembayaran: {String(paymentStatus).toUpperCase()}</div>}
+										<div className="mt-1 text-xs text-slate-500">Metode: {String(o.payment).toUpperCase()}</div>
 									</div>
 								</div>
 								{/* Total ringkas */}
@@ -305,10 +361,7 @@ export default function OrdersClient() {
 												<div className="text-xs text-slate-500">{formatDate(selectedOrder.createdAt ?? selectedOrder.created_at ?? selectedOrder.date)}</div>
 												<div className="flex items-center gap-1 text-xs">
 													<span className="text-slate-500">Pembayaran:</span>
-													<span
-														className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium
-            ${String(selectedOrder.payment).toLowerCase() === 'cod' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}
-													>
+													<span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium ${String(selectedOrder.payment).toLowerCase() === 'cod' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
 														{String(selectedOrder.payment).toUpperCase()}
 													</span>
 												</div>
