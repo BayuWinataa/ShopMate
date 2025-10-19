@@ -348,12 +348,12 @@ function ChatPageContent() {
 
 						{/* Composer - following reference pattern */}
 						<div className="border-t border-slate-200 p-3 sm:p-4">
-							<form onSubmit={handleSubmit} className="mx-auto flex items-end gap-2 sm:gap-3">
+							<form onSubmit={handleSubmit} className="mx-auto flex gap-2 sm:gap-1">
 								<input
 									value={input}
 									onChange={(e) => setInput(e.target.value)}
 									placeholder="Ketik pesan Anda..."
-									className="flex-1 min-h-[2.5rem] rounded-lg sm:rounded-xl border border-slate-300 px-3 py-2 sm:py-3 text-sm sm:text-base text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200 placeholder:text-slate-500"
+									className="flex-1 min-h-[2.5rem] rounded-lg sm:rounded-xl border border-slate-300 px-3 py-2 sm:py-3 text-sm sm:text-base text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200 placeholder:text-slate-500 w-full"
 									disabled={isLoading}
 								/>
 								<button
