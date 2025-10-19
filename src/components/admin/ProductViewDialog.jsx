@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -16,38 +16,11 @@ function formatIDR(n) {
 }
 
 export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
-	const [showMore, setShowMore] = useState(false);
 	const [imgLoaded, setImgLoaded] = useState(false);
 
 	const img = product?.gambar || product?.image || '/Frame 1.svg';
-	const created = product?.created_at ? new Date(product.created_at).toLocaleDateString('id-ID') : '-';
+	const created = product?.created_at ? new Date(product.created_at).toLocaleDateString('id-ID') : null;
 	const updated = product?.updated_at ? new Date(product.updated_at).toLocaleDateString('id-ID') : null;
-
-	const tags = useMemo(() => {
-		try {
-			if (Array.isArray(product?.tags)) return product.tags;
-			if (typeof product?.tags === 'string') return JSON.parse(product.tags || '[]');
-			return [];
-		} catch {
-			return [];
-		}
-	}, [product]);
-
-	const stockBadge = (v) => {
-		if (v == null) return null;
-		const n = Number(v);
-		const style = n <= 0 ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200' : n < 10 ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200';
-		const label = n <= 0 ? 'Stok Habis' : n < 10 ? `Stok Tipis (${n})` : `Stok ${n}`;
-		return <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${style}`}>{label}</span>;
-	};
-
-	const copyId = async () => {
-		try {
-			if (!product?.id) return;
-			await navigator.clipboard.writeText(String(product.id));
-			// optional: toast kalau kamu punya komponen toast
-		} catch {}
-	};
 
 	const formatKey = (k) => {
 		try {
@@ -100,19 +73,22 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-2xl md:max-w-3xl max-h-[88vh] overflow-hidden p-0">
 				{/* Header */}
 				<DialogHeader className="px-5 pt-5 pb-3">
-					<div className="flex items-start justify-between gap-3">
-						<div className="min-w-0">
-							<DialogTitle className="truncate text-xl leading-tight">{product?.nama ?? 'Detail Produk'}</DialogTitle>
+					<div className="min-w-0">
+						<DialogTitle className="truncate text-xl leading-tight">{product?.nama ?? 'Detail Produk'}</DialogTitle>
+						{(product?.kategori || created || updated) && (
 							<DialogDescription className="mt-1">
-								<span className="capitalize">{product?.kategori || '-'}</span> • Dibuat: {created}
+								{product?.kategori ? <span className="capitalize">{product.kategori}</span> : null}
+								{created ? (
+									<>
+										<span>
+											{' '}
+											{product?.kategori ? '• ' : ''}Dibuat: {created}
+										</span>
+									</>
+								) : null}
 								{updated ? <> • Diperbarui: {updated}</> : null}
 							</DialogDescription>
-						</div>
-						{/* Price badge */}
-						<div className="shrink-0 flex flex-col items-end gap-2">
-							<span className="inline-flex items-center rounded-lg bg-indigo-600 text-white px-3 py-1.5 text-sm font-semibold shadow-sm">{formatIDR(product?.harga)}</span>
-							{stockBadge(product?.stok)}
-						</div>
+						)}
 					</div>
 				</DialogHeader>
 
@@ -121,9 +97,9 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 
 				{/* Body scrollable */}
 				<ScrollArea className="px-5 py-4 max-h-[60vh]">
-					<div className="grid grid-cols-1">
+					<div className="grid grid-cols-1 gap-4">
 						{/* Image */}
-						<div className="">
+						<div>
 							<div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
 								{!imgLoaded && <Skeleton className="absolute inset-0" />}
 								<Image
@@ -136,30 +112,18 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 									priority
 								/>
 							</div>
-
-							{/* Tags */}
-							{tags.length > 0 && (
-								<div className="mt-3 flex flex-wrap gap-2">
-									{tags.slice(0, 8).map((t) => (
-										<span key={t} className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 ring-1 ring-gray-200">
-											#{t}
-										</span>
-									))}
-									{tags.length > 8 && <span className="text-xs text-gray-500">+{tags.length - 8} lainnya</span>}
-								</div>
-							)}
 						</div>
 
 						{/* Info */}
-						<div className="md:col-span-7 space-y-4">
-							{/* Semua Data */}
+						<div className="space-y-4">
+							{/* Semua Data dari Database */}
 							<div className="rounded-lg border bg-white">
-								<div className="px-4 py-3 border-b text-sm font-medium">Deskripsi</div>
+								<div className="px-4 py-3 border-b text-sm font-medium">Semua Data</div>
 								<div className="px-4 py-3">
 									<div className="grid grid-cols-1 gap-2">
 										{Object.entries(product || {}).map(([key, val]) => (
 											<div key={key} className="grid gap-1 sm:grid-cols-[180px_1fr] sm:gap-1 items-start text-sm">
-												<div className="text-muted-foreground  ">{formatKey(key)}</div>
+												<div className="text-muted-foreground">{formatKey(key)}</div>
 												<div className="text-foreground break-words whitespace-pre-wrap">{formatValue(key, val)}</div>
 											</div>
 										))}

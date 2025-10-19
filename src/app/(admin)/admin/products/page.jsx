@@ -4,6 +4,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCap
 import { Button } from '@/components/ui/button';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import ProductViewDialog from '@/components/admin/ProductViewDialog';
+import ProductEditDialog from '@/components/admin/ProductEditDialog';
+import ProductDeleteButton from '@/components/admin/ProductDeleteButton';
+import ProductCreateDialog from '@/components/admin/ProductCreateDialog';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 const PAGE_SIZE = 10;
@@ -29,8 +32,11 @@ export default async function AdminProductsPage({ searchParams }) {
 
 	return (
 		<div className="space-y-6">
-			<div className="space-y-1">
-				<h2 className="text-2xl font-bold tracking-tight">Produk</h2>
+			<div className="flex items-center justify-between">
+				<div className="space-y-1">
+					<h2 className="text-2xl font-bold tracking-tight">Produk</h2>
+				</div>
+				<ProductCreateDialog />
 			</div>
 			<div className="rounded-xl border bg-card">
 				<Table>
@@ -41,8 +47,8 @@ export default async function AdminProductsPage({ searchParams }) {
 							<TableHead>Nama</TableHead>
 							<TableHead>Kategori</TableHead>
 							<TableHead>Harga</TableHead>
-							<TableHead className="hidden md:table-cell">Dibuat</TableHead>
-							<TableHead className="text-right">Aksi</TableHead>
+							<TableHead>Dibuat</TableHead>
+							<TableHead className="text-center ">Aksi</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -76,7 +82,11 @@ export default async function AdminProductsPage({ searchParams }) {
 									<TableCell className="font-semibold">{formatIDR(p.harga)}</TableCell>
 									<TableCell className="hidden md:table-cell text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : '-'}</TableCell>
 									<TableCell className="text-right">
-										<ProductViewDialog product={p} />
+										<div className="flex items-center justify-center gap-2">
+											<ProductViewDialog product={p} />
+											<ProductEditDialog product={p} />
+											<ProductDeleteButton id={p.id} nama={p.nama} />
+										</div>
 									</TableCell>
 								</TableRow>
 							);
