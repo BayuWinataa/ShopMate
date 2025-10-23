@@ -13,7 +13,7 @@ AvatarFallback.displayName = 'AvatarFallback';
 const EmailAvatar = React.forwardRef(({ email, size = 'default', className, ...props }, ref) => {
 	const sizeClasses = {
 		sm: 'h-8 w-8 text-sm',
-		default: 'h-10 w-10 text-base',
+		default: 'h-7 w-7 text-base',
 		lg: 'h-12 w-12 text-lg',
 		xl: 'h-16 w-16 text-xl',
 	};
@@ -28,7 +28,7 @@ const EmailAvatar = React.forwardRef(({ email, size = 'default', className, ...p
 
 		// Generate a consistent color based on the first character
 		const char = email.charAt(0).toLowerCase();
-		const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-orange-500', 'bg-teal-500', 'bg-cyan-500'];
+		const colors = ['bg-violet-500'];
 
 		const index = char.charCodeAt(0) % colors.length;
 		return colors[index];
