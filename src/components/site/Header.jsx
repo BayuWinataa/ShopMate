@@ -26,10 +26,43 @@ export default function Header() {
 	const { user, loading } = useAuth();
 	const [mounted, setMounted] = useState(false);
 
-	useEffect(() => setMounted(true), []);
+	// ⬇️ NEW: state untuk apakah sudah discroll
+	const [scrolled, setScrolled] = useState(false);
 
-	const Shell = ({ children }) => (
-		<header className="sticky top-0 z-40 w-full border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50">
+	useEffect(() => {
+		setMounted(true);
+
+		// handler scroll yang ringan (dibungkus rAF biar hemat)
+		let ticking = false;
+		const onScroll = () => {
+			if (!ticking) {
+				window.requestAnimationFrame(() => {
+					setScrolled(window.scrollY > 2);
+					ticking = false;
+				});
+				ticking = true;
+			}
+		};
+
+		// set awal (misal reload di tengah halaman)
+		setScrolled(window.scrollY > 2);
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		return () => window.removeEventListener('scroll', onScroll);
+	}, []);
+
+	// ⬇️ UPDATE: Shell sekarang menerima prop `scrolled`
+	const Shell = ({ children, scrolled }) => (
+		<header
+			className={[
+				'sticky top-0 z-40 w-full transition-colors duration-300',
+				scrolled
+					? 
+					  'border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm'
+					: 
+					  'border-b border-transparent bg-transparent',
+			].join(' ')}
+		>
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between gap-3">{children}</div>
 			</div>
@@ -38,7 +71,7 @@ export default function Header() {
 
 	if (!mounted) {
 		return (
-			<Shell>
+			<Shell scrolled={false}>
 				{/* Brand */}
 				<div className="flex min-w-0 items-center gap-2">
 					<Link href="/" className="group inline-flex items-center">
@@ -57,14 +90,12 @@ export default function Header() {
 					<NavLink href="/chat">Chat AI</NavLink>
 				</nav>
 
-				{/* Actions: cart selalu tampil; user disembunyikan di mobile */}
+				{/* Actions */}
 				<div className="flex items-center gap-3">
 					<div className="scale-110">
 						<CartButton />
 					</div>
-					{/* placeholder loading avatar (desktop only) */}
 					<div className="hidden md:block h-10 w-10 animate-pulse bg-gray-200 rounded-full" />
-					{/* hamburger */}
 					<MobileMenu loading user={null} />
 				</div>
 			</Shell>
@@ -72,7 +103,7 @@ export default function Header() {
 	}
 
 	return (
-		<Shell>
+		<Shell scrolled={scrolled}>
 			{/* Brand */}
 			<div className="flex min-w-0 items-center gap-2">
 				<Link href="/" className="group inline-flex items-center gap-2">
@@ -99,7 +130,6 @@ export default function Header() {
 					<CartButton />
 				</div>
 
-				{/* ==== AUTH DI DESKTOP (md+) ==== */}
 				{loading ? (
 					<div className="hidden md:block h-10 w-10 animate-pulse bg-gray-200 rounded-full" />
 				) : user ? (
@@ -123,14 +153,13 @@ export default function Header() {
 					</div>
 				)}
 
-				{/* ==== HAMBURGER + SIDEBAR (mobile) ==== */}
 				<MobileMenu loading={loading} user={user} />
 			</div>
 		</Shell>
 	);
 }
 
-// Sidebar mobile; menampilkan user/login/register di dalam sheet
+// Sidebar mobile—tetap sama
 function MobileMenu({ loading, user }) {
 	return (
 		<Sheet>
@@ -145,7 +174,6 @@ function MobileMenu({ loading, user }) {
 					<SheetTitle>Menu</SheetTitle>
 				</SheetHeader>
 
-				{/* Profile / Auth section (mobile only) */}
 				<div className="mt-4">
 					{loading ? (
 						<div className="flex items-center gap-3 rounded-lg border p-3">
@@ -174,7 +202,6 @@ function MobileMenu({ loading, user }) {
 					)}
 				</div>
 
-				{/* Nav links */}
 				<div className="mt-4 grid gap-1 border-t pt-4">
 					<NavItem href="/">Beranda</NavItem>
 					<NavItem href="/products">Produk</NavItem>
@@ -186,7 +213,6 @@ function MobileMenu({ loading, user }) {
 	);
 }
 
-// item link untuk menu mobile (mengikuti highlight sederhana)
 function NavItem({ href, children }) {
 	const pathname = usePathname();
 	const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
