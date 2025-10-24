@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { validateLogin } from '@/lib/validation/auth';
 import GoogleLoginButton from '@/components/google-login-button';
 import Image from 'next/image';
 import illustration from '../../../../public/Frame 1.svg';
@@ -21,6 +22,7 @@ export default function LoginClient() {
 	const [showPwd, setShowPwd] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState(null);
+	const [errors, setErrors] = useState({ email: '', password: '', form: '' });
 
 	useEffect(() => {
 		const err = searchParams.get('error');
@@ -52,6 +54,14 @@ export default function LoginClient() {
 			e.preventDefault();
 			if (loading) return;
 
+			// Client-side validation via Zod
+			const v = validateLogin({ email, password });
+			if (!v.success) {
+				setErrors({ email: v.fieldErrors.email, password: v.fieldErrors.password, form: v.formError });
+				return;
+			}
+			setErrors({ email: '', password: '', form: '' });
+
 			setLoading(true);
 			setMessage(null);
 
@@ -63,6 +73,7 @@ export default function LoginClient() {
 			if (error) {
 				toast('Login failed', { description: error.message });
 				setMessage({ type: 'error', text: error.message });
+				setErrors((prev) => ({ ...prev, form: error.message }));
 				setLoading(false);
 				return;
 			}
@@ -112,7 +123,7 @@ export default function LoginClient() {
 							ShopMate <span className="text-violet-900">AI</span>
 						</p>
 
-						<form onSubmit={onSubmit} className="mt-6 space-y-4">
+						<form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
 							{/* Email */}
 							<div>
 								<label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700 ">
@@ -125,11 +136,14 @@ export default function LoginClient() {
 										placeholder="you@example.com"
 										className="w-full rounded-lg caret-violet-600 border border-violet-600  bg-white  px-4 py-2.5 text-[15px] outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-400"
 										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										required
+										onChange={(e) => {
+											setEmail(e.target.value);
+											if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+										}}
 										autoComplete="email"
 									/>
 								</div>
+								{errors.email ? <p className="mt-1 text-xs text-red-600">{errors.email}</p> : null}
 							</div>
 
 							{/* Password */}
@@ -144,8 +158,10 @@ export default function LoginClient() {
 										placeholder="*****"
 										className="w-full rounded-lg border caret-violet-600 border-violet-600 bg-white  px-4 py-2.5 pr-12 text-[15px] outline-none transition focus:ring-2 focus:ring-violet-400"
 										value={password}
-										onChange={(e) => setPassword(e.target.value)}
-										required
+										onChange={(e) => {
+											setPassword(e.target.value);
+											if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+										}}
 										autoComplete="current-password"
 									/>
 
@@ -160,6 +176,11 @@ export default function LoginClient() {
 										{showPwd ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
 									</button>
 								</div>
+								{errors.password ? (
+									<p id="password-error" className="mt-1 text-xs text-red-600">
+										{errors.password}
+									</p>
+								) : null}
 
 								{/* <div className="mt-2 text-right">
 									<Link href="/forgot-password" className="text-xs font-medium text-violet-800 hover:text-violet-900 hover:underline">
@@ -184,6 +205,7 @@ export default function LoginClient() {
 						</form>
 
 						{message?.type === 'error' && <p className="mt-4 text-center text-sm text-red-600">{message.text}</p>}
+						{errors.form && <p className="mt-2 text-center text-sm text-red-600">{errors.form}</p>}
 
 						<p className="mt-6 text-center text-sm text-gray-700 ">
 							Don’t have an account?

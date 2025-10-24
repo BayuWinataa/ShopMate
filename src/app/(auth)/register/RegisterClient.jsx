@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { validateRegister } from '@/lib/validation/auth';
 import GoogleLoginButton from '@/components/google-login-button';
 import Image from 'next/image';
 import illustration from '../../../../public/Frame 1.svg';
@@ -18,6 +19,7 @@ export default function RegisterClient() {
 	const [showPwd, setShowPwd] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState(null);
+	const [errors, setErrors] = useState({ email: '', password: '', form: '' });
 
 	const envOk = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -29,6 +31,14 @@ export default function RegisterClient() {
 	async function onSubmit(e) {
 		e.preventDefault();
 		if (loading) return;
+
+		// Client-side validation via shared validator
+		const v = validateRegister({ email, password });
+		if (!v.success) {
+			setErrors({ email: v.fieldErrors.email, password: v.fieldErrors.password, form: v.formError });
+			return;
+		}
+		setErrors({ email: '', password: '', form: '' });
 
 		if (!supabase) {
 			setMessage({
@@ -50,6 +60,7 @@ export default function RegisterClient() {
 		if (error) {
 			toast('Registration failed', { description: error.message });
 			setMessage({ type: 'error', text: error.message });
+			setErrors((prev) => ({ ...prev, form: error.message }));
 			setLoading(false);
 			return;
 		}
@@ -61,6 +72,7 @@ export default function RegisterClient() {
 
 		setEmail('');
 		setPassword('');
+		setErrors({ email: '', password: '', form: '' });
 		setLoading(false);
 
 		setTimeout(() => {
@@ -104,7 +116,7 @@ export default function RegisterClient() {
 							ShopMate <span className="text-violet-900">AI</span>
 						</p>
 
-						<form onSubmit={onSubmit} className="mt-6 space-y-4">
+						<form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
 							{/* Email */}
 							<div>
 								<label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
@@ -117,11 +129,14 @@ export default function RegisterClient() {
 										placeholder="you@example.com"
 										className="w-full rounded-lg caret-violet-600 border border-violet-600 bg-white px-4 py-2.5 text-[15px] outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-400"
 										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										required
+										onChange={(e) => {
+											setEmail(e.target.value);
+											if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+										}}
 										autoComplete="email"
 									/>
 								</div>
+								{errors.email ? <p className="mt-1 text-xs text-red-600">{errors.email}</p> : null}
 							</div>
 
 							{/* Password */}
@@ -136,9 +151,10 @@ export default function RegisterClient() {
 										placeholder="at least 6 characters"
 										className="w-full rounded-lg border caret-violet-600 border-violet-600 bg-white px-4 py-2.5 pr-12 text-[15px] outline-none transition focus:ring-2 focus:ring-violet-400"
 										value={password}
-										onChange={(e) => setPassword(e.target.value)}
-										required
-										minLength={6}
+										onChange={(e) => {
+											setPassword(e.target.value);
+											if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+										}}
 										autoComplete="new-password"
 									/>
 
@@ -153,6 +169,7 @@ export default function RegisterClient() {
 										{showPwd ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
 									</button>
 								</div>
+								{errors.password ? <p className="mt-1 text-xs text-red-600">{errors.password}</p> : null}
 							</div>
 
 							<Button type="submit" variant="pressPurple" disabled={loading} className="w-full rounded-full">
@@ -174,6 +191,7 @@ export default function RegisterClient() {
 
 						{/* Error message (seragam dengan login) */}
 						{message?.type === 'error' && <p className="mt-4 text-center text-sm text-red-600">{message.text}</p>}
+						{errors.form && <p className="mt-2 text-center text-sm text-red-600">{errors.form}</p>}
 
 						<p className="mt-6 text-center text-sm text-gray-700">
 							Already have an account?
