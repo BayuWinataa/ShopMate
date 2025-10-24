@@ -55,9 +55,9 @@ export default function GoogleLoginButton({ onError }) {
 			onClick={handleGoogleLogin}
 			disabled={loading}
 			type="button"
-			className={`w-full flex items-center justify-center gap-3 py-2 px-4 border-2 rounded-full text-sm font-medium transition-colors ${
-				loading ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400'
-			}`}
+			className={`w-full flex items-center rounded-full justify-center gap-3 text-purple-700 border border-purple-700 px-4 py-2  
+  shadow-[0_4px_0_#6b21a8] active:shadow-none active:translate-y-[4px] 
+  transition-all duration-150`}
 		>
 			{loading ? (
 				<div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>

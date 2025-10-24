@@ -17,8 +17,8 @@ const poppins = Poppins({
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="id">
-			<body className={poppins.className}>
+		<html lang="id" suppressHydrationWarning>
+			<body className={poppins.className} suppressHydrationWarning>
 				<AuthProviderWrapper>
 					<CartProvider>
 						{children}
