@@ -60,7 +60,7 @@ export default function Header() {
 					? 
 					  'border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm'
 					: 
-					  'border-b border-transparent bg-transparent',
+					  'border-b border-transparent bg-none',
 			].join(' ')}
 		>
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">

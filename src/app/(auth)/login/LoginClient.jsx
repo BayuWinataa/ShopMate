@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ButtonBack from '@/components/auth/back';
 
 export default function LoginClient() {
 	const router = useRouter();
@@ -109,8 +110,8 @@ export default function LoginClient() {
 				{/* Right form */}
 				<main className="flex items-center justify-center px-4 md:px-10 pt-12 md:pt-0 pb-12 md:pb-0">
 					<div className="w-full max-w-[460px]">
-						<Link href="/" className=" top-6 left-6 text-sm text-violet-800 hover:text-violet-900 transition">
-							← Back to Home
+						<Link href="/">
+							<ButtonBack />
 						</Link>
 						<h1 className="text-[34px] font-extrabold leading-tight text-gray-900 ">
 							Welcome Back!{' '}
@@ -126,7 +127,11 @@ export default function LoginClient() {
 						<form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
 							{/* Email */}
 							<div>
-								<label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700 ">
+								<label
+									htmlFor="email"
+									className="block text-sm font-semibold text-purple-700 mb-1 
+  transition-all duration-150 group-focus-within:text-purple-900"
+								>
 									Email
 								</label>
 								<div className="relative">
@@ -134,7 +139,9 @@ export default function LoginClient() {
 										id="email"
 										type="email"
 										placeholder="you@example.com"
-										className="w-full rounded-lg caret-violet-600 border border-violet-600  bg-white  px-4 py-2.5 text-[15px] outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-400"
+										className="w-full rounded-lg caret-violet-600 border border-violet-600 bg-white px-4 py-2.5 text-[15px] 
+  shadow-[0_4px_0_#6b21a8] focus:shadow-none focus:translate-y-[4px]
+  outline-none transition-all duration-150 focus:border-violet-400 focus:ring-2 focus:ring-violet-400"
 										value={email}
 										onChange={(e) => {
 											setEmail(e.target.value);
@@ -148,34 +155,42 @@ export default function LoginClient() {
 
 							{/* Password */}
 							<div>
-								<label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700 ">
+								<label
+									htmlFor="password"
+									className="block text-sm font-semibold text-purple-700 mb-1 
+  transition-all duration-150 group-focus-within:text-purple-900"
+								>
 									Password
 								</label>
-								<div className="relative">
+								<div className="relative group">
 									<input
 										id="password"
 										type={showPwd ? 'text' : 'password'}
-										placeholder="*****"
-										className="w-full rounded-lg border caret-violet-600 border-violet-600 bg-white  px-4 py-2.5 pr-12 text-[15px] outline-none transition focus:ring-2 focus:ring-violet-400"
+										placeholder="at least 6 characters"
+										className="w-full rounded-lg caret-violet-600 border border-violet-600 bg-white px-4 py-2.5 text-[15px] 
+    shadow-[0_4px_0_#6b21a8] focus:shadow-none focus:translate-y-[4px]
+    outline-none transition-all duration-150 focus:border-violet-400 focus:ring-2 focus:ring-violet-400"
 										value={password}
 										onChange={(e) => {
 											setPassword(e.target.value);
 											if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
 										}}
-										autoComplete="current-password"
+										autoComplete="new-password"
 									/>
 
-									{/* Toggle show/hide password dengan lucide-react */}
 									<button
 										type="button"
 										onClick={() => setShowPwd((v) => !v)}
 										aria-label={showPwd ? 'Hide password' : 'Show password'}
 										aria-pressed={showPwd}
-										className="absolute inset-y-0 right-3 flex items-center rounded p-1 text-gray-500 hover:text-violet-500"
+										className="absolute inset-y-0 right-3 flex items-center rounded p-1 
+    text-gray-500 hover:text-violet-500 
+    transition-all duration-150 group-focus-within:translate-y-[4px]"
 									>
 										{showPwd ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
 									</button>
 								</div>
+
 								{errors.password ? (
 									<p id="password-error" className="mt-1 text-xs text-red-600">
 										{errors.password}
@@ -207,7 +222,7 @@ export default function LoginClient() {
 						{message?.type === 'error' && <p className="mt-4 text-center text-sm text-red-600">{message.text}</p>}
 						{errors.form && <p className="mt-2 text-center text-sm text-red-600">{errors.form}</p>}
 
-						<p className="mt-6 text-center text-sm text-gray-700 ">
+						<p className="mt-6 text-center text-sm font-medium text-gray-700 ">
 							Don’t have an account?
 							<Link href="/register" className="ml-1 text-violet-800 font-bold hover:text-violet-900 hover:underline">
 								Register
