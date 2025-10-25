@@ -92,7 +92,8 @@ export default function Header() {
 				{/* Actions */}
 				<div className="flex items-center gap-3">
 					<div className="hidden md:block h-10 w-10 animate-pulse bg-gray-200 rounded-full" />
-					<MobileMenu loading user={null} />
+					{/* Don't render MobileMenu during SSR */}
+					<div className="md:hidden w-10 h-10" />
 				</div>
 			</Shell>
 		);

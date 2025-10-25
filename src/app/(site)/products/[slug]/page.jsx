@@ -1,9 +1,9 @@
-// app/products/[id]/page.jsx
+// app/products/[slug]/page.jsx
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-// import gambar from '@/app/assets/kobo.jpg';
+import { createSlug } from '@/lib/slugify';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,14 +32,14 @@ const formatIDR = (n) =>
 // ---- SSG (opsional tapi disarankan)
 export async function generateStaticParams() {
 	try {
-		const { data: products, error } = await supabase.from('Products').select('id');
+		const { data: products, error } = await supabase.from('Products').select('nama');
 
 		if (error) {
 			console.error('Error fetching products for static params:', error);
 			return [];
 		}
 
-		return (products || []).map((p) => ({ id: String(p.id) }));
+		return (products || []).map((p) => ({ slug: createSlug(p.nama) }));
 	} catch (err) {
 		console.error('Error in generateStaticParams:', err);
 		return [];
@@ -49,9 +49,18 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
 	try {
 		const resolvedParams = await params;
-		const { data: product, error } = await supabase.from('Products').select('id, nama, deskripsi, longDeskripsi').eq('id', resolvedParams.id).single();
+		const slug = resolvedParams.slug;
 
-		if (error || !product) {
+		// Get all products and find by slug
+		const { data: products, error } = await supabase.from('Products').select('id, nama, deskripsi, longDeskripsi');
+
+		if (error || !products) {
+			return { title: 'Produk tidak ditemukan · ShopMate' };
+		}
+
+		const product = products.find((p) => createSlug(p.nama) === slug);
+
+		if (!product) {
 			return { title: 'Produk tidak ditemukan · ShopMate' };
 		}
 
@@ -71,13 +80,20 @@ export async function generateMetadata({ params }) {
 
 // ---- Page (SERVER COMPONENT, tanpa 'use client')
 export default async function ProductDetail({ params }) {
-	const { id } = await params;
+	const { slug } = await params;
 
 	try {
-		// Fetch the main product
-		const { data: product, error: productError } = await supabase.from('Products').select('*').eq('id', id).single();
+		// Fetch all products and find by slug
+		const { data: products, error: productsError } = await supabase.from('Products').select('*');
 
-		if (productError || !product) {
+		if (productsError || !products) {
+			return notFound();
+		}
+
+		// Find product by slug
+		const product = products.find((p) => createSlug(p.nama) === slug);
+
+		if (!product) {
 			return notFound();
 		}
 
@@ -228,8 +244,9 @@ export default async function ProductDetail({ params }) {
 								<div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
 									{related.map((p) => {
 										const rImg = p.gambar || p.image || fallbackImg;
+										const relatedSlug = createSlug(p.nama);
 										return (
-											<Link key={p.id} href={`/products/${p.id}`} className="group rounded-2xl overflow-hidden border bg-white/60 backdrop-blur ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:shadow-md">
+											<Link key={p.id} href={`/products/${relatedSlug}`} className="group rounded-2xl overflow-hidden border bg-white/60 backdrop-blur ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:shadow-md">
 												<div className="relative aspect-[4/3] w-full overflow-hidden">
 													<Image src={rImg} alt={p.nama} fill className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
 												</div>
