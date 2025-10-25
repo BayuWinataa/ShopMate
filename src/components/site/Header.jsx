@@ -187,7 +187,7 @@ function MobileMenu({ loading, user }) {
 	return (
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
 			<SheetTrigger asChild>
-				<Button variant="ghost" size="icon" className="md:hidden relative overflow-hidden group" aria-label="Buka menu">
+				<Button variant="ghost" size="icon" className="md:hidden relative overflow-hidden group text-violet-600 hover:text-violet-700" aria-label="Buka menu">
 					<div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 via-purple-500/20 to-fuchsia-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 					<SimpleHamburger isOpen={isOpen} />
 				</Button>
@@ -339,9 +339,6 @@ function MobileMenu({ loading, user }) {
 							)}
 						</div>
 					</motion.div>
-
-
-					
 				</div>
 			</SheetContent>
 		</Sheet>
