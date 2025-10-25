@@ -27,11 +27,11 @@ export default async function DashboardPage() {
 
 	return (
 		<div className="space-y-3">
-			<h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
+			<h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">Dashboard</h1>
 			<p className="mt-1 text-sm text-muted-foreground">
-				Selamat datang, <span className="font-semibold">{user.user_metadata?.name || user.email}</span>.
+				Selamat datang, <span className="font-semibold text-violet-700">{user.user_metadata?.name || user.email}</span>.
 			</p>
-			<Separator />
+			<Separator className="bg-violet-200" />
 
 			<DashboardClient />
 		</div>

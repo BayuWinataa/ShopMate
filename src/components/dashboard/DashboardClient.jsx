@@ -225,48 +225,48 @@ export default function DashboardClient() {
 		<>
 			{/* Stats */}
 			<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-				<Card>
+				<Card className="border-violet-100 shadow-sm hover:shadow-md transition-shadow">
 					<CardContent className="p-4">
-						<div className="text-sm text-slate-500">Total Orders</div>
-						<div className="mt-1 text-2xl font-bold">{ordersLoading ? '…' : stats.totalOrders}</div>
-						<div className="text-xs text-slate-500">All stored orders</div>
+						<div className="text-sm text-violet-600 font-medium">Total Orders</div>
+						<div className="mt-1 text-2xl font-bold text-violet-900">{ordersLoading ? '…' : stats.totalOrders}</div>
+						<div className="text-xs text-gray-500">All stored orders</div>
 					</CardContent>
 				</Card>
 
-				<Card>
+				<Card className="border-violet-100 shadow-sm hover:shadow-md transition-shadow">
 					<CardContent className="p-4">
-						<div className="text-sm text-slate-500">Spent</div>
-						<div className="mt-1 text-2xl font-bold">{ordersLoading ? '…' : formatIDR(stats.spent)}</div>
-						<div className="text-xs text-slate-500">Subtotal of all orders</div>
+						<div className="text-sm text-violet-600 font-medium">Spent</div>
+						<div className="mt-1 text-2xl font-bold text-violet-900">{ordersLoading ? '…' : formatIDR(stats.spent)}</div>
+						<div className="text-xs text-gray-500">Subtotal of all orders</div>
 					</CardContent>
 				</Card>
 			</div>
 
 			{/* Line Chart */}
 			<div className="mt-4">
-				<Card>
+				<Card className="border-violet-100 shadow-sm">
 					<CardContent className="p-4">
 						<div className="mb-3">
-							<div className="text-sm text-slate-500">Spent (Last 7 Days)</div>
-							<div className="text-xs text-slate-500">Total value of orders per day</div>
+							<div className="text-sm text-violet-700 font-semibold">Spent (Last 7 Days)</div>
+							<div className="text-xs text-gray-600">Total value of orders per day</div>
 						</div>
 
 						<ChartContainer
 							config={{
 								spent: {
 									label: 'Spent',
-									color: 'hsl(var(--chart-1))', // or '#10b981' if not using CSS vars
+									color: 'hsl(var(--chart-1))',
 								},
 							}}
 							className="h-64 w-full"
 						>
 							<ResponsiveContainer width="100%" height="100%">
 								<LineChart data={chartData} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
-									<CartesianGrid strokeDasharray="3 3" vertical={false} />
-									<XAxis dataKey="date" tickLine={false} axisLine={false} fontSize={12} />
-									<YAxis tickLine={false} axisLine={false} width={40} tickFormatter={formatShort} fontSize={12} />
+									<CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e9d5ff" />
+									<XAxis dataKey="date" tickLine={false} axisLine={false} fontSize={12} stroke="#9333ea" />
+									<YAxis tickLine={false} axisLine={false} width={40} tickFormatter={formatShort} fontSize={12} stroke="#9333ea" />
 									<ChartTooltip content={<ChartTooltipContent formatter={(value) => formatIDR(value)} labelFormatter={(label, payload) => payload?.[0]?.payload?.full ?? label} />} />
-									<Line type="monotone" dataKey="spent" stroke="currentColor" strokeWidth={2} dot={false} className="text-emerald-600" activeDot={{ r: 4 }} />
+									<Line type="monotone" dataKey="spent" stroke="#9333ea" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: '#7c3aed' }} />
 								</LineChart>
 							</ResponsiveContainer>
 						</ChartContainer>
@@ -276,20 +276,25 @@ export default function DashboardClient() {
 
 			{/* Recent section */}
 			<div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4">
-				<Card>
+				<Card className="border-violet-100 shadow-sm">
 					<CardContent className="p-4">
-						<div className="mb-3 text-sm font-semibold">Recent Orders</div>
+						<div className="mb-3 flex items-center justify-between">
+							<div className="text-sm font-semibold text-violet-900">Recent Orders</div>
+							<Link href="/dashboard/orders" className="text-xs text-violet-600 hover:text-violet-700 font-medium">
+								View All →
+							</Link>
+						</div>
 						{recentOrders.length === 0 ? (
-							<div className="text-sm text-muted-foreground">No orders yet.</div>
+							<div className="text-sm text-gray-500">No orders yet.</div>
 						) : (
 							<ul className="space-y-2 text-sm">
 								{recentOrders.map((o) => (
-									<li key={o.id} className="flex items-center justify-between rounded-lg border px-3 py-2">
-										<span className="truncate">
-											{o.id} • {o.items?.[0]?.name ?? 'Order'}
+									<li key={o.id} className="flex items-center justify-between rounded-lg border border-violet-100 px-3 py-2 hover:bg-violet-50/30 transition-colors">
+										<span className="truncate text-gray-700">
+											<span className="font-medium text-violet-700">{o.id}</span> • {o.items?.[0]?.name ?? 'Order'}
 											{o.items && o.items.length > 1 ? ` +${o.items.length - 1} item` : ''}
 										</span>
-										<span className="text-slate-600">{formatIDR(o.total || 0)}</span>
+										<span className="text-violet-900 font-semibold">{formatIDR(o.total || 0)}</span>
 									</li>
 								))}
 							</ul>
@@ -297,16 +302,24 @@ export default function DashboardClient() {
 					</CardContent>
 				</Card>
 
-				<Card>
+				<Card className="border-violet-100 shadow-sm">
 					<CardContent className="p-4">
-						<div className="mb-3 text-sm font-semibold">Recent Chats</div>
+						<div className="mb-3 flex items-center justify-between">
+							<div className="text-sm font-semibold text-violet-900">Recent Chats</div>
+							<Link href="/chat" className="text-xs text-violet-600 hover:text-violet-700 font-medium">
+								Open Chat →
+							</Link>
+						</div>
 						{recentChats.length === 0 ? (
-							<div className="text-sm text-muted-foreground">No chats yet.</div>
+							<div className="text-sm text-gray-500">No chats yet.</div>
 						) : (
 							<ul className="space-y-2 text-sm">
 								{recentChats.map((m, i) => (
-									<li key={i} className="rounded-lg border px-3 py-2">
-										“{m.content?.slice(0, 80) ?? ''}”{m.content && m.content.length > 80 ? '…' : ''} <span className="text-slate-500">— {timeAgo(stats.lastChat)}</span>
+									<li key={i} className="rounded-lg border border-violet-100 px-3 py-2 hover:bg-violet-50/30 transition-colors">
+										<span className="text-gray-700">
+											"{m.content?.slice(0, 80) ?? ''}"{m.content && m.content.length > 80 ? '…' : ''}
+										</span>{' '}
+										<span className="text-gray-500">— {timeAgo(stats.lastChat)}</span>
 									</li>
 								))}
 							</ul>
@@ -317,9 +330,9 @@ export default function DashboardClient() {
 
 			{/* Modal Tanya AI */}
 			<Dialog open={isAskOpen} onOpenChange={setIsAskOpen} modal={false}>
-				<DialogContent className="flex h-[85vh] max-w-4xl flex-col gap-3 overflow-hidden p-0">
-					<DialogHeader className="px-5 pt-5">
-						<DialogTitle className="text-base font-semibold">AI Dashboard Assistant</DialogTitle>
+				<DialogContent className="flex h-[85vh] max-w-4xl flex-col gap-3 overflow-hidden p-0 border-violet-200">
+					<DialogHeader className="px-5 pt-5 border-b border-violet-100 bg-gradient-to-r from-violet-50 to-purple-50">
+						<DialogTitle className="text-base font-semibold text-violet-900">AI Dashboard Assistant</DialogTitle>
 					</DialogHeader>
 
 					<div className="min-h-0 flex-1">
@@ -327,35 +340,37 @@ export default function DashboardClient() {
 							<div className="space-y-4">
 								{askMessages.map((m, i) => (
 									<div key={`${m.role}-${i}`} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-										<div className={`${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white'} max-w-2xl rounded-2xl px-4 py-2 shadow-sm`}>
+										<div className={`${m.role === 'user' ? 'bg-violet-600 text-white' : 'bg-violet-900 text-white'} max-w-2xl rounded-2xl px-4 py-2 shadow-sm`}>
 											<div className="prose prose-invert max-w-none whitespace-pre-wrap">{m.content}</div>
 										</div>
 									</div>
 								))}
-
 								{isAsking && (
 									<div className="flex justify-start">
-										<div className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 text-slate-600">
+										<div className="inline-flex items-center gap-2 rounded-xl bg-violet-100 px-3 py-2 text-violet-700">
 											<Loader2 className="h-4 w-4 animate-spin" /> AI is thinking...
 										</div>
 									</div>
-								)}
-
+								)}{' '}
 								<div ref={askEndRef} />
 							</div>
 							<ScrollBar orientation="vertical" />
 						</ScrollArea>
 					</div>
 
-					<DialogFooter className="border-t bg-white/80 px-5 py-3 backdrop-blur">
+					<DialogFooter className="border-t border-violet-100 bg-white/80 px-5 py-3 backdrop-blur">
 						<form onSubmit={handleAskSubmit} className="flex w-full items-center gap-2">
 							<input
 								value={askInput}
 								onChange={(e) => setAskInput(e.target.value)}
 								placeholder="Ask anything: order summary, upgrade suggestion, status, etc."
-								className="flex-1 rounded-xl border p-3 text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+								className="flex-1 rounded-xl border border-violet-200 p-3 text-violet-900 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
 							/>
-							<button type="submit" disabled={isAsking} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:bg-blue-300">
+							<button
+								type="submit"
+								disabled={isAsking}
+								className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2 text-white font-medium transition-all hover:bg-violet-700 hover:shadow-lg disabled:bg-violet-300 disabled:cursor-not-allowed"
+							>
 								{isAsking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
 							</button>
 						</form>
