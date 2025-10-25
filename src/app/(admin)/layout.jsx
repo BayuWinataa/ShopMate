@@ -1,7 +1,50 @@
 // app/(admin)/layout.jsx
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AdminLayout({ children }) {
+	const router = useRouter();
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		// Check if admin is authenticated via sessionStorage
+		const adminAuth = sessionStorage.getItem('adminAuth');
+
+		if (adminAuth !== 'true') {
+			// Redirect to login if not authenticated
+			router.replace('/login');
+		} else {
+			setIsAuthenticated(true);
+		}
+		setIsLoading(false);
+	}, [router]);
+
+	const handleLogout = () => {
+		sessionStorage.removeItem('adminAuth');
+		router.push('/login');
+	};
+
+	// Show loading state
+	if (isLoading) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-gray-50">
+				<div className="text-center">
+					<div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+					<p className="mt-2 text-sm text-gray-600">Loading...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Don't render if not authenticated
+	if (!isAuthenticated) {
+		return null;
+	}
+
 	return (
 		<div className="min-h-screen bg-gray-50 flex">
 			{/* Sidebar */}
@@ -56,8 +99,10 @@ export default function AdminLayout({ children }) {
 					</div>
 
 					<div className="flex items-center gap-3">
-						<span className="hidden sm:inline text-sm text-gray-500">admin@myshop.com</span>
-						<button className="px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Logout</button>
+						<span className="hidden sm:inline text-sm text-gray-500">admin@gmail.com</span>
+						<button onClick={handleLogout} className="px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+							Logout
+						</button>
 					</div>
 				</header>
 

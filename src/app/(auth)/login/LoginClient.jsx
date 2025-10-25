@@ -66,6 +66,20 @@ export default function LoginClient() {
 			setLoading(true);
 			setMessage(null);
 
+			// Check if admin credentials
+			if (email === 'admin@gmail.com' && password === 'admin1234') {
+				// Set admin authentication in sessionStorage
+				sessionStorage.setItem('adminAuth', 'true');
+
+				toast.success('Admin login successful 🎉', {
+					description: 'Redirecting to admin panel…',
+				});
+				router.push('/admin');
+				router.refresh();
+				setLoading(false);
+				return;
+			}
+
 			const { error } = await supabase.auth.signInWithPassword({
 				email,
 				password,
