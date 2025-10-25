@@ -248,22 +248,22 @@ function ChatPageContent() {
 	const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number.isFinite(n) ? n : 0);
 
 	return (
-		<div className="h-[calc(100vh-4.1rem)] w-full bg-gradient-to-br from-slate-50 to-slate-100">
+		<div className="h-[calc(100vh-4.1rem)] w-full bg-gradient-to-b from-slate-50 via-white to-white">
 			<div className="container mx-auto h-full w-full">
-				<div className="sticky top-0 z-10 mb-2 sm:mb-3 rounded-xl border bg-white/80 backdrop-blur">
+				<div className="sticky top-0 z-10 mb-2 sm:mb-3 rounded-xl border border-violet-200 bg-white/80 backdrop-blur">
 					{/* MOBILE: buka rekomendasi */}
 					<div className="flex items-center justify-between gap-3 p-2 sm:p-3 md:hidden">
 						<Sheet>
 							<SheetTrigger asChild>
-								<Button variant="outline" size="sm" className="gap-1 text-xs sm:text-sm">
+								<Button variant="pressPurple" size="sm" className="gap-1 text-xs sm:text-sm border-violet-200 text-violet-700 hover:bg-violet-50">
 									<ListFilter className="h-3 w-3 sm:h-4 sm:w-4" />
 									<span className="hidden xs:inline">Rekomendasi</span>
 									<span className="xs:hidden">Rec</span>
 								</Button>
 							</SheetTrigger>
-							<SheetContent side="left" className="w-[80vw] sm:w-[420px] flex flex-col">
+							<SheetContent side="left" className="w-[80vw] sm:w-[420px] flex flex-col bg-gradient-to-b from-white to-violet-50/30">
 								<SheetHeader className="flex-shrink-0">
-									<SheetTitle>Produk Rekomendasi</SheetTitle>
+									<SheetTitle className="text-violet-800">Produk Rekomendasi</SheetTitle>
 								</SheetHeader>
 								<div className="flex-1 min-h-0 flex flex-col">
 									<div className="flex-1 min-h-0">
@@ -271,8 +271,8 @@ function ChatPageContent() {
 											{productsLoading ? (
 												<div className="flex items-center justify-center py-8">
 													<div className="text-center">
-														<Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
-														<p className="text-sm text-slate-500">Loading products...</p>
+														<Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-violet-600" />
+														<p className="text-sm text-violet-600">Loading products...</p>
 													</div>
 												</div>
 											) : (
@@ -281,7 +281,7 @@ function ChatPageContent() {
 											<ScrollBar orientation="vertical" />
 										</ScrollArea>
 									</div>
-									<div className="flex-shrink-0 px-4 py-3 border-t border-slate-200 bg-slate-50/50">
+									<div className="flex-shrink-0 px-4 py-3 border-t border-violet-200 bg-violet-50/50">
 										<DebateBar count={comparisonList.length} disabled={comparisonList.length !== 2 || isComparing} isComparing={isComparing} onClick={handleStartComparison} />
 									</div>
 								</div>
@@ -294,18 +294,18 @@ function ChatPageContent() {
 				<div className="flex flex-col md:grid h-[calc(100%-3.5rem)] sm:h-[calc(100%-2rem)] min-h-0 gap-2 sm:gap-4 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] xl:grid-cols-[420px_1fr]">
 					{/* LEFT: rekomendasi (desktop) */}
 					<aside className="hidden min-h-0 flex-col gap-4 md:flex order-1 md:order-none">
-						<div className="flex flex-col h-full rounded-2xl border bg-white/80 ring-1 ring-slate-200 overflow-hidden">
-							<div className="flex-shrink-0 p-4 border-b border-slate-200">
-								<h2 className="text-xl font-semibold">Produk Rekomendasi</h2>
-								<p className="text-sm text-slate-500">Dari jawaban AI-mu</p>
+						<div className="flex flex-col h-full rounded-2xl border border-violet-200 bg-white/80 ring-1 ring-violet-200 overflow-hidden shadow-sm">
+							<div className="flex-shrink-0 p-4 border-b border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50">
+								<h2 className="text-xl font-semibold text-violet-800">Produk Rekomendasi</h2>
+								<p className="text-sm text-violet-600">Dari jawaban AI-mu</p>
 							</div>
 							<div className="flex-1 min-h-0 p-4">
 								<ScrollArea className="h-full pr-2">
 									{productsLoading ? (
 										<div className="flex items-center justify-center py-8">
 											<div className="text-center">
-												<Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
-												<p className="text-sm text-slate-500">Loading products...</p>
+												<Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-violet-600" />
+												<p className="text-sm text-violet-600">Loading products...</p>
 											</div>
 										</div>
 									) : (
@@ -314,14 +314,14 @@ function ChatPageContent() {
 									<ScrollBar orientation="vertical" />
 								</ScrollArea>
 							</div>
-							<div className="flex-shrink-0 p-4 border-t border-slate-200 bg-slate-50/50">
+							<div className="flex-shrink-0 p-4 border-t border-violet-200 bg-violet-50/50">
 								<DebateBar count={comparisonList.length} disabled={comparisonList.length !== 2 || isComparing} isComparing={isComparing} onClick={handleStartComparison} />
 							</div>
 						</div>
 					</aside>
 
 					{/* RIGHT: chat */}
-					<section className="flex min-h-0 flex-col overflow-hidden rounded-xl sm:rounded-2xl border bg-white shadow-sm ring-1 ring-slate-200">
+					<section className="flex min-h-0 flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-violet-200 bg-white shadow-sm ring-1 ring-violet-200">
 						{/* Messages viewport - following reference pattern */}
 						<div ref={chatEndRef} className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
 							<div className="mx-auto flex flex-col gap-1">
@@ -331,7 +331,7 @@ function ChatPageContent() {
 
 								{isLoading && (
 									<div className="flex justify-start">
-										<div className="inline-flex items-center gap-2 rounded-lg sm:rounded-xl bg-slate-100 px-3 sm:px-4 py-2 sm:py-3 text-slate-600">
+										<div className="inline-flex items-center gap-2 rounded-lg sm:rounded-xl bg-violet-100 px-3 sm:px-4 py-2 sm:py-3 text-violet-700">
 											<Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
 											<span className="text-xs sm:text-sm">AI is thinking...</span>
 										</div>
@@ -347,19 +347,19 @@ function ChatPageContent() {
 						</div>
 
 						{/* Composer - following reference pattern */}
-						<div className="border-t border-slate-200 p-3 sm:p-4">
+						<div className="border-t border-violet-200 p-3 sm:p-4 bg-violet-50/30">
 							<form onSubmit={handleSubmit} className="mx-auto flex gap-2 sm:gap-1">
 								<input
 									value={input}
 									onChange={(e) => setInput(e.target.value)}
 									placeholder="Ketik pesan Anda..."
-									className="flex-1 min-h-[2.5rem] rounded-lg sm:rounded-xl border border-slate-300 px-3 py-2 sm:py-3 text-sm sm:text-base text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200 placeholder:text-slate-500 w-full"
+									className="flex-1 min-h-[2.5rem] rounded-lg sm:rounded-xl border border-violet-300 px-3 py-2 sm:py-3 text-sm sm:text-base text-slate-900 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200 placeholder:text-slate-500 w-full"
 									disabled={isLoading}
 								/>
 								<button
 									type="submit"
 									disabled={isLoading}
-									className="inline-flex h-10 sm:h-12 items-center justify-center rounded-lg sm:rounded-xl bg-blue-600 px-4 sm:px-5 text-white transition-colors hover:bg-blue-700 disabled:bg-blue-300"
+									className="inline-flex h-10 sm:h-12 items-center justify-center rounded-lg sm:rounded-xl bg-violet-600 px-4 sm:px-5 text-white transition-colors hover:bg-violet-700 disabled:bg-violet-300"
 								>
 									<Send className="h-6 w-6 " />
 								</button>
@@ -386,12 +386,12 @@ function ChatPageContent() {
 						}
 					}}
 				>
-					<DialogHeader className="px-3 sm:px-5 pt-3 sm:pt-5 pb-2 flex-shrink-0 border-b border-slate-100">
-						<DialogTitle className="text-sm sm:text-base font-semibold">Debat Produk</DialogTitle>
+					<DialogHeader className="px-3 sm:px-5 pt-3 sm:pt-5 pb-2 flex-shrink-0 border-b border-violet-100">
+						<DialogTitle className="text-sm sm:text-base font-semibold text-violet-800">Debat Produk</DialogTitle>
 
 						{comparedPair.length === 2 && (
 							<div className="mt-2 flex flex-wrap items-center gap-1 sm:gap-2 text-xs">
-								<span className="rounded-full bg-blue-50 px-2 sm:px-2.5 py-0.5 sm:py-1 font-medium text-blue-700 ring-1 ring-blue-200 text-xs">A: {comparedPair[0].nama}</span>
+								<span className="rounded-full bg-violet-50 px-2 sm:px-2.5 py-0.5 sm:py-1 font-medium text-violet-700 ring-1 ring-violet-200 text-xs">A: {comparedPair[0].nama}</span>
 								<span className="rounded-full bg-purple-50 px-2 sm:px-2.5 py-0.5 sm:py-1 font-medium text-purple-700 ring-1 ring-purple-200 text-xs">B: {comparedPair[1].nama}</span>
 							</div>
 						)}
@@ -401,8 +401,8 @@ function ChatPageContent() {
 					<div ref={modalContentRef} className="min-h-0 flex-1 overflow-y-scroll overflow-x-hidden">
 						<div className="px-3 sm:px-5 py-3 min-h-full">
 							{isComparing ? (
-								<div className="flex h-32 items-center justify-center text-slate-600">
-									<div className="inline-flex items-center gap-2 rounded-lg sm:rounded-xl bg-slate-100 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
+								<div className="flex h-32 items-center justify-center text-violet-700">
+									<div className="inline-flex items-center gap-2 rounded-lg sm:rounded-xl bg-violet-100 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
 										<Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" /> AI sedang menganalisis...
 									</div>
 								</div>
@@ -413,9 +413,9 @@ function ChatPageContent() {
 							)}
 
 							{followupThread.length > 0 && (
-								<div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4 border-t pt-3 sm:pt-4">
+								<div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4 border-t border-violet-100 pt-3 sm:pt-4">
 									{followupThread.map((m, idx) => (
-										<div key={`${m.role}-${idx}`} className={`${m.role === 'user' ? 'bg-blue-50' : 'bg-slate-50'} rounded-lg sm:rounded-xl p-3 sm:p-4 overflow-hidden`}>
+										<div key={`${m.role}-${idx}`} className={`${m.role === 'user' ? 'bg-violet-50' : 'bg-slate-50'} rounded-lg sm:rounded-xl p-3 sm:p-4 overflow-hidden`}>
 											<div className="prose prose-sm sm:prose max-w-none [&>*]:my-1 sm:[&>*]:my-2 [&_p]:leading-relaxed text-sm sm:text-base break-words overflow-wrap-anywhere">
 												<ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
 											</div>
@@ -430,18 +430,18 @@ function ChatPageContent() {
 					</div>
 
 					{/* footer sticky */}
-					<DialogFooter className="border-t bg-white/95 px-3 sm:px-5 py-2 sm:py-3 backdrop-blur flex-shrink-0">
+					<DialogFooter className="border-t border-violet-200 bg-white/95 px-3 sm:px-5 py-2 sm:py-3 backdrop-blur flex-shrink-0">
 						<form onSubmit={handleFollowupSubmit} className="flex w-full items-center gap-1.5 sm:gap-2">
 							<input
 								value={followupInput}
 								onChange={(e) => setFollowupInput(e.target.value)}
 								placeholder="Tanya detail lanjutan tentang dua produk ini..."
-								className="flex-1 rounded-lg sm:rounded-xl border p-2 sm:p-3 text-sm sm:text-base text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200 min-w-0"
+								className="flex-1 rounded-lg sm:rounded-xl border border-violet-300 p-2 sm:p-3 text-sm sm:text-base text-slate-900 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200 min-w-0"
 							/>
 							<button
 								type="submit"
 								disabled={isFollowupLoading}
-								className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-blue-600 px-3 sm:px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:bg-blue-300 min-w-[44px] justify-center flex-shrink-0"
+								className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-violet-600 px-3 sm:px-4 py-2 text-white transition-colors hover:bg-violet-700 disabled:bg-violet-300 min-w-[44px] justify-center flex-shrink-0"
 							>
 								{isFollowupLoading ? <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" /> : <Send className="h-3 w-3 sm:h-4 sm:w-4" />}
 								<span className="sr-only">Kirim</span>
@@ -458,7 +458,7 @@ function ChatPageContent() {
 		const isUser = role === 'user';
 		return (
 			<div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-				<div className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] ${isUser ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white'} rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-3 shadow-sm`}>
+				<div className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] ${isUser ? 'bg-violet-600 text-white' : 'bg-slate-800 text-white'} rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-3 shadow-sm`}>
 					<div className="prose prose-invert prose-sm sm:prose max-w-none break-words whitespace-pre-wrap leading-relaxed [&>*]:my-1 sm:[&>*]:my-2 [&_p]:leading-relaxed [&_pre]:text-xs sm:[&_pre]:text-sm [&_pre]:overflow-x-auto [&_code]:text-xs sm:[&_code]:text-sm">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
 					</div>
@@ -478,22 +478,22 @@ function RecList({ items, formatIDR, isSelectedForCompare, toggleCompare }) {
 	return (
 		<div className="">
 			{items.map((product, idx) => (
-				<div key={`${product.id}-${product.nama}-${idx}`} className="group flex flex-col w-full rounded-lg sm:rounded-xl border border-slate-200 p-2 transition-all hover:border-slate-300 hover:shadow-sm">
+				<div key={`${product.id}-${product.nama}-${idx}`} className="group flex flex-col w-full rounded-lg sm:rounded-xl border border-violet-200 p-2 transition-all hover:border-violet-300 hover:shadow-sm bg-white">
 					{/* Bagian atas: Gambar dan info produk */}
 					<div className="flex items-center gap-3 mb-3">
 						<Image src={product.gambar || product.image || '/placeholder.jpg'} alt={product.nama} width={64} height={64} className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-md sm:rounded-lg object-cover flex-shrink-0" />
 						<div className="min-w-0 flex-1">
-							<p className="font-medium text-sm sm:text-base leading-tight mb-1">{product.nama}</p>
-							<p className="font-semibold text-blue-600 text-sm sm:text-base">{formatIDR(product.harga)}</p>
+							<p className="font-medium text-sm sm:text-base leading-tight mb-1 text-violet-900">{product.nama}</p>
+							<p className="font-semibold text-violet-600 text-sm sm:text-base">{formatIDR(product.harga)}</p>
 						</div>
 					</div>
 
 					{/* Bagian bawah: Tombol aksi */}
-					<div className="flex gap-2 border-t border-slate-100 flex-wrap">
+					<div className="flex gap-2 border-t border-violet-100 flex-wrap">
 						<button
 							onClick={() => toggleCompare(product)}
 							className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-								isSelectedForCompare(product) ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+								isSelectedForCompare(product) ? 'border-violet-300 bg-violet-50 text-violet-700' : 'border-violet-200 bg-violet-50/50 text-violet-700 hover:bg-violet-100'
 							}`}
 							aria-label={isSelectedForCompare(product) ? 'Hapus dari perbandingan' : 'Tambah ke perbandingan'}
 						>
@@ -503,7 +503,7 @@ function RecList({ items, formatIDR, isSelectedForCompare, toggleCompare }) {
 
 						<Link
 							href={`/products/${product.id}`}
-							className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+							className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-violet-200 bg-white px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-50 transition-colors"
 							aria-label={`Detail ${product.nama}`}
 						>
 							<span>Detail</span>
@@ -518,7 +518,7 @@ function RecList({ items, formatIDR, isSelectedForCompare, toggleCompare }) {
 
 function DebateBar({ count, disabled, isComparing, onClick }) {
 	return (
-		<Button onClick={onClick} disabled={disabled} className="inline-flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl text-xs sm:text-sm py-2 sm:py-2.5">
+		<Button onClick={onClick} disabled={disabled} variant="pressPurple" className="inline-flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl text-xs sm:text-sm py-2 sm:py-2.5">
 			{isComparing ? (
 				<>
 					<Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
@@ -538,10 +538,10 @@ function DebateBar({ count, disabled, isComparing, onClick }) {
 
 function EmptyState({ title, description, icon }) {
 	return (
-		<div className="flex flex-col items-center justify-center rounded-lg sm:rounded-2xl border border-dashed bg-slate-50 px-3 sm:px-4 py-6 sm:py-10 text-center text-slate-600">
+		<div className="flex flex-col items-center justify-center rounded-lg sm:rounded-2xl border border-dashed border-violet-200 bg-violet-50 px-3 sm:px-4 py-6 sm:py-10 text-center text-violet-700">
 			<div className="mb-2">{icon ?? <Loader2 className="h-4 w-4 sm:h-5 sm:w-5" />}</div>
 			<p className="font-medium text-sm sm:text-base">{title}</p>
-			<p className="mt-1 max-w-sm text-xs sm:text-sm text-slate-500">{description}</p>
+			<p className="mt-1 max-w-sm text-xs sm:text-sm text-violet-600">{description}</p>
 		</div>
 	);
 }
@@ -549,11 +549,11 @@ function EmptyState({ title, description, icon }) {
 // Loading component for Suspense boundary
 function ChatPageLoading() {
 	return (
-		<div className="h-[calc(100vh-4rem)] w-full bg-gradient-to-br from-slate-50 to-slate-100">
+		<div className="h-[calc(100vh-4rem)] w-full bg-gradient-to-b from-slate-50 via-white to-white">
 			<div className="container mx-auto h-full w-full flex items-center justify-center">
 				<div className="text-center">
-					<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-					<p className="text-slate-600">Loading chat...</p>
+					<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-violet-600" />
+					<p className="text-violet-700">Loading chat...</p>
 				</div>
 			</div>
 		</div>
