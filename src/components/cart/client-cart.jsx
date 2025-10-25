@@ -39,6 +39,8 @@ export default function ClientCartPage() {
 
 	const [open, setOpen] = useState(false);
 	const [placing, setPlacing] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [user, setUser] = useState(null);
 
 	const [name, setName] = useState('');
 	const [phone, setPhone] = useState('');
@@ -48,6 +50,27 @@ export default function ClientCartPage() {
 	const [addresses, setAddresses] = useState([]);
 	const [addressId, setAddressId] = useState('');
 	const [addressMode, setAddressMode] = useState('manual'); // 'manual' | 'saved'
+
+	// Check authentication
+	useEffect(() => {
+		(async () => {
+			try {
+				const {
+					data: { user },
+				} = await supabase.auth.getUser();
+				if (!user) {
+					router.replace('/login');
+					return;
+				}
+				setUser(user);
+			} catch (error) {
+				console.error('Auth check error:', error);
+				router.replace('/login');
+			} finally {
+				setLoading(false);
+			}
+		})();
+	}, [supabase, router]);
 
 	useEffect(() => {
 		try {
@@ -97,6 +120,20 @@ export default function ClientCartPage() {
 
 	const inc = (it) => updateQty(it.id, (it.qty || 1) + 1);
 	const dec = (it) => updateQty(it.id, Math.max(1, (it.qty || 1) - 1));
+
+	// Show loading while checking auth
+	if (loading) {
+		return (
+			<div className="mt-10 flex items-center justify-center">
+				<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-violet-600"></div>
+			</div>
+		);
+	}
+
+	// Don't render if no user (will redirect)
+	if (!user) {
+		return null;
+	}
 
 	if (!items.length) {
 		return (

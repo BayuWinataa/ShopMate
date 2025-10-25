@@ -91,9 +91,6 @@ export default function Header() {
 
 				{/* Actions */}
 				<div className="flex items-center gap-3">
-					<div className="scale-110">
-						<CartButton />
-					</div>
 					<div className="hidden md:block h-10 w-10 animate-pulse bg-gray-200 rounded-full" />
 					<MobileMenu loading user={null} />
 				</div>
@@ -125,9 +122,11 @@ export default function Header() {
 
 			{/* Actions */}
 			<div className="flex items-center gap-3">
-				<div className="scale-110">
-					<CartButton />
-				</div>
+				{user && (
+					<div className="scale-110">
+						<CartButton />
+					</div>
+				)}
 
 				{loading ? (
 					<div className="hidden md:block h-10 w-10 animate-pulse bg-gray-200 rounded-full" />
