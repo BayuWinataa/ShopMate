@@ -19,11 +19,11 @@ export default async function OrdersPage() {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-2xl md:text-3xl font-bold tracking-tight">Orders</h1>
-				<p className="mt-1 text-sm text-muted-foreground">Daftar Riwayat pesanan kamu.</p>
+				<h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">Orders</h1>
+				<p className="mt-1 text-sm text-violet-600">Daftar Riwayat pesanan kamu.</p>
 			</div>
 
-			<Separator />
+			<Separator className="bg-violet-200" />
 			<OrdersClient />
 		</div>
 	);

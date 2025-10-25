@@ -28,20 +28,20 @@ function Row({ label, value }) {
 	if (value == null || value === '' || value === '—') return null;
 	return (
 		<div className="grid grid-cols-3 gap-3 text-sm">
-			<div className="text-slate-500">{label}</div>
-			<div className="col-span-2">{value}</div>
+			<div className="text-violet-600">{label}</div>
+			<div className="col-span-2 text-violet-900">{value}</div>
 		</div>
 	);
 }
 
 function ItemsTable({ items, productIndex }) {
 	if (!Array.isArray(items) || items.length === 0) {
-		return <div className="text-sm text-slate-500">Tidak ada item.</div>;
+		return <div className="text-sm text-violet-600">Tidak ada item.</div>;
 	}
 	return (
 		<div className="overflow-x-auto">
 			<table className="w-full text-sm">
-				<thead className="text-left text-slate-500">
+				<thead className="text-left text-violet-600">
 					<tr>
 						<th className="py-2 pr-3">Produk</th>
 						<th className="py-2 pr-3">Qty</th>
@@ -60,11 +60,11 @@ function ItemsTable({ items, productIndex }) {
 						const subtotal = Number(it.subtotal ?? price * qty);
 
 						return (
-							<tr key={idx} className="border-t">
-								<td className="py-2 pr-3">{name}</td>
-								<td className="py-2 pr-3">{qty}</td>
-								<td className="py-2 pr-3">{formatIDR(price)}</td>
-								<td className="py-2 pr-3">{formatIDR(subtotal)}</td>
+							<tr key={idx} className="border-t border-violet-100">
+								<td className="py-2 pr-3 text-violet-900">{name}</td>
+								<td className="py-2 pr-3 text-violet-900">{qty}</td>
+								<td className="py-2 pr-3 text-violet-900">{formatIDR(price)}</td>
+								<td className="py-2 pr-3 text-violet-900">{formatIDR(subtotal)}</td>
 							</tr>
 						);
 					})}
@@ -96,8 +96,8 @@ function Totals({ order, productIndex }) {
 			<Row label="Diskon" value={discount ? formatIDR(discount) : null} />
 			<Row label="Pajak" value={tax ? formatIDR(tax) : null} />
 			<Row label="Ongkir" value={shipping ? formatIDR(shipping) : null} />
-			<div className="h-px bg-slate-200 my-1" />
-			<div className="flex items-center justify-between font-semibold">
+			<div className="h-px bg-violet-200 my-1" />
+			<div className="flex items-center justify-between font-semibold text-violet-900">
 				<span>Total</span>
 				<span>{formatIDR(total)}</span>
 			</div>
@@ -286,10 +286,10 @@ export default function OrdersClient() {
 	return (
 		<>
 			<div className="flex items-center justify-between gap-2">
-				<div className="text-sm text-muted-foreground">
-					Total orders: <span className="font-medium">{orders.length}</span>
+				<div className="text-sm text-violet-600">
+					Total orders: <span className="font-medium text-violet-900">{orders.length}</span>
 				</div>
-				<Button variant="outline" size="sm" className="gap-2" onClick={() => setOpenChat(true)}>
+				<Button variant="pressPurple" onClick={() => setOpenChat(true)} className="gap-2 rounded-full">
 					<MessageSquare className="h-4 w-4" /> Tanya AI soal pesanan
 				</Button>
 			</div>
@@ -297,11 +297,11 @@ export default function OrdersClient() {
 			{/* ===== LIST ORDERS (ringkas; klik untuk buka modal detail) ===== */}
 			<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 				{ordersLoading ? (
-					<div className="text-sm text-muted-foreground">Memuat orders…</div>
+					<div className="text-sm text-violet-600">Memuat orders…</div>
 				) : ordersError ? (
 					<div className="text-sm text-red-600">{ordersError}</div>
 				) : orders.length === 0 ? (
-					<div className="text-sm text-muted-foreground">Belum ada pesanan.</div>
+					<div className="text-sm text-violet-600">Belum ada pesanan.</div>
 				) : (
 					orders.map((o) => {
 						const id = o.id ?? o.orderId ?? `temp-${Math.random()}`;
@@ -309,7 +309,8 @@ export default function OrdersClient() {
 						const paymentStatus = o.paymentStatus ?? o.payment_status ?? o.payment?.status;
 						const items = Array.isArray(o.items) ? o.items : Array.isArray(o.lines) ? o.lines : [];
 
-						const badgeVariant = String(status).toLowerCase().includes('cancel') ? 'destructive' : String(status).toLowerCase().includes('pending') ? 'secondary' : 'default';
+						const statusLower = String(status).toLowerCase();
+						const badgeVariant = statusLower.includes('cancel') ? 'destructive' : statusLower.includes('pending') ? 'secondary' : 'default';
 
 						const openDetailModal = () => {
 							setSelectedOrder(o);
@@ -317,21 +318,25 @@ export default function OrdersClient() {
 						};
 
 						return (
-							<button key={id} onClick={openDetailModal} className="rounded-lg border p-4 text-left hover:bg-slate-50 transition-colors">
+							<button key={id} onClick={openDetailModal} className="rounded-lg border border-violet-100 bg-white p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md hover:border-violet-200 hover:bg-violet-50/30">
 								<div className="mb-2 flex items-start justify-between gap-3">
 									<div>
-										<div className="text-sm font-semibold">#{id}</div>
-										<div className="text-xs text-slate-500">{formatDate(o.createdAt ?? o.created_at ?? o.date)}</div>
+										<div className="text-sm font-semibold text-violet-900">#{id}</div>
+										<div className="text-xs text-violet-600">{formatDate(o.createdAt ?? o.created_at ?? o.date)}</div>
 									</div>
 									<div className="text-right">
-										<Badge variant={badgeVariant} className="text-[10px]">
-											{String(status).toUpperCase()}
-										</Badge>
-										<div className="mt-1 text-xs text-slate-500">Metode: {String(o.payment).toUpperCase()}</div>
+										{statusLower.includes('confirmed') ? (
+											<Badge className="text-[10px] bg-violet-600 text-white hover:bg-violet-700">{String(status).toUpperCase()}</Badge>
+										) : (
+											<Badge variant={badgeVariant} className="text-[10px]">
+												{String(status).toUpperCase()}
+											</Badge>
+										)}
+										<div className="mt-1 text-xs text-violet-600">Metode: {String(o.payment).toUpperCase()}</div>
 									</div>
 								</div>
 								{/* Total ringkas */}
-								<div className="mt-3 border-t pt-2 text-sm font-semibold flex justify-between">
+								<div className="mt-3 border-t border-violet-100 pt-2 text-sm font-semibold flex justify-between text-violet-900">
 									<span>Total</span>
 									<span>{formatIDR(o.total ?? o.grandTotal ?? o.amount ?? 0)}</span>
 								</div>
@@ -343,9 +348,9 @@ export default function OrdersClient() {
 
 			{/* ===== MODAL DETAIL ORDER ===== */}
 			<Dialog open={openDetail} onOpenChange={setOpenDetail}>
-				<DialogContent className="flex h-[85vh] max-w-3xl flex-col gap-3 overflow-hidden p-0">
-					<DialogHeader className="px-5 pt-5">
-						<DialogTitle className="text-base font-semibold">Detail Order {selectedOrder ? `#${selectedOrder.id ?? selectedOrder.orderId ?? ''}` : ''}</DialogTitle>
+				<DialogContent className="flex h-[85vh] max-w-3xl flex-col gap-3 overflow-hidden p-0 border-violet-200">
+					<DialogHeader className="px-5 pt-5 bg-gradient-to-r from-violet-50 to-purple-50 border-b border-violet-100">
+						<DialogTitle className="text-base font-semibold text-violet-900">Detail Order {selectedOrder ? `#${selectedOrder.id ?? selectedOrder.orderId ?? ''}` : ''}</DialogTitle>
 					</DialogHeader>
 
 					<div className="min-h-0 flex-1">
@@ -353,15 +358,15 @@ export default function OrdersClient() {
 							{selectedOrder && (
 								<div className="space-y-4">
 									{/* Header */}
-									<div className="rounded-lg border p-3">
+									<div className="rounded-lg border border-violet-100 bg-violet-50/30 p-3">
 										<div className="flex items-start justify-between">
 											{/* Kiri: info order */}
 											<div className="space-y-1">
-												<div className="text-sm font-semibold">#{selectedOrder.id ?? selectedOrder.orderId ?? '—'}</div>
-												<div className="text-xs text-slate-500">{formatDate(selectedOrder.createdAt ?? selectedOrder.created_at ?? selectedOrder.date)}</div>
+												<div className="text-sm font-semibold text-violet-900">#{selectedOrder.id ?? selectedOrder.orderId ?? '—'}</div>
+												<div className="text-xs text-violet-600">{formatDate(selectedOrder.createdAt ?? selectedOrder.created_at ?? selectedOrder.date)}</div>
 												<div className="flex items-center gap-1 text-xs">
-													<span className="text-slate-500">Pembayaran:</span>
-													<span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium ${String(selectedOrder.payment).toLowerCase() === 'cod' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
+													<span className="text-violet-600">Pembayaran:</span>
+													<span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium ${String(selectedOrder.payment).toLowerCase() === 'cod' ? 'bg-yellow-100 text-yellow-800' : 'bg-violet-100 text-violet-800'}`}>
 														{String(selectedOrder.payment).toUpperCase()}
 													</span>
 												</div>
@@ -371,7 +376,14 @@ export default function OrdersClient() {
 											<div className="text-right">
 												{(() => {
 													const s = selectedOrder.status ?? selectedOrder.orderStatus ?? 'unknown';
-													const v = String(s).toLowerCase().includes('cancel') ? 'destructive' : String(s).toLowerCase().includes('pending') ? 'secondary' : 'default';
+													const sLower = String(s).toLowerCase();
+
+													if (sLower.includes('confirmed')) {
+														return <Badge className="text-[10px] bg-violet-600 text-white hover:bg-violet-700">{String(s).toUpperCase()}</Badge>;
+													}
+
+													const v = sLower.includes('cancel') ? 'destructive' : sLower.includes('pending') ? 'secondary' : 'default';
+
 													return (
 														<Badge variant={v} className="text-[10px]">
 															{String(s).toUpperCase()}
@@ -383,8 +395,8 @@ export default function OrdersClient() {
 									</div>
 
 									{/* 🆕 Informasi Customer */}
-									<div className="rounded-lg border p-3">
-										<div className="text-sm font-semibold mb-3 border-b pb-2">Informasi Customer</div>
+									<div className="rounded-lg border border-violet-100 bg-white p-3">
+										<div className="text-sm font-semibold text-violet-900 mb-3 border-b border-violet-100 pb-2">Informasi Customer</div>
 										<div className="grid gap-2 text-sm">
 											<Row label="Nama" value={selectedOrder.customer?.name} />
 											<Row label="Telepon" value={selectedOrder.customer?.phone} />
@@ -394,14 +406,14 @@ export default function OrdersClient() {
 									</div>
 
 									{/* Item detail (tabel) */}
-									<div className="rounded-lg border p-3">
-										<div className="text-sm font-semibold mb-2">Item Detail</div>
+									<div className="rounded-lg border border-violet-100 bg-white p-3">
+										<div className="text-sm font-semibold text-violet-900 mb-2">Item Detail</div>
 										<ItemsTable items={Array.isArray(selectedOrder.items) ? selectedOrder.items : selectedOrder.lines || []} productIndex={productIndex} />
 									</div>
 
 									{/* Ringkasan pembayaran */}
-									<div className="rounded-lg border p-3">
-										<div className="text-sm font-semibold mb-2">Ringkasan Pembayaran</div>
+									<div className="rounded-lg border border-violet-100 bg-white p-3">
+										<div className="text-sm font-semibold text-violet-900 mb-2">Ringkasan Pembayaran</div>
 										<Totals order={selectedOrder} productIndex={productIndex} />
 									</div>
 								</div>
@@ -410,8 +422,8 @@ export default function OrdersClient() {
 						</ScrollArea>
 					</div>
 
-					<DialogFooter className="border-t bg-white/80 px-5 py-3 backdrop-blur">
-						<Button variant="outline" onClick={() => setOpenDetail(false)}>
+					<DialogFooter className="border-t border-violet-100 bg-white/80 px-5 py-3 backdrop-blur">
+						<Button variant="pressPurple" onClick={() => setOpenDetail(false)} className="rounded-full">
 							Tutup
 						</Button>
 					</DialogFooter>
@@ -420,9 +432,9 @@ export default function OrdersClient() {
 
 			{/* ===== POPUP CHAT KHUSUS ORDERS (tetap ada) ===== */}
 			<Dialog open={openChat} onOpenChange={setOpenChat} modal={false}>
-				<DialogContent className="flex h-[80vh] max-w-3xl flex-col gap-3 overflow-hidden p-0">
-					<DialogHeader className="px-5 pt-5">
-						<DialogTitle className="text-base font-semibold">Asisten AI (Orders)</DialogTitle>
+				<DialogContent className="flex h-[80vh] max-w-3xl flex-col gap-3 overflow-hidden p-0 border-violet-200">
+					<DialogHeader className="px-5 pt-5 bg-gradient-to-r from-violet-50 to-purple-50 border-b border-violet-100">
+						<DialogTitle className="text-base font-semibold text-violet-900">Asisten AI (Orders)</DialogTitle>
 					</DialogHeader>
 
 					<div className="min-h-0 flex-1">
@@ -431,10 +443,10 @@ export default function OrdersClient() {
 								{/* Placeholder kalau chat kosong */}
 								{chatMsgs.length === 0 && !isAsking && (
 									<div className="flex justify-center py-12">
-										<div className="text-center text-slate-400 text-sm">
+										<div className="text-center text-violet-400 text-sm">
 											<div className="mb-2 text-2xl">💬</div>
-											<p className="font-medium">Belum ada percakapan</p>
-											<p className="text-slate-500">Tanyakan sesuatu tentang pesanan Anda ✨</p>
+											<p className="font-medium text-violet-600">Belum ada percakapan</p>
+											<p className="text-violet-500">Tanyakan sesuatu tentang pesanan Anda ✨</p>
 										</div>
 									</div>
 								)}
@@ -442,7 +454,7 @@ export default function OrdersClient() {
 								{/* Daftar chat */}
 								{chatMsgs.map((m, i) => (
 									<div key={`${m.role}-${i}`} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-										<div className={`${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white'} max-w-2xl rounded-2xl px-4 py-2 shadow-sm`}>
+										<div className={`${m.role === 'user' ? 'bg-violet-600 text-white' : 'bg-violet-900 text-white'} max-w-2xl rounded-2xl px-4 py-2 shadow-sm`}>
 											<div className="prose prose-invert max-w-none whitespace-pre-wrap">{m.content}</div>
 										</div>
 									</div>
@@ -451,7 +463,7 @@ export default function OrdersClient() {
 								{/* Loader ketika AI sedang berpikir */}
 								{isAsking && (
 									<div className="flex justify-start">
-										<div className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 text-slate-600">
+										<div className="inline-flex items-center gap-2 rounded-xl bg-violet-100 px-3 py-2 text-violet-700">
 											<Loader2 className="h-4 w-4 animate-spin" /> AI sedang memproses...
 										</div>
 									</div>
@@ -459,15 +471,15 @@ export default function OrdersClient() {
 
 								{/* Saran dari katalog */}
 								{catalogSuggestions.length > 0 && (
-									<div className="rounded-lg border p-3">
-										<div className="text-sm font-semibold mb-2">Saran Produk</div>
+									<div className="rounded-lg border border-violet-100 bg-violet-50/30 p-3">
+										<div className="text-sm font-semibold text-violet-900 mb-2">Saran Produk</div>
 										<ul className="space-y-1 text-sm">
 											{catalogSuggestions.map((p) => (
 												<li key={p.id} className="flex items-center justify-between">
-													<Link href={`/products/${p.id}`} target="_blank" className="truncate">
+													<Link href={`/products/${p.id}`} target="_blank" className="truncate text-violet-700 hover:text-violet-900">
 														{p.nama}
 													</Link>
-													<span className="text-slate-600">{formatIDR(p.harga)}</span>
+													<span className="text-violet-600">{formatIDR(p.harga)}</span>
 												</li>
 											))}
 										</ul>
@@ -480,17 +492,17 @@ export default function OrdersClient() {
 						</ScrollArea>
 					</div>
 
-					<DialogFooter className="border-t bg-white/80 px-5 py-3 backdrop-blur">
+					<DialogFooter className="border-t border-violet-100 bg-white/80 px-5 py-3 backdrop-blur">
 						<form onSubmit={handleSubmit} className="flex w-full items-center gap-2">
 							<input
 								value={chatInput}
 								onChange={(e) => setChatInput(e.target.value)}
 								placeholder="Tanya AI tentang pesanan"
-								className="flex-1 rounded-xl border p-3 text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+								className="flex-1 rounded-xl border border-violet-200 p-3 text-violet-900 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
 							/>
-							<button type="submit" disabled={isAsking} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:bg-blue-300">
+							<Button type="submit" disabled={isAsking} variant="pressPurple" className="gap-2 rounded-full">
 								{isAsking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-							</button>
+							</Button>
 						</form>
 					</DialogFooter>
 				</DialogContent>
