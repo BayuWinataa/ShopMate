@@ -62,7 +62,7 @@ export default function FlowSection() {
 						<h2 id="flow-title" className="text-3xl md:text-4xl font-bold tracking-tight">
 							Cara kerja yang simpel ✨
 						</h2>
-						<p className="mt-3 text-slate-600">Scroll pelan — tiap langkah muncul penuh layar.</p>
+						<p className="mt-3"></p>
 					</div>
 				</div>
 
