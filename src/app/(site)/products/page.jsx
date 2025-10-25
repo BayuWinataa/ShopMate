@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Lenis from 'lenis';
 import { createClient } from '@supabase/supabase-js';
 import { ChevronDown } from 'lucide-react';
 import ProductHero from '@/components/products/ProductHero';
@@ -37,6 +38,28 @@ export default function Products() {
 			}
 		};
 		fetchProducts();
+	}, []);
+
+	// Initialize Lenis smooth scroll for the products page (client-side)
+	useEffect(() => {
+		const lenis = new Lenis({
+			duration: 1.2,
+			easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+			smoothWheel: true,
+			smoothTouch: false,
+		});
+
+		function raf(time) {
+			lenis.raf(time);
+			requestAnimationFrame(raf);
+		}
+
+		const rafId = requestAnimationFrame(raf);
+
+		return () => {
+			cancelAnimationFrame(rafId);
+			lenis.destroy();
+		};
 	}, []);
 
 	const categories = useMemo(() => {
