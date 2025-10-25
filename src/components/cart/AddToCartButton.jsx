@@ -29,8 +29,18 @@ export default function AddToCartButton({ product }) {
 	};
 
 	return (
-		<Button className={loading ? 'cursor-not-allowed ' : ''} disabled={loading} onClick={handleClick}>
-			{!isAuthenticated ? 'Login untuk Tambah ke Keranjang' : 'Tambah ke Keranjang'}
+		<Button className={`text-base ${loading ? 'cursor-not-allowed ' : ''} `} disabled={loading} onClick={handleClick} variant="pressPurple">
+			{!isAuthenticated ? (
+				<>
+					<span className="sm:hidden">Login</span>
+					<span className="hidden sm:inline">Login untuk Tambah ke Keranjang</span>
+				</>
+			) : (
+				<>
+					<span className="sm:hidden">Tambah</span>
+					<span className="hidden sm:inline">Tambah ke Keranjang</span>
+				</>
+			)}
 		</Button>
 	);
 }
