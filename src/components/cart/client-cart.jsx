@@ -28,6 +28,42 @@ const Spinner = ({ className = 'h-4 w-4 text-violet-600' }) => (
 	</svg>
 );
 
+// Skeleton Loading Component
+const CartSkeleton = () => (
+	<div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+		{/* List items skeleton */}
+		<div className="space-y-4 lg:col-span-2">
+			{[1, 2, 3].map((i) => (
+				<div key={i} className="rounded-xl border border-violet-200 bg-white p-4 shadow-sm animate-pulse">
+					<div className="flex items-start gap-4">
+						<div className="h-16 w-16 shrink-0 rounded-lg bg-violet-100" />
+						<div className="min-w-0 flex-1 space-y-3">
+							<div className="space-y-2">
+								<div className="h-4 w-3/4 bg-violet-100 rounded" />
+								<div className="h-3 w-1/4 bg-violet-100 rounded" />
+							</div>
+							<div className="flex items-center gap-3">
+								<div className="h-8 w-32 bg-violet-100 rounded-lg" />
+								<div className="ml-auto h-4 w-20 bg-violet-100 rounded" />
+							</div>
+						</div>
+					</div>
+				</div>
+			))}
+		</div>
+		{/* Summary skeleton */}
+		<div className="lg:col-span-1">
+			<div className="sticky top-20 rounded-xl border border-violet-200 bg-white p-4 shadow-sm animate-pulse">
+				<div className="space-y-3">
+					<div className="h-6 w-full bg-violet-100 rounded" />
+					<div className="h-10 w-full bg-violet-100 rounded" />
+					<div className="h-10 w-full bg-violet-100 rounded" />
+				</div>
+			</div>
+		</div>
+	</div>
+);
+
 // debounce helper simpel
 function useDebouncedCallback(cb, delay = 250) {
 	const t = useRef();
@@ -162,11 +198,7 @@ export default function ClientCartPage() {
 
 	// ====== Loading awal
 	if (loading) {
-		return (
-			<div className="mt-10 flex items-center justify-center">
-				<Spinner className="h-8 w-8 text-violet-600" />
-			</div>
-		);
+		return <CartSkeleton />;
 	}
 	if (!user) return null;
 
