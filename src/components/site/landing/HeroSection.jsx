@@ -44,26 +44,26 @@ export default function HeroSection() {
 				{/* Title dengan animasi scale cepat */}
 				<motion.h1
 					id="hero-title"
-					className="max-w-5xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight text-gray-900 dark:text-gray-50"
+					className="max-w-5xl text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight text-gray-900 dark:text-gray-50"
 					initial={{ opacity: 0, scale: 0.7 }}
 					animate={{ opacity: 1, scale: 1 }}
-					transition={{ duration: 0.4, delay: 0.5, ease: 'easeOut' }}
+					transition={{ duration: 0.3, delay: 0.3, ease: 'easeOut' }}
 				>
 					Belanja{' '}
 					<motion.span
 						className="bg-gradient-to-r from-blue-600 via-indigo-600 to-fuchsia-600 bg-clip-text text-transparent"
 						initial={{ opacity: 0, scale: 0.5 }}
 						animate={{ opacity: 1, scale: 1 }}
-						transition={{ duration: 0.4, delay: 0.6, ease: 'easeOut' }}
+						transition={{ duration: 0.3, delay: 0.4, ease: 'easeOut' }}
 					>
 						lebih cerdas
 					</motion.span>{' '}
-					bersama AI
+					bersama Shopmate AI
 				</motion.h1>
 
 				{/* Buttons dengan animasi scale cepat bergantian */}
 				<div className="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-					<motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.7, ease: 'easeOut' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+					<motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.5, ease: 'easeOut' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
 						<Button
 							asChild
 							size="lg"
@@ -76,7 +76,7 @@ export default function HeroSection() {
 						</Button>
 					</motion.div>
 
-					<motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.8, ease: 'easeOut' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+					<motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.6, ease: 'easeOut' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
 						<Button
 							asChild
 							size="lg"
