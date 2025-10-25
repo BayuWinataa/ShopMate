@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 
 export default function AddressesClient() {
@@ -14,6 +15,8 @@ export default function AddressesClient() {
 	const [loading, setLoading] = useState(true);
 	const [open, setOpen] = useState(false);
 	const [editing, setEditing] = useState(null); // existing address or null for create
+	const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+	const [addressToDelete, setAddressToDelete] = useState(null);
 
 	const [label, setLabel] = useState('Utama');
 	const [recipient, setRecipient] = useState('');
@@ -65,15 +68,23 @@ export default function AddressesClient() {
 	};
 
 	const onDelete = async (a) => {
-		if (!confirm('Hapus alamat ini?')) return;
+		setAddressToDelete(a);
+		setDeleteConfirmOpen(true);
+	};
+
+	const confirmDelete = async () => {
+		if (!addressToDelete) return;
 		try {
-			const res = await fetch(`/api/addresses/${a.id}`, { method: 'DELETE' });
+			const res = await fetch(`/api/addresses/${addressToDelete.id}`, { method: 'DELETE' });
 			const json = await res.json().catch(() => ({}));
 			if (!res.ok) throw new Error(json?.error || 'Gagal menghapus alamat');
 			toast.success('Alamat dihapus');
 			load();
 		} catch (e) {
 			toast.error(e.message);
+		} finally {
+			setDeleteConfirmOpen(false);
+			setAddressToDelete(null);
 		}
 	};
 
@@ -105,34 +116,36 @@ export default function AddressesClient() {
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
-				<div className="text-sm text-muted-foreground">Kelola alamat pengiriman</div>
-				<Button onClick={onCreate}>Tambah Alamat</Button>
+				<div className="text-sm text-violet-600">Kelola alamat pengiriman</div>
+				<Button onClick={onCreate} variant="pressPurple" className="rounded-full">
+					Tambah Alamat
+				</Button>
 			</div>
 
 			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 				{loading ? (
-					<div className="text-sm text-muted-foreground">Memuat…</div>
+					<div className="text-sm text-violet-600">Memuat…</div>
 				) : addresses.length === 0 ? (
-					<div className="text-sm text-muted-foreground">Belum ada alamat.</div>
+					<div className="text-sm text-violet-600">Belum ada alamat.</div>
 				) : (
 					addresses.map((a) => (
-						<Card key={a.id}>
+						<Card key={a.id} className="border-violet-100 shadow-sm hover:shadow-md hover:border-violet-200 transition-all duration-300">
 							<CardContent className="p-4 space-y-2">
 								<div className="flex items-center justify-between">
-									<div className="font-medium">{a.label || 'Alamat'}</div>
-									<div className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleDateString('id-ID')}</div>
+									<div className="font-medium text-violet-900">{a.label || 'Alamat'}</div>
+									<div className="text-xs text-violet-600">{new Date(a.created_at).toLocaleDateString('id-ID')}</div>
 								</div>
 								<div className="text-sm">
-									<div className="font-medium">{a.recipient_name}</div>
-									<div className="text-muted-foreground">{a.phone}</div>
-									<div className="mt-1 whitespace-pre-wrap">{a.address}</div>
-									{a.note ? <div className="mt-1 text-muted-foreground">Catatan: {a.note}</div> : null}
+									<div className="font-medium text-violet-900">{a.recipient_name}</div>
+									<div className="text-violet-600">{a.phone}</div>
+									<div className="mt-1 whitespace-pre-wrap text-violet-700">{a.address}</div>
+									{a.note ? <div className="mt-1 text-violet-600">Catatan: {a.note}</div> : null}
 								</div>
 								<div className="flex gap-2 pt-2">
-									<Button variant="outline" size="sm" onClick={() => onEdit(a)}>
+									<Button variant="pressPurple" size="sm" onClick={() => onEdit(a)} className="rounded-full flex-1">
 										Edit
 									</Button>
-									<Button variant="destructive" size="sm" onClick={() => onDelete(a)}>
+									<Button variant="pressPurple" size="sm" onClick={() => onDelete(a)} className="rounded-full flex-1 border-red-700 text-red-700 shadow-[0_4px_0_#b91c1c] hover:bg-red-50">
 										Hapus
 									</Button>
 								</div>
@@ -149,40 +162,71 @@ export default function AddressesClient() {
 					if (!v) resetForm();
 				}}
 			>
-				<DialogContent className="max-w-lg">
-					<DialogHeader>
-						<DialogTitle>{editing ? 'Edit Alamat' : 'Tambah Alamat'}</DialogTitle>
+				<DialogContent className="max-w-lg border-violet-200">
+					<DialogHeader className="bg-gradient-to-r from-violet-50 to-purple-50 -mx-6 -mt-6 px-6 pt-6 pb-4 mb-4 border-b border-violet-100">
+						<DialogTitle className="text-violet-900">{editing ? 'Edit Alamat' : 'Tambah Alamat'}</DialogTitle>
 					</DialogHeader>
 					<form onSubmit={onSubmit} className="space-y-3">
 						<div className="grid gap-1.5">
-							<Label htmlFor="label">Label</Label>
-							<Input id="label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Rumah / Kantor / Utama" />
+							<Label htmlFor="label" className="text-violet-700">
+								Label
+							</Label>
+							<Input id="label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Rumah / Kantor / Utama" className="border-violet-200 focus:border-violet-400 focus:ring-violet-200" />
 						</div>
 						<div className="grid gap-1.5">
-							<Label htmlFor="recipient">Nama Penerima</Label>
-							<Input id="recipient" value={recipient} onChange={(e) => setRecipient(e.target.value)} required />
+							<Label htmlFor="recipient" className="text-violet-700">
+								Nama Penerima
+							</Label>
+							<Input id="recipient" value={recipient} onChange={(e) => setRecipient(e.target.value)} required className="border-violet-200 focus:border-violet-400 focus:ring-violet-200" />
 						</div>
 						<div className="grid gap-1.5">
-							<Label htmlFor="phone">No. HP</Label>
-							<Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+							<Label htmlFor="phone" className="text-violet-700">
+								No. HP
+							</Label>
+							<Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required className="border-violet-200 focus:border-violet-400 focus:ring-violet-200" />
 						</div>
 						<div className="grid gap-1.5">
-							<Label htmlFor="addr">Alamat</Label>
-							<Textarea id="addr" value={addr} onChange={(e) => setAddr(e.target.value)} required />
+							<Label htmlFor="addr" className="text-violet-700">
+								Alamat
+							</Label>
+							<Textarea id="addr" value={addr} onChange={(e) => setAddr(e.target.value)} required className="border-violet-200 focus:border-violet-400 focus:ring-violet-200" />
 						</div>
 						<div className="grid gap-1.5">
-							<Label htmlFor="note">Catatan (opsional)</Label>
-							<Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} />
+							<Label htmlFor="note" className="text-violet-700">
+								Catatan (opsional)
+							</Label>
+							<Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} className="border-violet-200 focus:border-violet-400 focus:ring-violet-200" />
 						</div>
-						<DialogFooter>
-							<Button type="button" variant="outline" onClick={() => setOpen(false)}>
+						<DialogFooter className="gap-2">
+							<Button type="button" variant="pressPurple" onClick={() => setOpen(false)} className="rounded-full border-gray-700 text-gray-700 shadow-[0_4px_0_#374151] hover:bg-gray-50">
 								Batal
 							</Button>
-							<Button type="submit">Simpan</Button>
+							<Button type="submit" variant="pressPurple" className="rounded-full">
+								Simpan
+							</Button>
 						</DialogFooter>
 					</form>
 				</DialogContent>
 			</Dialog>
+
+			<AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+				<AlertDialogContent className="border-red-200">
+					<AlertDialogHeader className="bg-gradient-to-r from-red-50 to-orange-50 -mx-6 -mt-6 px-6 pt-6 pb-4 mb-4 border-b border-red-100">
+						<AlertDialogTitle className="text-red-900">Konfirmasi Hapus</AlertDialogTitle>
+						<AlertDialogDescription className="text-red-700">
+							Apakah Anda yakin ingin menghapus alamat <span className="font-semibold">{addressToDelete?.label || 'ini'}</span>? Tindakan ini tidak dapat dibatalkan.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter className="gap-2">
+						<Button variant="pressPurple" onClick={() => setDeleteConfirmOpen(false)} className="rounded-full border-gray-700 text-gray-700 shadow-[0_4px_0_#374151] hover:bg-gray-50">
+							Batal
+						</Button>
+						<Button variant="pressPurple" onClick={confirmDelete} className="rounded-full border-red-700 text-red-700 shadow-[0_4px_0_#b91c1c] hover:bg-red-50">
+							Hapus
+						</Button>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

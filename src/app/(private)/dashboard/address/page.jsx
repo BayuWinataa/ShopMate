@@ -6,24 +6,24 @@ import { Separator } from '@/components/ui/separator';
 export const metadata = { title: 'Alamat · Dashboard' };
 
 export default async function AddressPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+	const supabase = await createSupabaseServerClient();
+	const {
+		data: { user },
+		error,
+	} = await supabase.auth.getUser();
 
-  if (error || !user) {
-    redirect('/login?next=/dashboard/address');
-  }
+	if (error || !user) {
+		redirect('/login?next=/dashboard/address');
+	}
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Alamat</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Kelola alamat pengiriman Anda.</p>
-      </div>
-      <Separator />
-      <AddressesClient />
-    </div>
-  );
+	return (
+		<div className="space-y-6">
+			<div>
+				<h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">Alamat</h1>
+				<p className="mt-1 text-sm text-violet-600">Kelola alamat pengiriman Anda.</p>
+			</div>
+			<Separator className="bg-violet-200" />
+			<AddressesClient />
+		</div>
+	);
 }
