@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
+import SplashScreen from '@/components/SplashScreen';
 import Decor from '@/components/site/landing/Decor';
 import HeroSection from '@/components/site/landing/HeroSection';
 import AdvantagesSection from '@/components/site/landing/AdvantagesSection';
@@ -13,6 +14,19 @@ import CtaSection from '@/components/site/landing/CtaSection';
 // This page represents the home/landing page
 
 export default function LandingPage() {
+	const [showSplash, setShowSplash] = useState(false);
+
+	useEffect(() => {
+		// Check if page was refreshed or if splash has been shown in this session
+		const navigationEntry = performance.getEntriesByType('navigation')[0];
+		const isReload = navigationEntry && navigationEntry.type === 'reload';
+		const splashShown = sessionStorage.getItem('splashShown');
+
+		if (isReload || !splashShown) {
+			setShowSplash(true);
+		}
+	}, []);
+
 	useEffect(() => {
 		// Initialize Lenis
 		const lenis = new Lenis({
@@ -40,6 +54,11 @@ export default function LandingPage() {
 			lenis.destroy();
 		};
 	}, []);
+
+	const handleSplashComplete = () => {
+		setShowSplash(false);
+		sessionStorage.setItem('splashShown', 'true');
+	};
 
 	return (
 		<>
@@ -81,14 +100,19 @@ export default function LandingPage() {
 					}),
 				}}
 			/>
-			<div className="relative min-h-screen overflow-x-clip ">
-				{/* <Decor /> */}
-				<HeroSection />
-				<AdvantagesSection />
-				<InvoiceIQSection />
-				<FlowSection />
-				<CtaSection />
-			</div>
+
+			{showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+
+			{!showSplash && (
+				<div className="relative min-h-screen overflow-x-clip ">
+					{/* <Decor /> */}
+					<HeroSection />
+					<AdvantagesSection />
+					<InvoiceIQSection />
+					<FlowSection />
+					<CtaSection />
+				</div>
+			)}
 		</>
 	);
 }
