@@ -21,7 +21,7 @@ export default async function AdminCartItemsPage({ searchParams }) {
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
 				<div className="space-y-1">
-					<h2 className="text-2xl font-bold tracking-tight">Cart Items</h2>
+					<h2 className="text-2xl font-bold tracking-tight text-violet-900">Cart Items</h2>
 					<p className="text-sm text-violet-600">Daftar item keranjang pengguna.</p>
 				</div>
 			</div>
@@ -29,13 +29,13 @@ export default async function AdminCartItemsPage({ searchParams }) {
 			<div className="rounded-xl border bg-card">
 				<Table>
 					<TableHeader>
-						<TableRow>
-							<TableHead>User ID</TableHead>
-							<TableHead>Product ID</TableHead>
-							<TableHead className="text-right">Quantity</TableHead>
-							<TableHead>Dibuat</TableHead>
-							<TableHead>Diperbarui</TableHead>
-							<TableHead className="text-center">Aksi</TableHead>
+						<TableRow className="bg-violet-50">
+							<TableHead className="text-violet-600">User ID</TableHead>
+							<TableHead className="text-violet-600">Product ID</TableHead>
+							<TableHead className="text-violet-600">Quantity</TableHead>
+							<TableHead className="text-violet-600">Dibuat</TableHead>
+							<TableHead className="text-violet-600">Diperbarui</TableHead>
+							<TableHead className="text-center text-violet-600">Aksi</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -59,7 +59,7 @@ export default async function AdminCartItemsPage({ searchParams }) {
 							<TableRow key={it.id}>
 								<TableCell className="text-violet-600">{it.user_id}</TableCell>
 								<TableCell className="text-violet-600">{it.product_id}</TableCell>
-								<TableCell className="text-right">{it.quantity}</TableCell>
+								<TableCell className="text-violet-600">{it.quantity}</TableCell>
 								<TableCell className="text-violet-600">{it.created_at ? new Date(it.created_at).toLocaleString('id-ID') : '-'}</TableCell>
 								<TableCell className="text-violet-600">{it.updated_at ? new Date(it.updated_at).toLocaleString('id-ID') : '-'}</TableCell>
 								<TableCell className="text-center">
@@ -69,7 +69,7 @@ export default async function AdminCartItemsPage({ searchParams }) {
 						))}
 					</TableBody>
 					{typeof total === 'number' && (
-						<TableCaption>
+						<TableCaption className="text-violet-600">
 							Menampilkan {items?.length ?? 0} dari {total} item.
 						</TableCaption>
 					)}

@@ -14,14 +14,14 @@ export default function Loading() {
 			<div className="rounded-xl border bg-card">
 				<Table>
 					<TableHeader>
-						<TableRow>
-							<TableHead className="w-12 text-center">No</TableHead>
-							<TableHead className="w-16">Gambar</TableHead>
-							<TableHead>Nama</TableHead>
-							<TableHead>Kategori</TableHead>
-							<TableHead>Harga</TableHead>
-							<TableHead className="hidden md:table-cell">Dibuat</TableHead>
-							<TableHead className="text-right">Aksi</TableHead>
+						<TableRow className="bg-violet-50">
+							<TableHead className="w-12 text-center text-violet-600">No</TableHead>
+							<TableHead className="w-16 text-violet-600">Gambar</TableHead>
+							<TableHead className="text-violet-600">Nama</TableHead>
+							<TableHead className="text-violet-600">Kategori</TableHead>
+							<TableHead className="text-violet-600">Harga</TableHead>
+							<TableHead className="hidden md:table-cell text-violet-600">Dibuat</TableHead>
+							<TableHead className="text-right text-violet-600">Aksi</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>

@@ -21,7 +21,7 @@ export default function CartItemViewDialog({ item }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button size="sm" variant="outline">
+				<Button size="sm" variant="pressPurple">
 					Detail
 				</Button>
 			</DialogTrigger>
@@ -56,7 +56,7 @@ export default function CartItemViewDialog({ item }) {
 
 				<DialogFooter>
 					<DialogClose asChild>
-						<Button type="button" variant="outline">
+						<Button type="button" variant="pressPurple">
 							Tutup
 						</Button>
 					</DialogClose>
