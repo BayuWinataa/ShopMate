@@ -31,12 +31,20 @@ function NavLink({ href, children }) {
 export default function Header() {
 	const { user, loading } = useAuth();
 	const [mounted, setMounted] = useState(false);
+	const [isAdmin, setIsAdmin] = useState(false);
 
 	// ⬇️ NEW: state untuk apakah sudah discroll
 	const [scrolled, setScrolled] = useState(false);
 
 	useEffect(() => {
 		setMounted(true);
+
+		// Check for admin session flag (some admin flows use sessionStorage)
+		try {
+			setIsAdmin(sessionStorage.getItem('adminAuth') === 'true');
+		} catch (e) {
+			setIsAdmin(false);
+		}
 
 		// handler scroll yang ringan (dibungkus rAF biar hemat)
 		let ticking = false;
@@ -131,6 +139,10 @@ export default function Header() {
 
 				{loading ? (
 					<div className="hidden md:block h-10 w-10 animate-pulse bg-gray-200 rounded-full" />
+				) : isAdmin ? (
+					<Link href="/admin" className="hidden md:block rounded-lg p-1 transition btn-press">
+						<EmailAvatar email={user?.email ?? 'admin@local'} size="default" />
+					</Link>
 				) : user ? (
 					<Link href="/dashboard" className="hidden md:block rounded-lg p-1 transition btn-press">
 						<EmailAvatar email={user.email} size="default" />
@@ -152,7 +164,7 @@ export default function Header() {
 					</div>
 				)}
 
-				<MobileMenu loading={loading} user={user} />
+				<MobileMenu loading={loading} user={user} isAdmin={isAdmin} />
 			</div>
 		</Shell>
 	);
@@ -173,7 +185,7 @@ function SimpleHamburger({ isOpen }) {
 }
 
 // Sidebar mobile dengan animasi super keren! 🎨✨
-function MobileMenu({ loading, user }) {
+function MobileMenu({ loading, user, isAdmin }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
@@ -247,6 +259,22 @@ function MobileMenu({ loading, user }) {
 							<motion.div className="flex items-center gap-3 rounded-xl border p-4 bg-gradient-to-r from-violet-500/5 to-purple-500/5" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>
 								<div className="h-12 w-12 animate-pulse rounded-full bg-gradient-to-br from-violet-400/20 to-purple-400/20" />
 								<div className="h-3 w-24 animate-pulse rounded bg-muted" />
+							</motion.div>
+						) : isAdmin ? (
+							<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+								<Link
+									href="/admin"
+									className="flex items-center gap-3 rounded-xl border p-4 hover:bg-gradient-to-r hover:from-violet-500/10 hover:to-purple-500/10 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20 group"
+									onClick={() => setIsOpen(false)}
+								>
+									<motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
+										<EmailAvatar email={user?.email ?? 'admin@local'} size="default" />
+									</motion.div>
+									<div className="grid">
+										<span className="text-sm font-semibold leading-none group-hover:text-violet-600 transition-colors">Admin</span>
+										<span className="text-xs text-muted-foreground mt-1">{user?.email ?? 'admin'}</span>
+									</div>
+								</Link>
 							</motion.div>
 						) : user ? (
 							<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -332,10 +360,16 @@ function MobileMenu({ loading, user }) {
 							<AnimatedNavItem href="/chat" icon="💬" onClick={() => setIsOpen(false)} hasBeenOpened={hasBeenOpened}>
 								Chat AI
 							</AnimatedNavItem>
-							{user && (
-								<AnimatedNavItem href="/dashboard" icon="📊" onClick={() => setIsOpen(false)} hasBeenOpened={hasBeenOpened}>
-									Dashboard
+							{isAdmin ? (
+								<AnimatedNavItem href="/admin" icon="🛠️" onClick={() => setIsOpen(false)} hasBeenOpened={hasBeenOpened}>
+									Admin
 								</AnimatedNavItem>
+							) : (
+								user && (
+									<AnimatedNavItem href="/dashboard" icon="📊" onClick={() => setIsOpen(false)} hasBeenOpened={hasBeenOpened}>
+										Dashboard
+									</AnimatedNavItem>
+								)
 							)}
 						</div>
 					</motion.div>
