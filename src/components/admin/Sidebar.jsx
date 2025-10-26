@@ -1,8 +1,13 @@
+"use client";
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
+import { Button } from '@/components/ui/button';
 
 export default function Sidebar() {
 	const pathname = usePathname();
+	const { signOut } = useAuth();
 
 	const navItems = [
 		{ href: '/admin', label: 'Dashboard' },
@@ -32,6 +37,12 @@ export default function Sidebar() {
 					</Link>
 				))}
 			</nav>
+
+			<div className="p-4 border-t border-violet-100">
+				<Button variant="pressViolet" size="default" className="w-full" onClick={async () => await signOut()}>
+					Logout
+				</Button>
+			</div>
 		</aside>
 	);
 }
