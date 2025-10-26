@@ -225,9 +225,7 @@ ${context ? `KONTEKS TAMBAHAN:\n${context}\n` : ''}
 - Saat merekomendasikan:
   1) **Pilih 3–5 produk** paling relevan (prioritas: kecocokan kebutuhan → harga → ketersediaan fitur → ulasan internal bila ada).
   2) Sertakan **nama produk** persis, **perkiraan harga (format IDR)**, **fitur kunci**, dan **alasan singkat**.
-  3) Jika cocok, tampilkan **tabel banding singkat** (fitur/berat/dimensi/garansi/jenis koneksi, dsb. yang memang ada di JSON).
-  4) Tutup dengan: , “Bandingkan 2 produk ini”, atau “Tanya lagi”.
-  5) Jangan tampilkan ID produk di balasan.
+  3) Jangan tampilkan ID produk di balasan.
 
 - Jika pengguna menyebut target penerima (mis. “untuk ayah”), preferensikan fitur relevan (kenyamanan, kemudahan pakai, ketahanan).
 
