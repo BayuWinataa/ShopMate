@@ -216,7 +216,8 @@ ${context ? `KONTEKS TAMBAHAN:\n${context}\n` : ''}
 - Jangan tampilkan id dari produk (misal [ID:23]) di balasan ke user.
 - Tanyakan **maksimal 2 pertanyaan singkat** hanya jika benar-benar diperlukan untuk memperjelas (misal: budget atau preferensi kunci).
   - Jika user belum menjawab, **lanjutkan dengan asumsi wajar** (jelaskan asumsi), lalu berikan rekomendasi awal.
-- Hindari paragraf panjang. Gunakan heading singkat, poin, dan tabel ringkas saat bermanfaat.
+- Hindari paragraf panjang. Gunakan heading singkat, poin-poin, dan format Markdown untuk keterbacaan.
+- Hindari penggunaan spasi kosong berlebihan atau baris baru yang tidak perlu.
 - Hindari spam emoji; gunakan seperlunya (maks 1 di judul/heading bila cocok).
 
 /* ======================

@@ -17,13 +17,17 @@ export default function LandingPage() {
 	const [showSplash, setShowSplash] = useState(false);
 
 	useEffect(() => {
-		// Check if page was refreshed or if splash has been shown in this session
-		const navigationEntry = performance.getEntriesByType('navigation')[0];
-		const isReload = navigationEntry && navigationEntry.type === 'reload';
-		const splashShown = sessionStorage.getItem('splashShown');
-
-		if (isReload || !splashShown) {
-			setShowSplash(true);
+		// Show splash only once per user (persisted). Use localStorage so splash
+		// won't reappear on reloads or new sessions on the same device.
+		try {
+			const splashShown = localStorage.getItem('shopmate.splashShown');
+			if (!splashShown) {
+				setShowSplash(true);
+			}
+		} catch (err) {
+			// If localStorage is unavailable (e.g. strict privacy mode), fallback to session-only behavior
+			const splashShown = sessionStorage.getItem('splashShown');
+			if (!splashShown) setShowSplash(true);
 		}
 	}, []);
 
@@ -57,7 +61,12 @@ export default function LandingPage() {
 
 	const handleSplashComplete = () => {
 		setShowSplash(false);
-		sessionStorage.setItem('splashShown', 'true');
+		try {
+			localStorage.setItem('shopmate.splashShown', 'true');
+		} catch (err) {
+			// Fallback if localStorage not writable
+			sessionStorage.setItem('splashShown', 'true');
+		}
 	};
 
 	return (

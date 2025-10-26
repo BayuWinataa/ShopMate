@@ -19,7 +19,8 @@ export async function POST(req) {
         2.  Mulai dengan judul perbandingan, contoh: ": [Nama Produk A] vs [Nama Produk B]**".
         3.  Buat bagian "Keunggulan Utama" untuk masing-masing produk.
         4.  Buat bagian "Potensi Kelemahan" untuk masing-masing produk.
-        5.  Akhiri dengan bagian "Kesimpulan & Rekomendasi" yang secara jelas merekomendasikan satu produk untuk persona pengguna yang diberikan, beserta alasannya.
+		5.  Jangan bahas hal di luar konteks produkA, produkB dan persona pengguna
+        6.  Akhiri dengan bagian "Kesimpulan & Rekomendasi" yang secara jelas merekomendasikan satu produk untuk persona pengguna yang diberikan, beserta alasannya.
         
         Persona Pengguna saat ini adalah: "${userPersona}"`;
 
