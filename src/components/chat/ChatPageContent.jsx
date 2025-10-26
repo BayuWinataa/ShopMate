@@ -180,16 +180,21 @@ export default function ChatPageContent() {
 											<AlertDialogDescription>Apakah Anda yakin ingin menghapus semua riwayat percakapan? Tindakan ini tidak dapat dibatalkan.</AlertDialogDescription>
 										</AlertDialogHeader>
 										<AlertDialogFooter>
-											<AlertDialogCancel>Batal</AlertDialogCancel>
-											<AlertDialogAction
+											<AlertDialogCancel asChild>
+												<Button variant="pressPurple" className="active:shadow-none active:translate-y-[4px] shadow-[0_4px_0_#6b21a8] ">
+													Batal
+												</Button>
+											</AlertDialogCancel>
+											<Button
+												variant="pressPurple"
 												onClick={() => {
 													clearChatHistory();
 													setIsDeleteDialogOpen(false);
 												}}
-												className="bg-red-500 hover:bg-red-600"
+												className="bg-red-500 border-red-500 text-white shadow-[0_4px_0_#dc2626] hover:bg-red-600 active:shadow-none active:translate-y-[4px]"
 											>
 												Hapus
-											</AlertDialogAction>
+											</Button>
 										</AlertDialogFooter>
 									</AlertDialogContent>
 								</AlertDialog>
