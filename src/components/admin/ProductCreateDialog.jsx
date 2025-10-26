@@ -35,7 +35,7 @@ function parseTags(input) {
 	return arr.length ? arr : null;
 }
 
-export default function ProductCreateDialog() {
+export default function ProductCreateDialog({ onSuccess }) {
 	const router = useRouter();
 	const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
@@ -93,7 +93,7 @@ export default function ProductCreateDialog() {
 			setTags('');
 
 			setOpen(false);
-			router.refresh();
+			if (onSuccess) onSuccess();
 		} catch (err) {
 			setError(err?.message || 'Terjadi kesalahan.');
 		} finally {
@@ -106,128 +106,138 @@ export default function ProductCreateDialog() {
 			<DialogTrigger asChild>
 				<Button variant="pressViolet">Tambah Produk</Button>
 			</DialogTrigger>
-			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-xl max-h-[88vh] overflow-y-auto">
-				<DialogHeader>
+			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-xl max-h-[88vh] overflow-y-auto p-0">
+				<DialogHeader className="px-5 pt-5 pb-3">
 					<DialogTitle className="text-violet-900">Tambah Produk</DialogTitle>
 					<DialogDescription className="text-violet-600">Isi detail produk kemudian simpan untuk menambahkan ke katalog.</DialogDescription>
 				</DialogHeader>
 
-				<form onSubmit={onSubmit} className="space-y-4">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+				{/* Separator */}
+				<div className="h-px bg-border/80" />
+
+				{/* Body scrollable */}
+				<div className="px-5 py-4">
+					<form id="product-create-form" onSubmit={onSubmit} className="space-y-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="space-y-2">
+								<Label htmlFor="nama" className="text-violet-600">
+									Nama<span className="text-rose-600">*</span>
+								</Label>
+								<Input
+									id="nama"
+									className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+									value={nama}
+									onChange={(e) => setNama(e.target.value)}
+									placeholder="Contoh: Laptop XYZ"
+									required
+								/>
+							</div>
+							<div className="space-y-2">
+								<Label htmlFor="kategori" className="text-violet-600">
+									Kategori
+								</Label>
+								<Input
+									id="kategori"
+									className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+									value={kategori}
+									onChange={(e) => setKategori(e.target.value)}
+									placeholder="Contoh: Elektronik"
+								/>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+							<div className="space-y-2">
+								<Label htmlFor="harga" className="text-violet-600">
+									Harga (IDR)<span className="text-rose-600">*</span>
+								</Label>
+								<Input
+									id="harga"
+									className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+									type="number"
+									min="0"
+									value={harga}
+									onChange={(e) => setHarga(e.target.value)}
+									placeholder="2000000"
+									required
+								/>
+							</div>
+							<div className="space-y-2" />
+							<div className="space-y-2" />
+						</div>
+
 						<div className="space-y-2">
-							<Label htmlFor="nama" className="text-violet-600">
-								Nama<span className="text-rose-600">*</span>
+							<Label htmlFor="gambar" className="text-violet-600">
+								URL Gambar
 							</Label>
 							<Input
-								id="nama"
+								id="gambar"
 								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-								value={nama}
-								onChange={(e) => setNama(e.target.value)}
-								placeholder="Contoh: Laptop XYZ"
-								required
+								value={gambar}
+								onChange={(e) => setGambar(e.target.value)}
+								placeholder="https://..."
 							/>
 						</div>
+
 						<div className="space-y-2">
-							<Label htmlFor="kategori" className="text-violet-600">
-								Kategori
+							<Label htmlFor="deskripsi" className="text-violet-600">
+								Deskripsi
+							</Label>
+							<Textarea
+								id="deskripsi"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={deskripsi}
+								onChange={(e) => setDeskripsi(e.target.value)}
+								placeholder="Deskripsi singkat produk"
+								rows={3}
+							/>
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="longDeskripsi" className="text-violet-600">
+								Deskripsi Panjang
+							</Label>
+							<Textarea
+								id="longDeskripsi"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={longDeskripsi}
+								onChange={(e) => setLongDeskripsi(e.target.value)}
+								placeholder="Detail lengkap produk"
+								rows={5}
+							/>
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="tags" className="text-violet-600">
+								Tags (pisahkan dengan koma)
 							</Label>
 							<Input
-								id="kategori"
+								id="tags"
 								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-								value={kategori}
-								onChange={(e) => setKategori(e.target.value)}
-								placeholder="Contoh: Elektronik"
+								value={tags}
+								onChange={(e) => setTags(e.target.value)}
+								placeholder="baru, promo, limited"
 							/>
 						</div>
-					</div>
 
-					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-						<div className="space-y-2">
-							<Label htmlFor="harga" className="text-violet-600">
-								Harga (IDR)<span className="text-rose-600">*</span>
-							</Label>
-							<Input
-								id="harga"
-								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-								type="number"
-								min="0"
-								value={harga}
-								onChange={(e) => setHarga(e.target.value)}
-								placeholder="2000000"
-								required
-							/>
-						</div>
-						<div className="space-y-2" />
-						<div className="space-y-2" />
-					</div>
+						{error && <p className="text-sm text-rose-600">{error}</p>}
+					</form>
+				</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="gambar" className="text-violet-600">
-							URL Gambar
-						</Label>
-						<Input
-							id="gambar"
-							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-							value={gambar}
-							onChange={(e) => setGambar(e.target.value)}
-							placeholder="https://..."
-						/>
-					</div>
+				{/* Separator */}
+				<div className="h-px bg-border/80" />
 
-					<div className="space-y-2">
-						<Label htmlFor="deskripsi" className="text-violet-600">
-							Deskripsi
-						</Label>
-						<Textarea
-							id="deskripsi"
-							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-							value={deskripsi}
-							onChange={(e) => setDeskripsi(e.target.value)}
-							placeholder="Deskripsi singkat produk"
-							rows={3}
-						/>
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="longDeskripsi" className="text-violet-600">
-							Deskripsi Panjang
-						</Label>
-						<Textarea
-							id="longDeskripsi"
-							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-							value={longDeskripsi}
-							onChange={(e) => setLongDeskripsi(e.target.value)}
-							placeholder="Detail lengkap produk"
-							rows={5}
-						/>
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="tags" className="text-violet-600">
-							Tags (pisahkan dengan koma)
-						</Label>
-						<Input
-							id="tags"
-							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-							value={tags}
-							onChange={(e) => setTags(e.target.value)}
-							placeholder="baru, promo, limited"
-						/>
-					</div>
-
-					{error && <p className="text-sm text-rose-600">{error}</p>}
-
-					<DialogFooter>
-						<DialogClose asChild>
-							<Button type="button" variant="pressPurple">
-								Batal
-							</Button>
-						</DialogClose>
-						<Button type="submit" variant="pressPurple" >
-							{loading ? 'Menyimpan...' : 'Simpan'}
+				{/* Footer */}
+				<DialogFooter className="px-5 py-4">
+					<DialogClose asChild>
+						<Button type="button" variant="pressViolet">
+							Batal
 						</Button>
-					</DialogFooter>
-				</form>
+					</DialogClose>
+					<Button type="submit" variant="pressViolet" disabled={!canSubmit || loading} onClick={() => document.getElementById('product-create-form')?.requestSubmit()}>
+						{loading ? 'Menyimpan...' : 'Simpan'}
+					</Button>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);

@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
 				<AuthProviderWrapper>
 					<CartProvider>
 						{children}
-						<Toaster richColors />
+						<Toaster position="top-center" richColors />
 						<CartSheet />
 					</CartProvider>
 				</AuthProviderWrapper>

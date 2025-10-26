@@ -55,5 +55,3 @@ function useAuth() {
 
 	return { isAuthenticated, isLoading, handleLogout };
 }
-
-

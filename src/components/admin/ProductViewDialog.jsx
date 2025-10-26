@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function formatIDR(n) {
@@ -70,13 +69,13 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-2xl md:max-w-3xl max-h-[88vh] overflow-hidden p-0">
+			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-2xl md:max-w-3xl max-h-[88vh] overflow-y-auto p-0">
 				{/* Header */}
 				<DialogHeader className="px-5 pt-5 pb-3">
 					<div className="min-w-0">
-						<DialogTitle className="truncate text-xl leading-tight">{product?.nama ?? 'Detail Produk'}</DialogTitle>
+						<DialogTitle className="truncate text-xl leading-tight text-violet-900">{product?.nama ?? 'Detail Produk'}</DialogTitle>
 						{(product?.kategori || created || updated) && (
-							<DialogDescription className="mt-1">
+							<DialogDescription className="mt-1 text-violet-600">
 								{product?.kategori ? <span className="capitalize">{product.kategori}</span> : null}
 								{created ? (
 									<>
@@ -96,7 +95,7 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 				<div className="h-px bg-border/80" />
 
 				{/* Body scrollable */}
-				<ScrollArea className="px-5 py-4 max-h-[60vh]">
+				<div className="px-5 py-4">
 					<div className="grid grid-cols-1 gap-4">
 						{/* Image */}
 						<div>
@@ -118,13 +117,21 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 						<div className="space-y-4">
 							{/* Semua Data dari Database */}
 							<div className="rounded-lg border bg-white">
-								<div className="px-4 py-3 border-b text-sm font-medium">Semua Data</div>
+								<div className="px-4 py-3 border-b text-sm font-medium text-violet-900">Semua Data</div>
 								<div className="px-4 py-3">
 									<div className="grid grid-cols-1 gap-2">
 										{Object.entries(product || {}).map(([key, val]) => (
-											<div key={key} className="grid gap-1 sm:grid-cols-[180px_1fr] sm:gap-1 items-start text-sm">
-												<div className="text-violet-600">{formatKey(key)}</div>
-												<div className="text-violet-900 break-words whitespace-pre-wrap">{formatValue(key, val)}</div>
+											<div key={key} className="grid gap-1 grid-cols-1 xs:grid-cols-[120px_1fr] sm:grid-cols-[160px_1fr] md:grid-cols-[180px_1fr] items-start text-sm">
+												<div className="text-violet-600 font-medium break-words">{formatKey(key)}</div>
+												<div className="text-violet-900 break-words whitespace-pre-wrap overflow-wrap-anywhere">
+													{key === 'gambar' || key === 'image' ? (
+														<a href={formatValue(key, val)} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline break-all hover:no-underline transition-colors">
+															{formatValue(key, val)}
+														</a>
+													) : (
+														formatValue(key, val)
+													)}
+												</div>
 											</div>
 										))}
 									</div>
@@ -132,7 +139,7 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 							</div>
 						</div>
 					</div>
-				</ScrollArea>
+				</div>
 
 				{/* Separator */}
 				<div className="h-px bg-border/80" />

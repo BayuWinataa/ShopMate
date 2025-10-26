@@ -46,7 +46,7 @@ function stringifyTagsForInput(val) {
 	}
 }
 
-export default function ProductEditDialog({ product }) {
+export default function ProductEditDialog({ product, onSuccess }) {
 	const router = useRouter();
 	const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
@@ -90,7 +90,7 @@ export default function ProductEditDialog({ product }) {
 			}
 
 			setOpen(false);
-			router.refresh();
+			if (onSuccess) onSuccess();
 		} catch (err) {
 			setError(err?.message || 'Terjadi kesalahan.');
 		} finally {
@@ -105,70 +105,127 @@ export default function ProductEditDialog({ product }) {
 					Edit
 				</Button>
 			</DialogTrigger>
-			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-xl max-h-[88vh] overflow-y-auto">
-				<DialogHeader>
-					<DialogTitle>Edit Produk</DialogTitle>
-					<DialogDescription>Ubah data produk lalu simpan untuk memperbarui.</DialogDescription>
+			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-xl max-h-[88vh] overflow-y-auto p-0">
+				<DialogHeader className="px-5 pt-5 pb-3">
+					<DialogTitle className="text-violet-900">Edit Produk</DialogTitle>
+					<DialogDescription className="text-violet-600">Ubah data produk lalu simpan untuk memperbarui.</DialogDescription>
 				</DialogHeader>
 
-				<form onSubmit={onSubmit} className="space-y-4">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+				{/* Separator */}
+				<div className="h-px bg-border/80" />
+
+				{/* Body scrollable */}
+				<div className="px-5 py-4">
+					<form id="product-edit-form" onSubmit={onSubmit} className="space-y-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="space-y-2">
+								<Label htmlFor="nama-edit" className="text-violet-600">
+									Nama<span className="text-rose-600">*</span>
+								</Label>
+								<Input
+									id="nama-edit"
+									className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+									value={nama}
+									onChange={(e) => setNama(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="space-y-2">
+								<Label htmlFor="kategori-edit" className="text-violet-600">
+									Kategori
+								</Label>
+								<Input
+									id="kategori-edit"
+									className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+									value={kategori}
+									onChange={(e) => setKategori(e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+							<div className="space-y-2">
+								<Label htmlFor="harga-edit" className="text-violet-600">
+									Harga (IDR)<span className="text-rose-600">*</span>
+								</Label>
+								<Input
+									id="harga-edit"
+									className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+									type="number"
+									min="0"
+									value={harga}
+									onChange={(e) => setHarga(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="space-y-2" />
+							<div className="space-y-2" />
+						</div>
+
 						<div className="space-y-2">
-							<Label htmlFor="nama-edit">
-								Nama<span className="text-rose-600">*</span>
+							<Label htmlFor="gambar-edit" className="text-violet-600">
+								URL Gambar
 							</Label>
-							<Input id="nama-edit" value={nama} onChange={(e) => setNama(e.target.value)} required />
+							<Input id="gambar-edit" className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1" value={gambar} onChange={(e) => setGambar(e.target.value)} />
 						</div>
-						<div className="space-y-2">
-							<Label htmlFor="kategori-edit">Kategori</Label>
-							<Input id="kategori-edit" value={kategori} onChange={(e) => setKategori(e.target.value)} />
-						</div>
-					</div>
 
-					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div className="space-y-2">
-							<Label htmlFor="harga-edit">
-								Harga (IDR)<span className="text-rose-600">*</span>
+							<Label htmlFor="deskripsi-edit" className="text-violet-600">
+								Deskripsi
 							</Label>
-							<Input id="harga-edit" type="number" min="0" value={harga} onChange={(e) => setHarga(e.target.value)} required />
+							<Textarea
+								id="deskripsi-edit"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={deskripsi}
+								onChange={(e) => setDeskripsi(e.target.value)}
+								rows={3}
+							/>
 						</div>
-						<div className="space-y-2" />
-						<div className="space-y-2" />
-					</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="gambar-edit">URL Gambar</Label>
-						<Input id="gambar-edit" value={gambar} onChange={(e) => setGambar(e.target.value)} />
-					</div>
+						<div className="space-y-2">
+							<Label htmlFor="longDeskripsi-edit" className="text-violet-600">
+								Deskripsi Panjang
+							</Label>
+							<Textarea
+								id="longDeskripsi-edit"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={longDeskripsi}
+								onChange={(e) => setLongDeskripsi(e.target.value)}
+								rows={5}
+							/>
+						</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="deskripsi-edit">Deskripsi</Label>
-						<Textarea id="deskripsi-edit" value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} rows={3} />
-					</div>
+						<div className="space-y-2">
+							<Label htmlFor="tags-edit" className="text-violet-600">
+								Tags (pisahkan dengan koma)
+							</Label>
+							<Input
+								id="tags-edit"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={tags}
+								onChange={(e) => setTags(e.target.value)}
+								placeholder="baru, promo, limited"
+							/>
+						</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="longDeskripsi-edit">Deskripsi Panjang</Label>
-						<Textarea id="longDeskripsi-edit" value={longDeskripsi} onChange={(e) => setLongDeskripsi(e.target.value)} rows={5} />
-					</div>
+						{error && <p className="text-sm text-rose-600">{error}</p>}
+					</form>
+				</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="tags-edit">Tags (pisahkan dengan koma)</Label>
-						<Input id="tags-edit" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="baru, promo, limited" />
-					</div>
+				{/* Separator */}
+				<div className="h-px bg-border/80" />
 
-					{error && <p className="text-sm text-rose-600">{error}</p>}
-
-					<DialogFooter>
-						<DialogClose asChild>
-							<Button type="button" variant="outline">
-								Batal
-							</Button>
-						</DialogClose>
-						<Button type="submit" variant="pressViolet" disabled={!canSubmit || loading}>
-							{loading ? 'Menyimpan...' : 'Simpan'}
+				{/* Footer */}
+				<DialogFooter className="px-5 py-4">
+					<DialogClose asChild>
+						<Button type="button" variant="pressViolet">
+							Batal
 						</Button>
-					</DialogFooter>
-				</form>
+					</DialogClose>
+					<Button type="submit" variant="pressViolet" disabled={!canSubmit || loading} onClick={() => document.getElementById('product-edit-form')?.requestSubmit()}>
+						{loading ? 'Menyimpan...' : 'Simpan'}
+					</Button>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);
