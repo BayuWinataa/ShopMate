@@ -1,13 +1,23 @@
-"use client";
+'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function Sidebar() {
 	const pathname = usePathname();
-	const { signOut } = useAuth();
+	// Try to get signOut from AuthProvider; some layouts don't provide it and
+	// use sessionStorage-based auth instead. Protect against useAuth() throwing.
+	let signOut;
+	try {
+		const auth = useAuth();
+		signOut = auth?.signOut;
+	} catch (e) {
+		signOut = undefined;
+	}
+	const router = useRouter();
 
 	const navItems = [
 		{ href: '/admin', label: 'Dashboard' },
@@ -39,7 +49,26 @@ export default function Sidebar() {
 			</nav>
 
 			<div className="p-4 border-t border-violet-100">
-				<Button variant="pressViolet" size="default" className="w-full" onClick={async () => await signOut()}>
+				<Button
+					variant="pressViolet"
+					size="default"
+					className="w-full"
+					onClick={async () => {
+						if (typeof signOut === 'function') {
+							try {
+								await signOut();
+							} catch (e) {
+								console.error('signOut error', e);
+							}
+						}
+						try {
+							sessionStorage.removeItem('adminAuth');
+						} catch (e) {
+							console.error('sessionStorage error', e);
+						}
+						router.push('/');
+					}}
+				>
 					Logout
 				</Button>
 			</div>

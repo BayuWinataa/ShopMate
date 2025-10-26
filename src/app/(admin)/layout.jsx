@@ -4,7 +4,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Loader from '@/components/loader';
 import Sidebar from '@/components/admin/Sidebar';
-import Topbar from '@/components/admin/Topbar';
 
 export default function AdminLayout({ children }) {
 	const { isAuthenticated, isLoading, handleLogout } = useAuth();
@@ -21,7 +20,6 @@ export default function AdminLayout({ children }) {
 		<div className="min-h-screen bg-gradient-to-br from-violet-50/30 to-purple-50/30 flex">
 			<Sidebar />
 			<div className="flex-1 flex flex-col">
-				<Topbar onLogout={handleLogout} />
 				<main className="flex-1 overflow-auto">
 					<div className="h-full p-6">
 						<div className="h-full max-w-none">{children}</div>
