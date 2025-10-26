@@ -23,7 +23,6 @@ export default function Sidebar() {
 		{ href: '/admin', label: 'Dashboard' },
 		{ href: '/admin/products', label: 'Produk' },
 		{ href: '/admin/cart-items', label: 'Cart Items' },
-		{ href: '/admin/orders', label: 'Pesanan' },
 		{ href: '/admin/customers', label: 'Pelanggan' },
 		{ href: '/admin/settings', label: 'Pengaturan' },
 	];
