@@ -209,10 +209,13 @@ export default function DashboardClient() {
 		}
 		const days = [];
 		const today = new Date();
-		for (let i = 6; i >= 0; i--) {
+		// Show last 30 days (including today)
+		const daysBack = 29;
+		for (let i = daysBack; i >= 0; i--) {
 			const dt = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
 			const key = dt.toISOString().slice(0, 10);
 			days.push({
+				// show month-day for compact x-axis (MM-DD)
 				date: key.slice(5),
 				spent: byDate.get(key) ?? 0,
 				full: key,
@@ -247,7 +250,7 @@ export default function DashboardClient() {
 				<Card className="border-violet-100 shadow-sm">
 					<CardContent className="p-4">
 						<div className="mb-3">
-							<div className="text-sm text-violet-700 font-semibold">Spent (Last 7 Days)</div>
+							<div className="text-sm text-violet-700 font-semibold">Spent (Last 30 Days)</div>
 							<div className="text-xs text-gray-600">Total value of orders per day</div>
 						</div>
 
