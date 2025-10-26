@@ -20,6 +20,7 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 ## 🚀 Fitur Utama
 
 ### 🛒 **Fitur Customer**
+
 - **Landing Page** - Halaman utama dengan hero section, advantages, flow section, dan CTA
 - **Katalog Produk** - Browse produk dengan detail lengkap (nama, harga, deskripsi, gambar)
 - **Detail Produk** - Lihat spesifikasi lengkap produk
@@ -30,6 +31,7 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 - **User Dashboard** - Dashboard personal dengan statistics dan recent activities
 
 ### 👨‍💼 **Fitur Admin**
+
 - **Admin Dashboard** - Overview statistik (total products, orders, customers, revenue)
 - **Product Management** - CRUD produk (Create, Read, Update, Delete)
 - **Order Management** - Lihat dan kelola pesanan customer
@@ -38,6 +40,7 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 - **Settings** - Pengaturan aplikasi (coming soon)
 
 ### 🤖 **AI Features**
+
 - **Product Recommendations** - AI memberikan rekomendasi produk berdasarkan preferensi
 - **Order Assistance** - Bantuan AI untuk proses pemesanan
 - **Product Comparison** - Bandingkan produk menggunakan AI
@@ -49,6 +52,7 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 ## 🛠️ Tech Stack
 
 ### **Frontend**
+
 - **Next.js 15** (App Router) - React framework dengan server components
 - **React 19** - UI library
 - **Tailwind CSS 4** - Utility-first CSS framework
@@ -58,26 +62,31 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 - **Lucide React** - Icon library
 
 ### **Backend & Database**
+
 - **Supabase** - Backend as a Service (PostgreSQL, Auth, Storage)
 - **Supabase SSR** - Server-side rendering support untuk auth
 - **Next.js API Routes** - API endpoints serverless
 
 ### **AI & ML**
+
 - **Groq SDK** - AI inference dengan model Llama
 - **React Markdown** - Render response AI dalam format markdown
 
 ### **Authentication**
+
 - **Supabase Auth** - Email/password authentication
 - **Google OAuth** - Login dengan akun Google
 - **Session Management** - Session handling dengan cookies & localStorage
 
 ### **Styling & UI**
+
 - **Radix UI** - Primitives untuk accessible components
 - **Class Variance Authority (CVA)** - Variant styling
 - **Tailwind Merge** - Merge Tailwind classes dengan smart conflict resolution
 - **Sonner** - Toast notifications
 
 ### **Dev Tools**
+
 - **ESLint** - Code linting
 - **Turbopack** - Fast bundler untuk development
 
@@ -86,6 +95,7 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 ## 🏗️ Arsitektur Aplikasi
 
 ### **Route Groups**
+
 Aplikasi menggunakan Next.js App Router dengan route groups untuk organisasi yang lebih baik:
 
 ```
@@ -178,7 +188,8 @@ User Login/Register
 ## 📦 Instalasi
 
 ### **Prerequisites**
-- Node.js 18+ 
+
+- Node.js 18+
 - pnpm (atau npm/yarn)
 - Akun Supabase
 - Akun Groq AI
@@ -186,18 +197,21 @@ User Login/Register
 ### **Langkah Instalasi**
 
 1. **Clone repository**
+
 ```bash
 git clone https://github.com/BayuWinataa/ShopMate.git
 cd ShopMate
 ```
 
 2. **Install dependencies**
+
 ```bash
 pnpm install
 ```
 
 3. **Setup environment variables**
-Buat file `.env.local` di root folder:
+   Buat file `.env.local` di root folder:
+
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -274,11 +288,13 @@ CREATE TABLE addresses (
 ```
 
 5. **Setup Supabase Auth**
+
 - Enable Email/Password authentication di Supabase Dashboard
 - Enable Google OAuth (optional)
 - Configure redirect URLs: `http://localhost:3000/auth/callback`
 
 6. **Run development server**
+
 ```bash
 pnpm dev
 ```
@@ -287,39 +303,75 @@ Aplikasi akan berjalan di [http://localhost:3000](http://localhost:3000)
 
 ---
 
+## 🔑 Akses Admin
+
+### **Login ke Admin Dashboard**
+
+Untuk mengakses admin panel, gunakan kredensial berikut:
+
+**URL:** [http://localhost:3000/login](http://localhost:3000/login)
+
+**Kredensial Admin:**
+
+- **Email:** `admin@gmail.com`
+- **Password:** `admin1234`
+
+**Langkah-langkah:**
+
+1. Buka halaman login: `/login`
+2. Masukkan email: `admin@gmail.com`
+3. Masukkan password: `admin1234`
+4. Klik tombol **Login**
+5. Setelah berhasil login, akses admin dashboard di: `/admin`
+
+**Fitur yang tersedia setelah login sebagai admin:**
+
+- Dashboard overview dengan statistik
+- Product Management (CRUD)
+- Order Management
+- Cart Items Monitoring
+- Customer Management
+- Settings
+
+> **Note:** Pastikan akun admin sudah dibuat di Supabase Auth dengan email dan password tersebut. Jika belum, buat akun baru melalui Supabase Dashboard atau halaman register.
+
+---
+
 ## ⚙️ Konfigurasi
 
 ### **Supabase Configuration**
+
 File: `src/lib/supabase/client.js` dan `src/lib/supabase/server.js`
 
 ```javascript
 // Browser client untuk client components
 export function createSupabaseBrowserClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
+	return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
 // Server client untuk server components
 export function createSupabaseServerClient() {
-  // Uses cookies for SSR
+	// Uses cookies for SSR
 }
 ```
 
 ### **Auth Provider**
+
 File: `src/lib/auth-context.jsx`
 
 Menyediakan context untuk authentication state di seluruh aplikasi:
+
 - `user` - Current user object
 - `loading` - Loading state
 - `signOut()` - Logout function
 - `supabase` - Supabase client instance
 
 ### **Cart Provider**
+
 File: `src/components/cart/CartProvider.jsx`
 
 Mengelola shopping cart state dengan localStorage:
+
 - `cartItems` - Array of cart items
 - `addToCart()` - Add product to cart
 - `removeFromCart()` - Remove product
@@ -414,6 +466,7 @@ User Can Continue Conversation
 ```
 
 **AI Capabilities:**
+
 - Rekomendasi produk berdasarkan preferensi
 - Informasi detail produk
 - Perbandingan produk
@@ -544,6 +597,7 @@ User Dashboard → Addresses (/dashboard/address)
 ### **A. Authentication System**
 
 #### **Login Flow**
+
 - **Route:** `/login`
 - **Component:** `src/app/(auth)/login/LoginClient.jsx`
 - **Features:**
@@ -556,24 +610,25 @@ User Dashboard → Addresses (/dashboard/address)
 ```javascript
 // Login dengan email/password
 const handleLogin = async (email, password) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  })
-}
+	const { data, error } = await supabase.auth.signInWithPassword({
+		email,
+		password,
+	});
+};
 
 // Login dengan Google
 const handleGoogleLogin = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${origin}/auth/callback`
-    }
-  })
-}
+	const { data, error } = await supabase.auth.signInWithOAuth({
+		provider: 'google',
+		options: {
+			redirectTo: `${origin}/auth/callback`,
+		},
+	});
+};
 ```
 
 #### **Register Flow**
+
 - **Route:** `/register`
 - **Component:** `src/app/(auth)/register/RegisterClient.jsx`
 - **Features:**
@@ -583,6 +638,7 @@ const handleGoogleLogin = async () => {
   - Auto-login after registration
 
 #### **Auth Callback**
+
 - **Route:** `/auth/callback`
 - **Purpose:** Handle OAuth redirect dari Google
 - **Flow:** Exchange code → Set session → Redirect ke dashboard
@@ -590,6 +646,7 @@ const handleGoogleLogin = async () => {
 ### **B. Product Management**
 
 #### **Product List (Customer View)**
+
 - **Route:** `/products`
 - **Component:** `src/app/(site)/products/page.jsx`
 - **Features:**
@@ -600,6 +657,7 @@ const handleGoogleLogin = async () => {
   - Server-side data fetching dari Supabase
 
 #### **Product Detail**
+
 - **Route:** `/products/[id]`
 - **Features:**
   - Full product information
@@ -609,6 +667,7 @@ const handleGoogleLogin = async () => {
   - Back to products link
 
 #### **Product Management (Admin)**
+
 - **Route:** `/admin/products`
 - **Component:** `src/app/(admin)/admin/products/page.jsx`
 - **Features:**
@@ -620,16 +679,19 @@ const handleGoogleLogin = async () => {
 **Product CRUD Dialogs:**
 
 1. **Create Product** - `ProductCreateDialog.jsx`
+
    - Form fields: name, price, description, image_url, stock
    - Validation dengan Zod
    - POST to Supabase
 
 2. **Edit Product** - `ProductEditDialog.jsx`
+
    - Pre-filled form dengan data existing
    - Update fields
    - PUT to Supabase
 
 3. **View Product** - `ProductViewDialog.jsx`
+
    - Read-only display
    - All product details
 
@@ -640,41 +702,41 @@ const handleGoogleLogin = async () => {
 ### **C. Shopping Cart System**
 
 #### **Cart Context**
+
 - **Provider:** `CartProvider.jsx`
 - **Storage:** localStorage dengan key `shopping_cart`
 - **State:**
   ```javascript
   {
-    cartItems: [
-      {
-        id: number,
-        name: string,
-        price: number,
-        quantity: number,
-        image_url: string
-      }
-    ]
+  	cartItems: [
+  		{
+  			id: number,
+  			name: string,
+  			price: number,
+  			quantity: number,
+  			image_url: string,
+  		},
+  	];
   }
   ```
 
 #### **Cart Operations**
+
 ```javascript
 // Add to cart
-addToCart(product)
+addToCart(product);
 
 // Remove item
-removeFromCart(productId)
+removeFromCart(productId);
 
 // Update quantity
-updateQuantity(productId, newQuantity)
+updateQuantity(productId, newQuantity);
 
 // Clear cart
-clearCart()
+clearCart();
 
 // Get total
-const total = cartItems.reduce((sum, item) => 
-  sum + (item.price * item.quantity), 0
-)
+const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 ```
 
 #### **Cart UI Components**
@@ -690,6 +752,7 @@ const total = cartItems.reduce((sum, item) =>
 ### **D. Order Management**
 
 #### **Create Order Flow**
+
 ```javascript
 // API Route: /api/orders (POST)
 1. Receive: { customer, items, paymentMethod }
@@ -701,6 +764,7 @@ const total = cartItems.reduce((sum, item) =>
 ```
 
 #### **Order List (Customer)**
+
 - **Route:** `/dashboard/orders`
 - **Component:** `OrdersClient.jsx`
 - **Features:**
@@ -710,6 +774,7 @@ const total = cartItems.reduce((sum, item) =>
   - Payment method info
 
 #### **Order List (Admin)**
+
 - **Route:** `/admin/orders`
 - **Features:**
   - View all orders from all customers
@@ -720,6 +785,7 @@ const total = cartItems.reduce((sum, item) =>
 ### **E. AI Chat System**
 
 #### **Chat Interface**
+
 - **Route:** `/chat`
 - **Component:** `src/app/(site)/chat/page.jsx`
 - **Features:**
@@ -730,6 +796,7 @@ const total = cartItems.reduce((sum, item) =>
   - Auto-scroll to latest message
 
 #### **AI Integration**
+
 ```javascript
 // API Route: /api/chat (POST)
 1. Receive user message
@@ -741,6 +808,7 @@ const total = cartItems.reduce((sum, item) =>
 ```
 
 #### **AI Capabilities**
+
 - Product recommendations
 - Product comparison
 - Order assistance
@@ -750,6 +818,7 @@ const total = cartItems.reduce((sum, item) =>
 ### **F. Dashboard & Analytics**
 
 #### **User Dashboard**
+
 - **Route:** `/dashboard`
 - **Component:** `DashboardClient.jsx`
 - **Widgets:**
@@ -757,24 +826,21 @@ const total = cartItems.reduce((sum, item) =>
      - Total Orders
      - Total Spent (IDR)
      - Unpaid Invoices
-     
   2. **Spending Chart** (Recharts LineChart)
      - Last 30 days
      - Daily spending visualization
      - Interactive tooltips
-     
   3. **Recent Orders**
      - Latest 3 orders
      - Quick view dengan link ke full history
-     
   4. **Recent Chats**
      - Latest AI conversations
-     
   5. **AI Assistant Modal**
      - In-dashboard AI chat
      - Order insights & analysis
 
 #### **Admin Dashboard**
+
 - **Route:** `/admin`
 - **Component:** `src/app/(admin)/admin/page.jsx`
 - **Widgets:**
@@ -786,6 +852,7 @@ const total = cartItems.reduce((sum, item) =>
 ### **G. Address Management**
 
 #### **Address CRUD**
+
 - **Route:** `/dashboard/address`
 - **Component:** `AddressesClient.jsx`
 - **Features:**
@@ -796,6 +863,7 @@ const total = cartItems.reduce((sum, item) =>
   - Form validation
 
 **Address Schema:**
+
 ```javascript
 {
   id: UUID,
@@ -962,130 +1030,152 @@ belajar-supabase/
 ## 🔌 API Routes
 
 ### **1. POST /api/chat**
+
 Chat dengan AI assistant
 
 **Request:**
+
 ```json
 {
-  "messages": [
-    { "role": "user", "content": "Rekomendasi laptop gaming" }
-  ]
+	"messages": [{ "role": "user", "content": "Rekomendasi laptop gaming" }]
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "reply": "Berikut rekomendasi laptop gaming terbaik..."
+	"reply": "Berikut rekomendasi laptop gaming terbaik..."
 }
 ```
 
 ### **2. POST /api/orders**
+
 Create new order
 
 **Request:**
+
 ```json
 {
-  "customer": {
-    "name": "John Doe",
-    "phone": "08123456789",
-    "address": "Jl. Example No. 123",
-    "note": "Kirim pagi"
-  },
-  "items": [
-    {
-      "id": 1,
-      "name": "Product A",
-      "price": 100000,
-      "quantity": 2
-    }
-  ],
-  "paymentMethod": "transfer"
+	"customer": {
+		"name": "John Doe",
+		"phone": "08123456789",
+		"address": "Jl. Example No. 123",
+		"note": "Kirim pagi"
+	},
+	"items": [
+		{
+			"id": 1,
+			"name": "Product A",
+			"price": 100000,
+			"quantity": 2
+		}
+	],
+	"paymentMethod": "transfer"
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "order": {
-    "id": "uuid",
-    "order_code": "ORD-1234567890",
-    "total": 200000
-  }
+	"success": true,
+	"order": {
+		"id": "uuid",
+		"order_code": "ORD-1234567890",
+		"total": 200000
+	}
 }
 ```
 
 ### **3. GET /api/orders**
+
 Get all orders (admin) atau user orders
 
 **Query Params:**
+
 - `user_id` (optional) - Filter by user
 
 **Response:**
+
 ```json
 {
-  "orders": [
-    {
-      "id": "uuid",
-      "order_code": "ORD-1234567890",
-      "status": "paid",
-      "total": 200000,
-      "created_at": "2025-01-01T10:00:00Z",
-      "customer": { /* customer data */ },
-      "items": [ /* order items */ ]
-    }
-  ]
+	"orders": [
+		{
+			"id": "uuid",
+			"order_code": "ORD-1234567890",
+			"status": "paid",
+			"total": 200000,
+			"created_at": "2025-01-01T10:00:00Z",
+			"customer": {
+				/* customer data */
+			},
+			"items": [
+				/* order items */
+			]
+		}
+	]
 }
 ```
 
 ### **4. POST /api/addresses**
+
 Create new address
 
 **Request:**
+
 ```json
 {
-  "label": "Rumah",
-  "recipient_name": "John Doe",
-  "phone": "08123456789",
-  "address": "Jl. Example No. 123",
-  "city": "Jakarta",
-  "province": "DKI Jakarta",
-  "postal_code": "12345",
-  "is_default": true
+	"label": "Rumah",
+	"recipient_name": "John Doe",
+	"phone": "08123456789",
+	"address": "Jl. Example No. 123",
+	"city": "Jakarta",
+	"province": "DKI Jakarta",
+	"postal_code": "12345",
+	"is_default": true
 }
 ```
 
 ### **5. GET /api/addresses**
+
 Get user addresses
 
 **Response:**
+
 ```json
 {
-  "addresses": [ /* address list */ ]
+	"addresses": [
+		/* address list */
+	]
 }
 ```
 
 ### **6. PUT /api/addresses/[id]**
+
 Update address
 
 ### **7. DELETE /api/addresses/[id]**
+
 Delete address
 
 ### **8. POST /api/compare**
+
 Compare products dengan AI
 
 **Request:**
+
 ```json
 {
-  "productIds": [1, 2, 3]
+	"productIds": [1, 2, 3]
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "comparison": "Perbandingan detail produk..."
+	"comparison": "Perbandingan detail produk..."
 }
 ```
 
@@ -1094,6 +1184,7 @@ Compare products dengan AI
 ## 🎨 UI/UX Features
 
 ### **Design System**
+
 - **Color Theme:** Violet/Purple gradient
 - **Typography:** System fonts dengan Geist fallback
 - **Components:** shadcn/ui dengan custom styling
@@ -1101,6 +1192,7 @@ Compare products dengan AI
 - **Responsive:** Mobile-first design
 
 ### **Component Variants**
+
 ```javascript
 // Button variants
 <Button variant="pressViolet">Primary</Button>
@@ -1116,6 +1208,7 @@ Compare products dengan AI
 ```
 
 ### **Theme Features**
+
 - Consistent violet color palette
 - Focus states dengan violet rings
 - Hover effects dengan smooth transitions
@@ -1143,6 +1236,7 @@ vercel
 ```
 
 ### **Environment Variables di Production**
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_production_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_key
@@ -1150,6 +1244,7 @@ GROQ_API_KEY=your_groq_key
 ```
 
 ### **Build untuk Production**
+
 ```bash
 pnpm build
 pnpm start
@@ -1160,16 +1255,19 @@ pnpm start
 ## 🔐 Security Best Practices
 
 1. **Environment Variables**
+
    - Jangan commit `.env.local`
    - Use different keys untuk dev/prod
    - Rotate keys secara berkala
 
 2. **Supabase RLS (Row Level Security)**
+
    - Enable RLS pada semua tables
    - Configure policies untuk user access
    - Restrict admin actions
 
 3. **API Protection**
+
    - Validate input dengan Zod
    - Rate limiting (optional)
    - Error handling yang proper
@@ -1186,16 +1284,19 @@ pnpm start
 ### **Common Issues**
 
 1. **Supabase connection error**
+
    - Check environment variables
    - Verify Supabase URL & anon key
    - Check network/firewall
 
 2. **Cart not persisting**
+
    - Check localStorage availability
    - Clear browser cache
    - Check CartProvider wrapping
 
 3. **AI chat not working**
+
    - Verify GROQ_API_KEY
    - Check API rate limits
    - Review console errors
@@ -1236,6 +1337,7 @@ Contributions are welcome! Please follow these steps:
 5. Open Pull Request
 
 ### **Commit Convention**
+
 - `feat:` New feature
 - `fix:` Bug fix
 - `docs:` Documentation
@@ -1255,6 +1357,7 @@ This project is private and not open for public use.
 ## 👨‍💻 Author
 
 **Bayu Winata**
+
 - GitHub: [@BayuWinataa](https://github.com/BayuWinataa)
 - Repository: [ShopMate](https://github.com/BayuWinataa/ShopMate)
 
