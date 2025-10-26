@@ -40,29 +40,67 @@ export async function generateMetadata({ params }) {
 		const slug = resolvedParams.slug;
 
 		// Get all products and find by slug
-		const { data: products, error } = await supabase.from('Products').select('id, nama, deskripsi, longDeskripsi');
+		const { data: products, error } = await supabase.from('Products').select('id, nama, deskripsi, longDeskripsi, harga, gambar, image, kategori');
 
 		if (error || !products) {
-			return { title: 'Produk tidak ditemukan · ShopMate' };
+			return {
+				title: 'Produk tidak ditemukan',
+				description: 'Produk yang Anda cari tidak tersedia.',
+			};
 		}
 
 		const product = products.find((p) => createSlug(p.nama) === slug);
 
 		if (!product) {
-			return { title: 'Produk tidak ditemukan · ShopMate' };
+			return {
+				title: 'Produk tidak ditemukan',
+				description: 'Produk yang Anda cari tidak tersedia.',
+			};
 		}
 
+		const productImage = product.gambar || product.image || '/images/product-placeholder.jpg';
+		const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/products/${slug}`;
+		const description = product.deskripsi?.slice(0, 155) || product.longDeskripsi?.slice(0, 155) || `Beli ${product.nama} dengan harga terbaik di ShopMate`;
+
 		return {
-			title: `${product.nama} · ShopMate`,
-			description: product.deskripsi?.slice(0, 160) || product.longDeskripsi?.slice(0, 160) || `Beli ${product.nama} di ShopMate`,
+			title: `${product.nama} - ${product.kategori || 'Produk'}`,
+			description,
+			keywords: [product.nama, product.kategori, 'belanja online', 'e-commerce', 'ShopMate'].filter(Boolean),
+			alternates: {
+				canonical: productUrl,
+			},
 			openGraph: {
-				title: `${product.nama} · ShopMate`,
-				description: product.deskripsi?.slice(0, 200) || product.longDeskripsi?.slice(0, 200) || `Beli ${product.nama} di ShopMate`,
+				type: 'product',
+				url: productUrl,
+				title: `${product.nama} - ShopMate`,
+				description,
+				images: [
+					{
+						url: productImage,
+						width: 800,
+						height: 600,
+						alt: product.nama,
+					},
+				],
+				siteName: 'ShopMate AI',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: `${product.nama} - ShopMate`,
+				description,
+				images: [productImage],
+			},
+			other: {
+				'product:price:amount': product.harga,
+				'product:price:currency': 'IDR',
 			},
 		};
 	} catch (err) {
 		console.error('Error generating metadata:', err);
-		return { title: 'Produk tidak ditemukan · ShopMate' };
+		return {
+			title: 'Produk tidak ditemukan',
+			description: 'Produk yang Anda cari tidak tersedia.',
+		};
 	}
 }
 
@@ -105,30 +143,70 @@ export default async function ProductDetail({ params }) {
 		// Handle tags - could be array or JSON string
 		const productTags = Array.isArray(product.tags) ? product.tags : typeof product.tags === 'string' ? JSON.parse(product.tags || '[]') : [];
 
+		// Structured data for product
+		const productStructuredData = {
+			'@context': 'https://schema.org',
+			'@type': 'Product',
+			name: product.nama,
+			image: imgSrc,
+			description: product.deskripsi || product.longDeskripsi || '',
+			sku: `PROD-${product.id}`,
+			brand: {
+				'@type': 'Brand',
+				name: 'ShopMate',
+			},
+			offers: {
+				'@type': 'Offer',
+				url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/products/${slug}`,
+				priceCurrency: 'IDR',
+				price: product.harga,
+				availability: product.stok > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+				itemCondition: 'https://schema.org/NewCondition',
+			},
+			category: product.kategori,
+		};
+
+		// Add rating if available
+		if (product.rating) {
+			productStructuredData.aggregateRating = {
+				'@type': 'AggregateRating',
+				ratingValue: product.rating,
+				reviewCount: product.reviewCount || 1,
+			};
+		}
+
 		return (
-			<div className="min-h-screen bg-gradient-to-b from-violet-50 via-white to-white">
-				<ProductBreadcrumb productName={product.nama} />
+			<>
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(productStructuredData),
+					}}
+				/>
+				<div className="min-h-screen bg-gradient-to-b from-violet-50 via-white to-white">
+					<ProductBreadcrumb productName={product.nama} />
 
-				<main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					<ProductHero product={product} productTags={productTags} />
+					<main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+						<ProductHero product={product} productTags={productTags} />
 
-					<div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8">
-						{/* Left Column: Gallery & Details */}
-						<section className="space-y-4">
-							<ProductGallery imgSrc={imgSrc} productName={product.nama} />
-							<ProductDetailCard longDeskripsi={product.longDeskripsi} />
-						</section>
+						<div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8">
+							{/* Left Column: Gallery & Details */}
+							<section className="space-y-4">
+								<ProductGallery imgSrc={imgSrc} productName={product.nama} />
+								<ProductDetailCard longDeskripsi={product.longDeskripsi} />
+							</section>
 
-						{/* Right Column: Purchase Panel */}
-						<aside className="lg:pl-2">
-							<PurchasePanel product={product} cartProduct={cartProduct} />
-						</aside>
-					</div>
+							{/* Right Column: Purchase Panel */}
+							<aside className="lg:pl-2">
+								<PurchasePanel product={product} cartProduct={cartProduct} />
+							</aside>
+						</div>
 
-					{/* Related Products */}
-					<RelatedProducts related={related} fallbackImg={fallbackImg} />
-				</main>
-			</div>
+						{/* Related Products */}
+						<RelatedProducts related={related} fallbackImg={fallbackImg} />
+					</main>
+				</div>
+			</>
 		);
 	} catch (err) {
 		console.error('Error fetching product:', err);
