@@ -7,6 +7,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import Link from 'next/link';
+import { createSlug } from '@/lib/slugify';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number.isFinite(Number(n)) ? Number(n) : 0);
@@ -476,7 +477,7 @@ export default function OrdersClient() {
 										<ul className="space-y-1 text-sm">
 											{catalogSuggestions.map((p) => (
 												<li key={p.id} className="flex items-center justify-between">
-													<Link href={`/products/${p.id}`} target="_blank" className="truncate text-violet-700 hover:text-violet-900">
+													<Link href={`/products/${createSlug(p.nama || p.name || p.title)}`} target="_blank" className="truncate text-violet-700 hover:text-violet-900">
 														{p.nama}
 													</Link>
 													<span className="text-violet-600">{formatIDR(p.harga)}</span>

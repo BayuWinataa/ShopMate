@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowRight, Scale } from 'lucide-react';
+import { createSlug } from '@/lib/slugify';
 
 function ProductSkeleton() {
 	return (
@@ -87,7 +88,7 @@ export default function RecList({ items, formatIDR, isSelectedForCompare, toggle
 
 						<motion.div whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 17 }}>
 							<Link
-								href={`/products/${product.id}`}
+								href={`/products/${createSlug(product.nama || product.name || product.title)}`}
 								className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-violet-200 bg-white px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-50 transition-colors"
 								aria-label={`Detail ${product.nama}`}
 							>
