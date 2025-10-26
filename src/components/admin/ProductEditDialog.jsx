@@ -101,7 +101,7 @@ export default function ProductEditDialog({ product }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button size="sm" variant="outline">
+				<Button size="sm" variant="pressViolet">
 					Edit
 				</Button>
 			</DialogTrigger>
@@ -164,7 +164,7 @@ export default function ProductEditDialog({ product }) {
 								Batal
 							</Button>
 						</DialogClose>
-						<Button type="submit" disabled={!canSubmit || loading}>
+						<Button type="submit" variant="pressViolet" disabled={!canSubmit || loading}>
 							{loading ? 'Menyimpan...' : 'Simpan'}
 						</Button>
 					</DialogFooter>

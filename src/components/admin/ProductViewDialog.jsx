@@ -65,7 +65,7 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button size="sm" variant="outline">
+				<Button size="sm" variant="pressViolet">
 					{triggerLabel}
 				</Button>
 			</DialogTrigger>
@@ -123,8 +123,8 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 									<div className="grid grid-cols-1 gap-2">
 										{Object.entries(product || {}).map(([key, val]) => (
 											<div key={key} className="grid gap-1 sm:grid-cols-[180px_1fr] sm:gap-1 items-start text-sm">
-												<div className="text-muted-foreground">{formatKey(key)}</div>
-												<div className="text-foreground break-words whitespace-pre-wrap">{formatValue(key, val)}</div>
+												<div className="text-violet-600">{formatKey(key)}</div>
+												<div className="text-violet-900 break-words whitespace-pre-wrap">{formatValue(key, val)}</div>
 											</div>
 										))}
 									</div>
@@ -140,7 +140,7 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 				{/* Footer */}
 				<DialogFooter className="px-5 py-4">
 					<DialogClose asChild>
-						<Button type="button" variant="default">
+						<Button type="button" variant="pressViolet">
 							Tutup
 						</Button>
 					</DialogClose>

@@ -34,21 +34,21 @@ export default async function AdminProductsPage({ searchParams }) {
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
 				<div className="space-y-1">
-					<h2 className="text-2xl font-bold tracking-tight">Produk</h2>
+					<h2 className="text-2xl font-bold tracking-tight text-violet-900">Produk</h2>
 				</div>
 				<ProductCreateDialog />
 			</div>
-			<div className="rounded-xl border bg-card">
+			<div className="rounded-xl border border-violet-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
 				<Table>
 					<TableHeader>
-						<TableRow>
-							<TableHead className="w-12 text-center">No</TableHead>
-							<TableHead className="w-16">Gambar</TableHead>
-							<TableHead>Nama</TableHead>
-							<TableHead>Kategori</TableHead>
-							<TableHead>Harga</TableHead>
-							<TableHead>Dibuat</TableHead>
-							<TableHead className="text-center ">Aksi</TableHead>
+						<TableRow className="bg-violet-50">
+							<TableHead className="w-12 text-center text-violet-600">No</TableHead>
+							<TableHead className="w-16 text-violet-600">Gambar</TableHead>
+							<TableHead className="text-violet-600">Nama</TableHead>
+							<TableHead className="text-violet-600">Kategori</TableHead>
+							<TableHead className="text-violet-600">Harga</TableHead>
+							<TableHead className="text-violet-600">Dibuat</TableHead>
+							<TableHead className="text-center text-violet-600">Aksi</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -61,7 +61,7 @@ export default async function AdminProductsPage({ searchParams }) {
 						)}
 						{!error && (products?.length ?? 0) === 0 && (
 							<TableRow>
-								<TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+								<TableCell colSpan={7} className="py-8 text-center text-violet-600">
 									Belum ada produk.
 								</TableCell>
 							</TableRow>
@@ -70,17 +70,17 @@ export default async function AdminProductsPage({ searchParams }) {
 							const img = p.gambar || p.image || '/Frame 1.svg';
 							return (
 								<TableRow key={p.id}>
-									<TableCell className="text-center text-muted-foreground">{from + idx + 1}</TableCell>
+									<TableCell className="text-center text-violet-600">{from + idx + 1}</TableCell>
 									<TableCell>
 										<div className="h-12 w-16 overflow-hidden rounded-md border bg-muted">
 											{/* Use next/image when possible; fallback to img if needed */}
 											<Image src={img} alt={p.nama} width={64} height={48} className="h-12 w-16 object-cover" />
 										</div>
 									</TableCell>
-									<TableCell className="font-medium">{p.nama}</TableCell>
-									<TableCell className="capitalize text-muted-foreground">{p.kategori || '-'}</TableCell>
-									<TableCell className="font-semibold">{formatIDR(p.harga)}</TableCell>
-									<TableCell className="hidden md:table-cell text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : '-'}</TableCell>
+									<TableCell className="font-medium text-violet-900">{p.nama}</TableCell>
+									<TableCell className="capitalize text-violet-600">{p.kategori || '-'}</TableCell>
+									<TableCell className="font-semibold text-violet-900">{formatIDR(p.harga)}</TableCell>
+									<TableCell className="hidden md:table-cell text-violet-600">{p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : '-'}</TableCell>
 									<TableCell className="text-right">
 										<div className="flex items-center justify-center gap-2">
 											<ProductViewDialog product={p} />
@@ -93,7 +93,7 @@ export default async function AdminProductsPage({ searchParams }) {
 						})}
 					</TableBody>
 					{typeof total === 'number' && (
-						<TableCaption>
+						<TableCaption className="text-violet-600">
 							Menampilkan {products?.length ?? 0} dari {total} produk.
 						</TableCaption>
 					)}

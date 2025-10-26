@@ -104,68 +104,126 @@ export default function ProductCreateDialog() {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="default">Tambah Produk</Button>
+				<Button variant="pressViolet">Tambah Produk</Button>
 			</DialogTrigger>
 			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-xl max-h-[88vh] overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle>Tambah Produk</DialogTitle>
-					<DialogDescription>Isi detail produk kemudian simpan untuk menambahkan ke katalog.</DialogDescription>
+					<DialogTitle className="text-violet-900">Tambah Produk</DialogTitle>
+					<DialogDescription className="text-violet-600">Isi detail produk kemudian simpan untuk menambahkan ke katalog.</DialogDescription>
 				</DialogHeader>
 
 				<form onSubmit={onSubmit} className="space-y-4">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="space-y-2">
-							<Label htmlFor="nama">
+							<Label htmlFor="nama" className="text-violet-600">
 								Nama<span className="text-rose-600">*</span>
 							</Label>
-							<Input id="nama" value={nama} onChange={(e) => setNama(e.target.value)} placeholder="Contoh: Laptop XYZ" required />
+							<Input
+								id="nama"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={nama}
+								onChange={(e) => setNama(e.target.value)}
+								placeholder="Contoh: Laptop XYZ"
+								required
+							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="kategori">Kategori</Label>
-							<Input id="kategori" value={kategori} onChange={(e) => setKategori(e.target.value)} placeholder="Contoh: Elektronik" />
+							<Label htmlFor="kategori" className="text-violet-600">
+								Kategori
+							</Label>
+							<Input
+								id="kategori"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								value={kategori}
+								onChange={(e) => setKategori(e.target.value)}
+								placeholder="Contoh: Elektronik"
+							/>
 						</div>
 					</div>
 
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div className="space-y-2">
-							<Label htmlFor="harga">
+							<Label htmlFor="harga" className="text-violet-600">
 								Harga (IDR)<span className="text-rose-600">*</span>
 							</Label>
-							<Input id="harga" type="number" min="0" value={harga} onChange={(e) => setHarga(e.target.value)} placeholder="2000000" required />
+							<Input
+								id="harga"
+								className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+								type="number"
+								min="0"
+								value={harga}
+								onChange={(e) => setHarga(e.target.value)}
+								placeholder="2000000"
+								required
+							/>
 						</div>
 						<div className="space-y-2" />
 						<div className="space-y-2" />
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="gambar">URL Gambar</Label>
-						<Input id="gambar" value={gambar} onChange={(e) => setGambar(e.target.value)} placeholder="https://..." />
+						<Label htmlFor="gambar" className="text-violet-600">
+							URL Gambar
+						</Label>
+						<Input
+							id="gambar"
+							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+							value={gambar}
+							onChange={(e) => setGambar(e.target.value)}
+							placeholder="https://..."
+						/>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="deskripsi">Deskripsi</Label>
-						<Textarea id="deskripsi" value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} placeholder="Deskripsi singkat produk" rows={3} />
+						<Label htmlFor="deskripsi" className="text-violet-600">
+							Deskripsi
+						</Label>
+						<Textarea
+							id="deskripsi"
+							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+							value={deskripsi}
+							onChange={(e) => setDeskripsi(e.target.value)}
+							placeholder="Deskripsi singkat produk"
+							rows={3}
+						/>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="longDeskripsi">Deskripsi Panjang</Label>
-						<Textarea id="longDeskripsi" value={longDeskripsi} onChange={(e) => setLongDeskripsi(e.target.value)} placeholder="Detail lengkap produk" rows={5} />
+						<Label htmlFor="longDeskripsi" className="text-violet-600">
+							Deskripsi Panjang
+						</Label>
+						<Textarea
+							id="longDeskripsi"
+							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+							value={longDeskripsi}
+							onChange={(e) => setLongDeskripsi(e.target.value)}
+							placeholder="Detail lengkap produk"
+							rows={5}
+						/>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="tags">Tags (pisahkan dengan koma)</Label>
-						<Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="baru, promo, limited" />
+						<Label htmlFor="tags" className="text-violet-600">
+							Tags (pisahkan dengan koma)
+						</Label>
+						<Input
+							id="tags"
+							className="text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
+							value={tags}
+							onChange={(e) => setTags(e.target.value)}
+							placeholder="baru, promo, limited"
+						/>
 					</div>
 
 					{error && <p className="text-sm text-rose-600">{error}</p>}
 
 					<DialogFooter>
 						<DialogClose asChild>
-							<Button type="button" variant="outline">
+							<Button type="button" variant="pressPurple">
 								Batal
 							</Button>
 						</DialogClose>
-						<Button type="submit" disabled={!canSubmit || loading}>
+						<Button type="submit" variant="pressPurple" >
 							{loading ? 'Menyimpan...' : 'Simpan'}
 						</Button>
 					</DialogFooter>

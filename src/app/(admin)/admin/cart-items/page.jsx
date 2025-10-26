@@ -22,7 +22,7 @@ export default async function AdminCartItemsPage({ searchParams }) {
 			<div className="flex items-center justify-between">
 				<div className="space-y-1">
 					<h2 className="text-2xl font-bold tracking-tight">Cart Items</h2>
-					<p className="text-sm text-muted-foreground">Daftar item keranjang pengguna.</p>
+					<p className="text-sm text-violet-600">Daftar item keranjang pengguna.</p>
 				</div>
 			</div>
 
@@ -49,7 +49,7 @@ export default async function AdminCartItemsPage({ searchParams }) {
 
 						{!error && (items?.length ?? 0) === 0 && (
 							<TableRow>
-								<TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+								<TableCell colSpan={7} className="py-8 text-center text-violet-600">
 									Belum ada data.
 								</TableCell>
 							</TableRow>
@@ -57,11 +57,11 @@ export default async function AdminCartItemsPage({ searchParams }) {
 
 						{(items ?? []).map((it) => (
 							<TableRow key={it.id}>
-								<TableCell className="text-muted-foreground">{it.user_id}</TableCell>
-								<TableCell className="text-muted-foreground">{it.product_id}</TableCell>
+								<TableCell className="text-violet-600">{it.user_id}</TableCell>
+								<TableCell className="text-violet-600">{it.product_id}</TableCell>
 								<TableCell className="text-right">{it.quantity}</TableCell>
-								<TableCell className="text-muted-foreground">{it.created_at ? new Date(it.created_at).toLocaleString('id-ID') : '-'}</TableCell>
-								<TableCell className="text-muted-foreground">{it.updated_at ? new Date(it.updated_at).toLocaleString('id-ID') : '-'}</TableCell>
+								<TableCell className="text-violet-600">{it.created_at ? new Date(it.created_at).toLocaleString('id-ID') : '-'}</TableCell>
+								<TableCell className="text-violet-600">{it.updated_at ? new Date(it.updated_at).toLocaleString('id-ID') : '-'}</TableCell>
 								<TableCell className="text-center">
 									<CartItemViewDialog item={it} />
 								</TableCell>

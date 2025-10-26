@@ -18,12 +18,13 @@ function PaginationItem({ className, ...props }) {
 }
 
 function PaginationLink({ className, isActive, href = '#', prefetch, ...props }) {
-	return <Link href={href} prefetch={prefetch} aria-current={isActive ? 'page' : undefined} className={cn(buttonVariants({ variant: isActive ? 'default' : 'outline', size: 'sm' }), 'h-9 w-9 p-0', className)} {...props} />;
+	// Active page uses a violet "pressed" look, other pages use outline
+	return <Link href={href} prefetch={prefetch} aria-current={isActive ? 'page' : undefined} className={cn(buttonVariants({ variant: isActive ? 'pressViolet' : 'outline', size: 'sm' }), 'h-9 w-9 p-0', className)} {...props} />;
 }
 
 function PaginationPrevious({ className, href = '#', prefetch, ...props }) {
 	return (
-		<Link href={href} prefetch={prefetch} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1 pl-2.5 pr-2.5', className)} {...props}>
+		<Link href={href} prefetch={prefetch} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1 pl-2.5 pr-2.5 border-violet-700 text-violet-700 hover:bg-violet-50', className)} {...props}>
 			<span className="sr-only">Sebelumnya</span>
 			<span aria-hidden>«</span>
 		</Link>
@@ -32,7 +33,7 @@ function PaginationPrevious({ className, href = '#', prefetch, ...props }) {
 
 function PaginationNext({ className, href = '#', prefetch, ...props }) {
 	return (
-		<Link href={href} prefetch={prefetch} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1 pl-2.5 pr-2.5', className)} {...props}>
+		<Link href={href} prefetch={prefetch} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1 pl-2.5 pr-2.5 border-violet-700 text-violet-700 hover:bg-violet-50', className)} {...props}>
 			<span className="sr-only">Berikutnya</span>
 			<span aria-hidden>»</span>
 		</Link>
@@ -41,7 +42,7 @@ function PaginationNext({ className, href = '#', prefetch, ...props }) {
 
 function PaginationEllipsis({ className, ...props }) {
 	return (
-		<span className={cn('flex h-9 w-9 items-center justify-center rounded-md border bg-background text-sm text-muted-foreground', className)} {...props}>
+		<span className={cn('flex h-9 w-9 items-center justify-center rounded-md border border-violet-100 bg-violet-50 text-sm text-violet-600', className)} {...props}>
 			…<span className="sr-only">Lebih banyak halaman</span>
 		</span>
 	);

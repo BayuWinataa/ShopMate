@@ -7,7 +7,7 @@ export default function Loading() {
 			<div className="flex items-center justify-between">
 				<div className="space-y-1">
 					<h2 className="text-2xl font-bold tracking-tight">Cart Items</h2>
-					<p className="text-sm text-muted-foreground">Daftar item keranjang pengguna.</p>
+					<p className="text-sm text-violet-600">Daftar item keranjang pengguna.</p>
 				</div>
 			</div>
 

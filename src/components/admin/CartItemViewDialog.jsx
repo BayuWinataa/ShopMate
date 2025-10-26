@@ -33,24 +33,24 @@ export default function CartItemViewDialog({ item }) {
 
 				<div className="grid grid-cols-1 gap-4">
 					<div className="space-y-1">
-						<p className="text-xs text-muted-foreground">User ID</p>
-						<p className="font-medium break-all">{item.user_id ?? '-'}</p>
+						<p className="text-xs text-violet-600">User ID</p>
+						<p className="font-medium break-all text-violet-900">{item.user_id ?? '-'}</p>
 					</div>
 					<div className="space-y-1">
-						<p className="text-xs text-muted-foreground">Product ID</p>
-						<p className="font-medium break-all">{item.product_id ?? '-'}</p>
+						<p className="text-xs text-violet-600">Product ID</p>
+						<p className="font-medium break-all text-violet-900">{item.product_id ?? '-'}</p>
 					</div>
 					<div className="space-y-1">
-						<p className="text-xs text-muted-foreground">Quantity</p>
-						<p className="font-medium">{item.quantity ?? '-'}</p>
+						<p className="text-xs text-violet-600">Quantity</p>
+						<p className="font-medium text-violet-900">{item.quantity ?? '-'}</p>
 					</div>
 					<div className="space-y-1">
-						<p className="text-xs text-muted-foreground">Dibuat</p>
-						<p className="font-medium">{formatDate(item.created_at)}</p>
+						<p className="text-xs text-violet-600">Dibuat</p>
+						<p className="font-medium text-violet-900">{formatDate(item.created_at)}</p>
 					</div>
 					<div className="space-y-1">
-						<p className="text-xs text-muted-foreground">Diperbarui</p>
-						<p className="font-medium">{formatDate(item.updated_at)}</p>
+						<p className="text-xs text-violet-600">Diperbarui</p>
+						<p className="font-medium text-violet-900">{formatDate(item.updated_at)}</p>
 					</div>
 				</div>
 
