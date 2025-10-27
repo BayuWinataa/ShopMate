@@ -81,19 +81,19 @@ export default function OrdersTable() {
 				<table className="min-w-full text-sm">
 					<thead className="bg-violet-50 text-violet-600">
 						<tr>
-							<Th>Kode Pesanan</Th>
-							<Th>Tanggal</Th>
-							<Th>Total</Th>
-							<Th>Status</Th>
+							<Th className="whitespace-nowrap">Kode Pesanan</Th>
+							<Th className="whitespace-nowrap">Tanggal</Th>
+							<Th className="whitespace-nowrap">Total</Th>
+							<Th className="whitespace-nowrap">Status</Th>
 						</tr>
 					</thead>
 					<tbody className="divide-y">
 						{orders.map((order) => (
 							<tr key={order.id} className="bg-white hover:bg-gray-50">
-								<Td>#{order.order_code}</Td>
-								<Td>{new Date(order.created_at).toLocaleDateString('id-ID')}</Td>
-								<Td>{formatIDR(order.total || 0)}</Td>
-								<Td>
+								<Td className="whitespace-nowrap">#{order.order_code}</Td>
+								<Td className="whitespace-nowrap">{new Date(order.created_at).toLocaleDateString('id-ID')}</Td>
+								<Td className="whitespace-nowrap">{formatIDR(order.total || 0)}</Td>
+								<Td className="whitespace-nowrap">
 									<span className={`px-2 py-1 rounded text-xs ${getStatusClass(order.status)}`}>{getStatusLabel(order.status)}</span>
 								</Td>
 							</tr>

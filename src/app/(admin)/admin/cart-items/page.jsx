@@ -18,7 +18,7 @@ export default async function AdminCartItemsPage({ searchParams }) {
 	const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4 md:space-y-6 min-w-0">
 			<div className="flex items-center justify-between">
 				<div className="space-y-1">
 					<h2 className="text-2xl font-bold tracking-tight text-violet-900">Cart Items</h2>
@@ -26,54 +26,56 @@ export default async function AdminCartItemsPage({ searchParams }) {
 				</div>
 			</div>
 
-			<div className="rounded-xl border bg-card">
-				<Table>
-					<TableHeader>
-						<TableRow className="bg-violet-50">
-							<TableHead className="text-violet-600">User ID</TableHead>
-							<TableHead className="text-violet-600">Product ID</TableHead>
-							<TableHead className="text-violet-600">Quantity</TableHead>
-							<TableHead className="text-violet-600">Dibuat</TableHead>
-							<TableHead className="text-violet-600">Diperbarui</TableHead>
-							<TableHead className="text-center text-violet-600">Aksi</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{error && (
-							<TableRow>
-								<TableCell colSpan={7} className="py-8 text-center text-rose-600">
-									Gagal memuat data: {error.message}
-								</TableCell>
+			<div className="rounded-xl border bg-card overflow-hidden">
+				<div className="overflow-x-auto">
+					<Table className="min-w-[800px]">
+						<TableHeader>
+							<TableRow className="bg-violet-50">
+								<TableHead className="text-violet-600 whitespace-nowrap">User ID</TableHead>
+								<TableHead className="text-violet-600 whitespace-nowrap">Product ID</TableHead>
+								<TableHead className="text-violet-600 whitespace-nowrap">Quantity</TableHead>
+								<TableHead className="hidden sm:table-cell text-violet-600 whitespace-nowrap">Dibuat</TableHead>
+								<TableHead className="hidden md:table-cell text-violet-600 whitespace-nowrap">Diperbarui</TableHead>
+								<TableHead className="text-center text-violet-600 whitespace-nowrap">Aksi</TableHead>
 							</TableRow>
-						)}
+						</TableHeader>
+						<TableBody>
+							{error && (
+								<TableRow>
+									<TableCell colSpan={6} className="py-8 text-center text-rose-600">
+										Gagal memuat data: {error.message}
+									</TableCell>
+								</TableRow>
+							)}
 
-						{!error && (items?.length ?? 0) === 0 && (
-							<TableRow>
-								<TableCell colSpan={7} className="py-8 text-center text-violet-600">
-									Belum ada data.
-								</TableCell>
-							</TableRow>
-						)}
+							{!error && (items?.length ?? 0) === 0 && (
+								<TableRow>
+									<TableCell colSpan={6} className="py-8 text-center text-violet-600">
+										Belum ada data.
+									</TableCell>
+								</TableRow>
+							)}
 
-						{(items ?? []).map((it) => (
-							<TableRow key={it.id}>
-								<TableCell className="text-violet-600">{it.user_id}</TableCell>
-								<TableCell className="text-violet-600">{it.product_id}</TableCell>
-								<TableCell className="text-violet-600">{it.quantity}</TableCell>
-								<TableCell className="text-violet-600">{it.created_at ? new Date(it.created_at).toLocaleString('id-ID') : '-'}</TableCell>
-								<TableCell className="text-violet-600">{it.updated_at ? new Date(it.updated_at).toLocaleString('id-ID') : '-'}</TableCell>
-								<TableCell className="text-center">
-									<CartItemViewDialog item={it} />
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-					{typeof total === 'number' && (
-						<TableCaption className="text-violet-600">
-							Menampilkan {items?.length ?? 0} dari {total} item.
-						</TableCaption>
-					)}
-				</Table>
+							{(items ?? []).map((it) => (
+								<TableRow key={it.id}>
+									<TableCell className="text-violet-600 whitespace-nowrap">{it.user_id}</TableCell>
+									<TableCell className="text-violet-600 whitespace-nowrap">{it.product_id}</TableCell>
+									<TableCell className="text-violet-600 whitespace-nowrap">{it.quantity}</TableCell>
+									<TableCell className="hidden sm:table-cell text-violet-600 whitespace-nowrap">{it.created_at ? new Date(it.created_at).toLocaleString('id-ID') : '-'}</TableCell>
+									<TableCell className="hidden md:table-cell text-violet-600 whitespace-nowrap">{it.updated_at ? new Date(it.updated_at).toLocaleString('id-ID') : '-'}</TableCell>
+									<TableCell className="text-center whitespace-nowrap">
+										<CartItemViewDialog item={it} />
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+						{typeof total === 'number' && (
+							<TableCaption className="text-violet-600">
+								Menampilkan {items?.length ?? 0} dari {total} item.
+							</TableCaption>
+						)}
+					</Table>
+				</div>
 			</div>
 
 			<Pagination>

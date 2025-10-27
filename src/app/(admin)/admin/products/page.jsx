@@ -123,11 +123,11 @@ export default function AdminProductsPage() {
 
 	return (
 		// >>> penting: min-w-0 supaya kolom grid ini mau mengecil dan tidak "dorong" sidebar
-		<div className="space-y-6 min-w-0">
+		<div className="space-y-4 md:space-y-6 min-w-0">
 			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-				<div className="space-y-1 min-w-0">
+				<div className="space-y-1 min-w-0 w-full sm:w-auto">
 					<h2 className="text-2xl font-bold tracking-tight text-violet-900 truncate">Produk</h2>
-					{debouncedSearchQuery && <p className="text-sm text-violet-600">Menampilkan hasil pencarian untuk "{debouncedSearchQuery}"</p>}
+					{debouncedSearchQuery && <p className="text-sm text-violet-600 truncate">Menampilkan hasil pencarian untuk "{debouncedSearchQuery}"</p>}
 				</div>
 				<div className="flex items-center gap-3 w-full sm:w-auto">
 					<div className="relative flex-1 sm:flex-initial sm:w-64">
