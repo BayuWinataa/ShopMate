@@ -124,34 +124,100 @@ export default function AdminProductsPage() {
 	return (
 		// >>> penting: min-w-0 supaya kolom grid ini mau mengecil dan tidak "dorong" sidebar
 		<div className="space-y-4 md:space-y-6 min-w-0">
-			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-				<div className="space-y-1 min-w-0 w-full sm:w-auto">
-					<h2 className="text-2xl font-bold tracking-tight text-violet-900 truncate">Produk</h2>
-					{debouncedSearchQuery && <p className="text-sm text-violet-600 truncate">Menampilkan hasil pencarian untuk "{debouncedSearchQuery}"</p>}
-				</div>
-				<div className="flex items-center gap-3 w-full sm:w-auto">
-					<div className="relative flex-1 sm:flex-initial sm:w-64">
-						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-						<Input
-							type="text"
-							placeholder="Cari produk..."
-							value={searchQuery}
-							onChange={(e) => handleSearch(e.target.value)}
-							className="pl-10 pr-10 text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1"
-						/>
-						{searchQuery && (
-							<button onClick={clearSearch} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-								<X className="h-4 w-4" />
-							</button>
-						)}
+			<div className="flex flex-col gap-4">
+				{/* Header Section */}
+				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+					<div className="space-y-1 min-w-0 flex-1">
+						<h2 className="text-xl md:text-2xl font-bold tracking-tight text-violet-900">Produk</h2>
+						{debouncedSearchQuery && <p className="text-sm text-violet-600 truncate">Menampilkan hasil pencarian untuk "{debouncedSearchQuery}"</p>}
 					</div>
-					<ProductCreateDialog onSuccess={handleProductCreated} />
+					<div className="w-full sm:w-auto">
+						<ProductCreateDialog onSuccess={handleProductCreated} />
+					</div>
+				</div>
+
+				{/* Search Bar */}
+				<div className="relative w-full">
+					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+					<Input
+						type="text"
+						placeholder="Cari produk..."
+						value={searchQuery}
+						onChange={(e) => handleSearch(e.target.value)}
+						className="pl-10 pr-10 text-violet-900 placeholder:text-violet-400 focus-visible:border-violet-600 focus-visible:ring-violet-200 focus-visible:ring-1 w-full"
+					/>
+					{searchQuery && (
+						<button onClick={clearSearch} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+							<X className="h-4 w-4" />
+						</button>
+					)}
 				</div>
 			</div>
 
 			{/* >>> bungkus tabel dengan scroller, dan beri min-w pada tabel */}
 			<div className="rounded-xl border border-violet-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-				<div className="overflow-x-auto">
+				{/* Mobile Card View */}
+				<div className="block md:hidden">
+					{loading ? (
+						<div className="p-4 space-y-4">
+							{Array.from({ length: PAGE_SIZE }).map((_, idx) => (
+								<div key={`skeleton-mobile-${idx}`} className="bg-white border border-violet-100 rounded-lg p-4">
+									<div className="flex gap-3">
+										<Skeleton className="h-16 w-16 rounded-md flex-shrink-0" />
+										<div className="flex-1 space-y-2">
+											<Skeleton className="h-4 w-3/4" />
+											<Skeleton className="h-4 w-1/2" />
+											<Skeleton className="h-4 w-1/4" />
+										</div>
+									</div>
+									<div className="flex justify-end gap-2 mt-3">
+										<Skeleton className="h-8 w-16" />
+										<Skeleton className="h-8 w-16" />
+										<Skeleton className="h-8 w-16" />
+									</div>
+								</div>
+							))}
+						</div>
+					) : products.length === 0 ? (
+						<div className="p-8 text-center text-violet-600">{debouncedSearchQuery ? `Tidak ada produk yang cocok dengan "${debouncedSearchQuery}".` : 'Belum ada produk.'}</div>
+					) : (
+						<div className="p-4 space-y-4">
+							{products.map((p, idx) => {
+								const img = p.gambar || p.image || '/Frame 1.svg';
+								return (
+									<div key={p.id} className="bg-white border border-violet-100 rounded-lg p-4">
+										<div className="flex gap-3">
+											<div className="h-16 w-16 overflow-hidden rounded-md border bg-muted flex-shrink-0">
+												<Image src={img} alt={p.nama} width={64} height={64} className="h-full w-full object-cover" />
+											</div>
+											<div className="flex-1 min-w-0">
+												<h3 className="font-medium text-violet-900 truncate">{p.nama}</h3>
+												<p className="text-sm text-violet-600 capitalize">{p.kategori || '-'}</p>
+												<p className="text-sm font-semibold text-violet-900">{formatIDR(p.harga)}</p>
+												{p.created_at && <p className="text-xs text-violet-500">{new Date(p.created_at).toLocaleDateString('id-ID')}</p>}
+											</div>
+										</div>
+										<div className="flex justify-end gap-2 mt-3">
+											<ProductViewDialog product={p} />
+											<ProductEditDialog product={p} onSuccess={handleProductUpdated} />
+											<ProductDeleteButton id={p.id} nama={p.nama} onSuccess={handleProductDeleted} />
+										</div>
+									</div>
+								);
+							})}
+
+							{/* Mobile: Show count info */}
+							{typeof total === 'number' && (
+								<div className="text-center text-sm text-violet-600 py-4 border-t border-violet-100">
+									Menampilkan {products?.length ?? 0} dari {total} produk
+								</div>
+							)}
+						</div>
+					)}
+				</div>
+
+				{/* Desktop Table View */}
+				<div className="hidden md:block overflow-x-auto">
 					{/* min-w bikin tabel scroll horizontal di mobile, bukan melebarkan layout */}
 					<Table className="w-full min-w-[800px]">
 						<TableHeader>
@@ -265,67 +331,92 @@ export default function AdminProductsPage() {
 
 			{/* Pagination */}
 			{totalPages > 1 && (
-				<Pagination>
-					<PaginationContent>
-						<PaginationItem>
-							<PaginationPrevious href={createPageUrl(Math.max(1, page - 1))} />
-						</PaginationItem>
+				<div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+					{/* Mobile Pagination Info */}
+					<div className="text-sm text-violet-600 text-center sm:text-left">
+						Halaman {page} dari {totalPages}
+					</div>
 
-						{(() => {
-							const items = [];
-							const window = 1;
-							const start = Math.max(1, page - window);
-							const end = Math.min(totalPages, page + window);
+					{/* Pagination Controls */}
+					<Pagination>
+						<PaginationContent className="flex-wrap justify-center sm:justify-end">
+							<PaginationItem>
+								<PaginationPrevious href={createPageUrl(Math.max(1, page - 1))} className={page <= 1 ? 'pointer-events-none opacity-50' : ''} />
+							</PaginationItem>
 
-							if (start > 1) {
-								items.push(
-									<PaginationItem key={1}>
-										<PaginationLink href={createPageUrl(1)} isActive={page === 1}>
-											1
-										</PaginationLink>
-									</PaginationItem>
-								);
-							}
-							if (start > 2) {
-								items.push(
-									<PaginationItem key="ellipsis-start">
-										<PaginationEllipsis />
-									</PaginationItem>
-								);
-							}
-							for (let i = start; i <= end; i++) {
-								items.push(
-									<PaginationItem key={i}>
-										<PaginationLink href={createPageUrl(i)} isActive={page === i}>
-											{i}
-										</PaginationLink>
-									</PaginationItem>
-								);
-							}
-							if (end < totalPages - 1) {
-								items.push(
-									<PaginationItem key="ellipsis-end">
-										<PaginationEllipsis />
-									</PaginationItem>
-								);
-							}
-							if (end < totalPages) {
-								items.push(
-									<PaginationItem key={totalPages}>
-										<PaginationLink href={createPageUrl(totalPages)} isActive={page === totalPages}>
-											{totalPages}
-										</PaginationLink>
-									</PaginationItem>
-								);
-							}
-							return items;
-						})()}
+							{/* Mobile: Show fewer pages */}
+							<div className="hidden sm:flex">
+								{(() => {
+									const items = [];
+									const window = 1;
+									const start = Math.max(1, page - window);
+									const end = Math.min(totalPages, page + window);
 
-						<PaginationItem>
-							<PaginationNext href={createPageUrl(Math.min(totalPages, page + 1))} />
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
+									if (start > 1) {
+										items.push(
+											<PaginationItem key={1}>
+												<PaginationLink href={createPageUrl(1)} isActive={page === 1}>
+													1
+												</PaginationLink>
+											</PaginationItem>
+										);
+									}
+									if (start > 2) {
+										items.push(
+											<PaginationItem key="ellipsis-start">
+												<PaginationEllipsis />
+											</PaginationItem>
+										);
+									}
+									for (let i = start; i <= end; i++) {
+										items.push(
+											<PaginationItem key={i}>
+												<PaginationLink href={createPageUrl(i)} isActive={page === i}>
+													{i}
+												</PaginationLink>
+											</PaginationItem>
+										);
+									}
+									if (end < totalPages - 1) {
+										items.push(
+											<PaginationItem key="ellipsis-end">
+												<PaginationEllipsis />
+											</PaginationItem>
+										);
+									}
+									if (end < totalPages) {
+										items.push(
+											<PaginationItem key={totalPages}>
+												<PaginationLink href={createPageUrl(totalPages)} isActive={page === totalPages}>
+													{totalPages}
+												</PaginationLink>
+											</PaginationItem>
+										);
+									}
+									return items;
+								})()}
+							</div>
+
+							{/* Mobile: Simple prev/next */}
+							<div className="flex sm:hidden gap-2">
+								{page > 1 && (
+									<PaginationItem>
+										<PaginationLink href={createPageUrl(page - 1)}>Sebelumnya</PaginationLink>
+									</PaginationItem>
+								)}
+								{page < totalPages && (
+									<PaginationItem>
+										<PaginationLink href={createPageUrl(page + 1)}>Selanjutnya</PaginationLink>
+									</PaginationItem>
+								)}
+							</div>
+
+							<PaginationItem>
+								<PaginationNext href={createPageUrl(Math.min(totalPages, page + 1))} className={page >= totalPages ? 'pointer-events-none opacity-50' : ''} />
+							</PaginationItem>
+						</PaginationContent>
+					</Pagination>
+				</div>
 			)}
 		</div>
 	);

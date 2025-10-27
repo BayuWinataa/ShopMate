@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -69,23 +69,23 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-2xl md:max-w-3xl max-h-[88vh] overflow-y-auto p-0">
+			<DialogContent showCloseButton={false} className="w-[calc(100%-1rem)] sm:max-w-xl md:max-w-2xl max-h-[90vh] overflow-y-auto p-0">
 				{/* Header */}
-				<DialogHeader className="px-5 pt-5 pb-3">
+				<DialogHeader className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
 					<div className="min-w-0">
-						<DialogTitle className="truncate text-xl leading-tight text-violet-900">{product?.nama ?? 'Detail Produk'}</DialogTitle>
+						<DialogTitle className="truncate text-lg sm:text-xl leading-tight text-violet-900 pr-8 break-words">{product?.nama ?? 'Detail Produk'}</DialogTitle>
 						{(product?.kategori || created || updated) && (
-							<DialogDescription className="mt-1 text-violet-600">
+							<DialogDescription className="mt-1 text-sm text-violet-600">
 								{product?.kategori ? <span className="capitalize">{product.kategori}</span> : null}
 								{created ? (
 									<>
-										<span>
+										<span className="block sm:inline">
 											{' '}
 											{product?.kategori ? '• ' : ''}Dibuat: {created}
 										</span>
 									</>
 								) : null}
-								{updated ? <> • Diperbarui: {updated}</> : null}
+								{updated ? <span className="block sm:inline"> • Diperbarui: {updated}</span> : null}
 							</DialogDescription>
 						)}
 					</div>
@@ -95,11 +95,11 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 				<div className="h-px bg-border/80" />
 
 				{/* Body scrollable */}
-				<div className="px-5 py-4">
+				<div className="px-4 sm:px-5 py-4">
 					<div className="grid grid-cols-1 gap-4">
 						{/* Image */}
 						<div>
-							<div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
+							<div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
 								{!imgLoaded && <Skeleton className="absolute inset-0" />}
 								<Image
 									src={img}
@@ -107,7 +107,7 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 									fill
 									onLoad={() => setImgLoaded(true)}
 									className={`object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-									sizes="(max-width: 768px) 100vw, 40vw"
+									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 									priority
 								/>
 							</div>
@@ -115,22 +115,36 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 
 						{/* Info */}
 						<div className="space-y-4">
+							{/* Price & Key Info */}
+							{product?.harga && (
+								<div className="bg-violet-50 rounded-lg p-3 sm:p-4">
+									<div className="text-2xl sm:text-3xl font-bold text-violet-900 mb-2 break-all">{formatIDR(product.harga)}</div>
+									{product?.stok !== undefined && (
+										<div className="text-sm text-violet-600">
+											Stok: <span className={`font-medium ${product.stok > 0 ? 'text-green-600' : 'text-red-600'}`}>{product.stok > 0 ? `${product.stok} tersedia` : 'Habis'}</span>
+										</div>
+									)}
+								</div>
+							)}
+
 							{/* Semua Data dari Database */}
 							<div className="rounded-lg border bg-white">
-								<div className="px-4 py-3 border-b text-sm font-medium text-violet-900">Semua Data</div>
-								<div className="px-4 py-3">
-									<div className="grid grid-cols-1 gap-2">
+								<div className="px-3 sm:px-4 py-3 border-b text-sm font-medium text-violet-900">Semua Data</div>
+								<div className="px-3 sm:px-4 py-3">
+									<div className="grid grid-cols-1 gap-3">
 										{Object.entries(product || {}).map(([key, val]) => (
-											<div key={key} className="grid gap-1 grid-cols-1 xs:grid-cols-[120px_1fr] sm:grid-cols-[160px_1fr] md:grid-cols-[180px_1fr] items-start text-sm">
-												<div className="text-violet-600 font-medium break-words">{formatKey(key)}</div>
-												<div className="text-violet-900 break-words whitespace-pre-wrap overflow-wrap-anywhere">
-													{key === 'gambar' || key === 'image' ? (
-														<a href={formatValue(key, val)} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline break-all hover:no-underline transition-colors">
-															{formatValue(key, val)}
-														</a>
-													) : (
-														formatValue(key, val)
-													)}
+											<div key={key} className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0">
+												<div className="grid gap-1 grid-cols-1 sm:grid-cols-[minmax(100px,120px)_1fr] md:grid-cols-[minmax(120px,140px)_1fr] items-start text-sm">
+													<div className="text-violet-600 font-medium break-words text-xs sm:text-sm min-w-0">{formatKey(key)}</div>
+													<div className="text-violet-900 break-words whitespace-pre-wrap overflow-wrap-anywhere text-sm min-w-0">
+														{key === 'gambar' || key === 'image' ? (
+															<a href={formatValue(key, val)} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline break-all hover:no-underline transition-colors text-sm">
+																{formatValue(key, val)}
+															</a>
+														) : (
+															formatValue(key, val)
+														)}
+													</div>
 												</div>
 											</div>
 										))}
@@ -145,13 +159,15 @@ export default function ProductViewDialog({ product, triggerLabel = 'Lihat' }) {
 				<div className="h-px bg-border/80" />
 
 				{/* Footer */}
-				<DialogFooter className="px-5 py-4">
+				<div className="flex flex-col-reverse sm:flex-row justify-end gap-2 px-4 sm:px-5 py-4 border-t bg-gray-50">
 					<DialogClose asChild>
-						<Button type="button" variant="pressViolet">
+						<Button variant="outline" className="w-full sm:w-auto order-2 sm:order-1">
 							Tutup
 						</Button>
 					</DialogClose>
-				</DialogFooter>
+					{/* placeholder for future actions (Edit/Delete) - keeps layout consistent */}
+					<div className="w-full sm:w-auto order-1 sm:order-2" />
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
