@@ -283,7 +283,7 @@ ${context ? `KONTEKS TAMBAHAN:\n${context}\n` : ''}
 			messages: [systemMessage, ...clientMessages],
 			model: 'meta-llama/llama-4-scout-17b-16e-instruct',
 			temperature: 0.7,
-			max_tokens: 1024,
+			max_tokens: 512,
 		});
 
 		const aiResponse = chatCompletion.choices?.[0]?.message?.content || '';

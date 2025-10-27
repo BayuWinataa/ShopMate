@@ -67,7 +67,7 @@ export default function RecList({ items, formatIDR, isSelectedForCompare, toggle
 					<div className="flex items-center gap-3 mb-3">
 						<Image src={product.gambar || product.image || '/placeholder.jpg'} alt={product.nama} width={64} height={64} className="h-14 w-14 md:h-16 md:w-16 rounded-lg object-cover flex-shrink-0" />
 						<div className="min-w-0 flex-1">
-							<p className="font-medium text-sm sm:text-base leading-tight mb-1 text-violet-900 truncate">{product.nama}</p>
+							<p className="font-medium text-sm sm:text-base leading-tight mb-1 text-violet-900 wrap line-clamp-3">{product.nama}</p>
 							<p className="font-semibold text-violet-600 text-sm sm:text-base">{formatIDR(product.harga)}</p>
 						</div>
 					</div>

@@ -61,7 +61,18 @@ export default function ProductCreateDialog({ onSuccess }) {
 			setLoading(true);
 			setError('');
 
+			// Fetch the last product ID
+			const { data: lastProduct, error: fetchError } = await supabase.from('Products').select('id').order('id', { ascending: false }).limit(1).single();
+
+			if (fetchError) {
+				setError('Gagal mengambil ID terakhir produk.');
+				return;
+			}
+
+			const newId = lastProduct ? lastProduct.id + 1 : 1; // Default to 1 if no products exist
+
 			const payload = {
+				id: newId, // Set the new ID
 				nama: nama.trim(),
 				kategori: kategori.trim() || null,
 				harga: Number(harga),
@@ -74,7 +85,7 @@ export default function ProductCreateDialog({ onSuccess }) {
 			const { error: insertError } = await supabase.from('Products').insert([payload]).select('id').single();
 
 			if (insertError) {
-				// Tangani error duplicate key (sequence id tidak sinkron)
+				// Handle duplicate key error (sequence ID out of sync)
 				if (insertError.code === '23505' && /pkey|_pkey/i.test(insertError.message || '')) {
 					setError('Gagal menambahkan: Primary key sudah terpakai. Kemungkinan sequence kolom id tidak sinkron. ' + 'Silakan reset sequence ke MAX(id)+1 atau ke 40 (jika ingin mulai dari 40) lewat SQL Editor Supabase.');
 				} else {
@@ -83,7 +94,7 @@ export default function ProductCreateDialog({ onSuccess }) {
 				return;
 			}
 
-			// reset form
+			// Reset form
 			setNama('');
 			setKategori('');
 			setHarga('');
