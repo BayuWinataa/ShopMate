@@ -60,6 +60,9 @@ ShopMate adalah aplikasi e-commerce modern dengan integrasi AI, dibangun menggun
 - **Framer Motion** - Animasi dan transisi smooth
 - **Recharts** - Library untuk chart dan visualisasi data
 - **Lucide React** - Icon library
+- **Lenis** - Library untuk scroll smooth
+- **Zod** - Untuk validasi form
+
 
 ### **Backend & Database**
 
