@@ -1,0 +1,22 @@
+<svg width="192" height="192" viewBox="0 0 396 447" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_739_29)">
+<rect width="396" height="447" fill="url(#paint0_linear_739_29)"/>
+<rect x="50" y="13" width="296" height="256" fill="url(#pattern0_739_29)"/>
+<rect x="-2.02429" y="255.018" width="381.004" height="191.993" transform="rotate(-0.604107 -2.02429 255.018)" fill="url(#pattern1_739_29)"/>
+</g>
+<defs>
+<pattern id="pattern0_739_29" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_739_29" transform="matrix(0.00117509 0 0 0.0013587 0.0675676 0)"/>
+</pattern>
+<pattern id="pattern1_739_29" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image1_739_29" transform="matrix(0.000684666 0 0 0.0013587 0.248043 0)"/>
+</pattern>
+<linearGradient id="paint0_linear_739_29" x1="198" y1="0" x2="204.93" y2="447.063" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BC21FF"/>
+<stop offset="1" stop-color="#5FCEE7"/>
+</linearGradient>
+<clipPath id="clip0_739_29">
+<rect width="396" height="447" fill="white"/>
+</clipPath>
+</defs>
+</svg>

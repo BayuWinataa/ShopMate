@@ -106,7 +106,7 @@ export default function InvoiceIQSection() {
 							}}
 						>
 							{['Chatbot AI membaca detail pemesanan yang sudah anda beli', 'Bisa ditanya ulang soal item, harga, atau tanggal pesanan', 'Minta rekomendasi barang dari pemesanan anda sebelumnya'].map((text, index) => (
-								<motion.div
+								<motion.li
 									key={index}
 									variants={{
 										hidden: { opacity: 0, x: -20 },
@@ -115,7 +115,7 @@ export default function InvoiceIQSection() {
 									transition={{ type: 'spring', stiffness: 100 }}
 								>
 									<Li>{text}</Li>
-								</motion.div>
+								</motion.li>
 							))}
 						</motion.ul>
 

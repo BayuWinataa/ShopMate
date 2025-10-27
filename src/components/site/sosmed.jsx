@@ -4,7 +4,7 @@ const Sosmed = () => {
 	return (
 		<div className="flex items-center gap-4 ">
 			<div className="social-button">
-				<button className="relative w-12 h-12 rounded-full group">
+				<button type="button" aria-label="Instagram" className="relative w-12 h-12 rounded-full group">
 					<div className="floater w-full h-full absolute top-0 left-0 bg-violet-400 rounded-full duration-300 group-hover:-top-8 group-hover:shadow-2xl" />
 					<div className="icon relative z-10 w-full h-full flex items-center justify-center border-2 border-violet-400 rounded-full">
 						<svg xmlns="http://www.w3.org/2000/svg" width={22} height={22} viewBox="0 0 22 22" fill="none">
@@ -21,7 +21,7 @@ const Sosmed = () => {
 				</button>
 			</div>
 			<div className="social-button">
-				<button className="relative w-12 h-12 rounded-full group">
+				<button type="button" aria-label="GitHub" className="relative w-12 h-12 rounded-full group">
 					<div className="floater w-full h-full absolute top-0 left-0 bg-black rounded-full duration-300 group-hover:-top-8 group-hover:shadow-2xl" />
 					<div className="icon relative z-10 w-full h-full flex items-center justify-center border-2 border-black rounded-full">
 						<svg height={24} width={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -35,7 +35,7 @@ const Sosmed = () => {
 				</button>
 			</div>
 			<div className="social-button">
-				<button className="relative w-12 h-12 rounded-full group">
+				<button type="button" aria-label="LinkedIn" className="relative w-12 h-12 rounded-full group">
 					<div className="floater w-full h-full absolute top-0 left-0 bg-blue-500 rounded-full duration-300 group-hover:-top-8 group-hover:shadow-2xl" />
 					<div className="icon relative z-10 w-full h-full flex items-center justify-center border-2 border-blue-500 rounded-full">
 						<svg height={24} width={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +49,7 @@ const Sosmed = () => {
 				</button>
 			</div>
 			<div className="social-button">
-				<button className="relative w-12 h-12 rounded-full group">
+				<button type="button" aria-label="Email" className="relative w-12 h-12 rounded-full group">
 					<div className="floater w-full h-full absolute top-0 left-0 bg-red-400 rounded-full duration-300 group-hover:-top-8 group-hover:shadow-2xl" />
 					<div className="icon relative z-10 w-full h-full flex items-center justify-center border-2 border-red-400 rounded-full">
 						<svg height={32} width={32} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">

@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+// Link removed: footer contains social buttons which are interactive elements themselves
 import Sosmed from '@/components/site/sosmed';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { useRef } from 'react';
@@ -39,9 +39,9 @@ export default function Footer() {
 					<motion.div className="space-y-8" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}>
 						<h3 className="text-lg font-semibold text-white">Contact</h3>
 
-						<Link href="#">
+						<div role="group" aria-label="Social media links">
 							<Sosmed />
-						</Link>
+						</div>
 					</motion.div>
 				</div>
 

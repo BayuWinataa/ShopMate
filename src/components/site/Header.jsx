@@ -117,7 +117,7 @@ export default function Header() {
 					</span>
 					<span className="relative inline-block">
 						<span className="truncate pr-5 text-xl sm:text-2xl font-extrabold tracking-tight text-violet-600 leading-none">ShopMate</span>
-						<span className="pointer-events-none select-none absolute -top-1.5 right-1 sm:-top-2 sm:right-0 md:-top-2.5 md:-right-0.5 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-violet-500">AI</span>
+						<span className="pointer-events-none select-none absolute -top-1.5 right-1 sm:-top-2 sm:right-0 md:-top-2.5 md:-right-0.5 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-violet-700">AI</span>
 					</span>
 				</Link>
 			</div>
@@ -149,18 +149,18 @@ export default function Header() {
 					</Link>
 				) : (
 					<div className="hidden md:flex items-center gap-2">
-						<Link href="/login">
-							<Button variant="pressPurple" size="sm" className="gap-2">
+						<Button asChild variant="pressPurple" size="sm" className="gap-2">
+							<Link href="/login" className="block">
 								<LogIn size={16} />
 								<span className="hidden sm:inline">Login</span>
-							</Button>
-						</Link>
-						<Link href="/register">
-							<Button variant="pressPurple" size="sm" className="gap-2">
+							</Link>
+						</Button>
+						<Button asChild variant="pressPurple" size="sm" className="gap-2">
+							<Link href="/register" className="block">
 								<UserPlus size={16} />
 								<span className="hidden sm:inline">Register</span>
-							</Button>
-						</Link>
+							</Link>
+						</Button>
 					</div>
 				)}
 
@@ -302,14 +302,14 @@ function MobileMenu({ loading, user, isAdmin }) {
 									whileTap={{ scale: 0.98 }}
 									className="flex-1 xs:flex-initial"
 								>
-									<Link href="/login" onClick={() => setIsOpen(false)} className="block">
-										<Button variant="pressPurple" size="sm" className="gap-2 w-full xs:w-auto">
+									<Button asChild variant="pressPurple" size="sm" className="gap-2 w-full xs:w-auto">
+										<Link href="/login" onClick={() => setIsOpen(false)} className="block">
 											<motion.div animate={hasBeenOpened ? { rotate: [0, 10, -10, 0] } : {}} transition={hasBeenOpened ? { duration: 0.5, repeat: Infinity, repeatDelay: 3 } : {}}>
 												<LogIn size={16} />
 											</motion.div>
 											Login
-										</Button>
-									</Link>
+										</Link>
+									</Button>
 								</motion.div>
 								<motion.div
 									initial={hasBeenOpened ? { opacity: 0, x: -20 } : { opacity: 1, x: 0 }}
@@ -319,14 +319,14 @@ function MobileMenu({ loading, user, isAdmin }) {
 									whileTap={{ scale: 0.98 }}
 									className="flex-1 xs:flex-initial"
 								>
-									<Link href="/register" onClick={() => setIsOpen(false)} className="block">
-										<Button variant="pressPurple" size="sm" className="gap-2 w-full xs:w-auto">
+									<Button asChild variant="pressPurple" size="sm" className="gap-2 w-full xs:w-auto">
+										<Link href="/register" onClick={() => setIsOpen(false)} className="block">
 											<motion.div animate={hasBeenOpened ? { scale: [1, 1.2, 1] } : {}} transition={hasBeenOpened ? { duration: 0.5, repeat: Infinity, repeatDelay: 3 } : {}}>
 												<UserPlus size={16} />
 											</motion.div>
 											Register
-										</Button>
-									</Link>
+										</Link>
+									</Button>
 								</motion.div>
 							</div>
 						)}
