@@ -311,7 +311,25 @@ export default function OrdersClient() {
 			{/* ===== LIST ORDERS (ringkas; klik untuk buka modal detail) ===== */}
 			<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 				{ordersLoading ? (
-					<div className="text-sm text-violet-600">Memuat orders…</div>
+					// Skeleton placeholders for loading state
+					Array.from({ length: 6 }).map((_, index) => (
+						<div key={index} className="rounded-lg border border-violet-100 bg-white p-4 text-left shadow-sm animate-pulse" aria-hidden="true">
+							<div className="mb-2 flex items-start justify-between gap-3">
+								<div>
+									<div className="h-4 bg-violet-200 rounded w-24 mb-2"></div>
+									<div className="h-3 bg-violet-100 rounded w-16"></div>
+								</div>
+								<div className="text-right">
+									<div className="h-4 bg-violet-200 rounded w-20 mb-2"></div>
+									<div className="h-3 bg-violet-100 rounded w-16"></div>
+								</div>
+							</div>
+							<div className="mt-3 border-t border-violet-100 pt-2 text-sm font-semibold flex justify-between">
+								<div className="h-4 bg-violet-200 rounded w-16"></div>
+								<div className="h-4 bg-violet-200 rounded w-20"></div>
+							</div>
+						</div>
+					))
 				) : ordersError ? (
 					<div className="text-sm text-red-600">{ordersError}</div>
 				) : orders.length === 0 ? (
