@@ -156,13 +156,26 @@ export default function OrdersClient() {
 			try {
 				setOrdersLoading(true);
 				setOrdersError('');
+				// Pastikan hanya mengambil pesanan milik user yang sedang login
+				const {
+					data: { user },
+					error: userErr,
+				} = await supabase.auth.getUser();
+				if (userErr || !user) {
+					setOrders([]);
+					setOrdersError('Anda harus login untuk melihat pesanan.');
+					setOrdersLoading(false);
+					return;
+				}
+
 				const { data, error } = await supabase
 					.from('orders')
 					.select(
 						`id, order_code, payment_method, status, subtotal, total, created_at,
-						customers:customer_id ( id, name, phone, address, note ),
-						order_items ( id, product_id, name, price, qty, subtotal )`
+							customers:customer_id ( id, name, phone, address, note ),
+							order_items ( id, product_id, name, price, qty, subtotal )`
 					)
+					.eq('user_id', user.id)
 					.order('created_at', { ascending: false });
 
 				if (error) {

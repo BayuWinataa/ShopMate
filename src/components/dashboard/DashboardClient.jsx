@@ -48,13 +48,27 @@ export default function DashboardClient() {
 			try {
 				setOrdersLoading(true);
 				setOrdersError('');
+				// Hanya ambil orders milik user yang sedang login
+				const {
+					data: { user },
+					error: userErr,
+				} = await supabase.auth.getUser();
+				if (userErr || !user) {
+					// Jika belum login, tampilkan kosong / pesan error ringan
+					setOrders([]);
+					setOrdersError('Anda harus login untuk melihat ringkasan pesanan.');
+					setOrdersLoading(false);
+					return;
+				}
+
 				const { data, error } = await supabase
 					.from('orders')
 					.select(
 						`id, order_code, payment_method, status, subtotal, total, created_at,
-						customers:customer_id ( id, name, phone, address, note ),
-						order_items ( id, product_id, name, price, qty, subtotal )`
+							customers:customer_id ( id, name, phone, address, note ),
+							order_items ( id, product_id, name, price, qty, subtotal )`
 					)
+					.eq('user_id', user.id)
 					.order('created_at', { ascending: false });
 
 				if (error) {
@@ -232,7 +246,7 @@ export default function DashboardClient() {
 					<CardContent className="p-4">
 						<div className="text-sm text-violet-600 font-medium">Total Orders</div>
 						<div className="mt-1 text-2xl font-bold text-violet-900">{ordersLoading ? '…' : stats.totalOrders}</div>
-						<div className="text-xs text-gray-500">All stored orders</div>
+						<div className="text-xs text-gray-500">Hanya pesanan Anda</div>
 					</CardContent>
 				</Card>
 
@@ -240,7 +254,7 @@ export default function DashboardClient() {
 					<CardContent className="p-4">
 						<div className="text-sm text-violet-600 font-medium">Spent</div>
 						<div className="mt-1 text-2xl font-bold text-violet-900">{ordersLoading ? '…' : formatIDR(stats.spent)}</div>
-						<div className="text-xs text-gray-500">Subtotal of all orders</div>
+						<div className="text-xs text-gray-500">Subtotal pesanan Anda</div>
 					</CardContent>
 				</Card>
 			</div>
