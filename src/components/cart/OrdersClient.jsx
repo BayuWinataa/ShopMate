@@ -378,7 +378,7 @@ export default function OrdersClient() {
 				)}
 			</div>
 
-			{/* ===== MODAL DETAIL ORDER ===== */}
+			{/*  MODAL DETAIL ORDER  */}
 			<Dialog open={openDetail} onOpenChange={setOpenDetail}>
 				<DialogContent className="flex h-[85vh] max-w-3xl flex-col gap-3 overflow-hidden p-0 border-violet-200">
 					<DialogHeader className="px-5 pt-5 bg-gradient-to-r from-violet-50 to-purple-50 border-b border-violet-100">
